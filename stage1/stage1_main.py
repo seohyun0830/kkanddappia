@@ -1,4 +1,8 @@
+import os
+import sys
 import pygame
+from fail_magma import *
+from images import *
 
 pygame.init()
 
@@ -7,35 +11,6 @@ window_width = 1200
 window_height = 800
 window = pygame.display.set_mode((window_width,window_height))
 pygame.display.set_caption("Kkanddappia!")
-
-# 이미지 업로드
-background = pygame.image.load("stage1/assets/background.png")
-block1 = pygame.image.load("stage1/assets/block1.jpg")
-block2 = pygame.image.load("stage1/assets/block2.png")
-block3 = pygame.image.load("stage1/assets/block3.png")
-block4 = pygame.image.load("stage1/assets/block4.png")
-LDc = pygame.image.load("stage1/assets/worker_LD.png")
-LDPc = pygame.image.load("stage1/assets/worker_LDP.png")
-LW1c = pygame.image.load("stage1/assets/worker_LW1.png")
-LW2c = pygame.image.load("stage1/assets/worker_LW2.png")
-RDc = pygame.image.load("stage1/assets/worker_RD.png")
-RDPc = pygame.image.load("stage1/assets/worker_RDP.png")
-RW1c = pygame.image.load("stage1/assets/worker_RW1.png")
-RW2c = pygame.image.load("stage1/assets/worker_RW2.png")
-DLc = pygame.image.load("stage1/assets/worker_DL.png")
-DRc = pygame.image.load("stage1/assets/worker_DR.png")
-pick_LF = pygame.image.load("stage1/assets/pick_LF.png")
-pick_LB = pygame.image.load("stage1/assets/pick_LB.png")
-pick_LD = pygame.image.load("stage1/assets/pick_LD.png")
-pick_RF = pygame.image.load("stage1/assets/pick_RF.png")
-pick_RB = pygame.image.load("stage1/assets/pick_RB.png")
-pick_RD = pygame.image.load("stage1/assets/pick_RD.png")
-coal = pygame.image.load("stage1/assets/coal.png")
-
-# 각 이미지들 배열에 저장
-characters = [[LDc, LW1c, LW2c,LDPc], [RDc, RW1c, RW2c,RDPc], [DLc], [DRc]]
-blocks = [block1, block2, block3, block4]
-picks = [[pick_LF, pick_LB], [pick_RF, pick_RB],[pick_LF, pick_LD],[pick_RF, pick_RD]]
 
 # 기본세팅
 fps = pygame.time.Clock()                       # fps 설정
@@ -61,9 +36,12 @@ m_time = 0  # 모션 바뀌는 시간 측정
 b = 0       # 블록 넘버 (깨지는 모양)
 b_time = 0    # 블록 깨지는 시간
 p = 0
+f = 0       # 실패 조건
+
+#jumping = 0
 
 # 캐릭터 스피드는 아직 안쓰긴 함
-character_speed = 1   
+character_speed = 1
 play = True
 
 while play:
@@ -85,12 +63,12 @@ while play:
 
     # 한 프레임에서 움직인 값
     r_to_x = 0
-    c_to_y = 0
+    r_to_y = 0
     
     # 중력 설정 (같은 x 값에서 가장 밑으로 가도록)
     for i in range(c_y + 1, row):
         if (under_map[i][c_x] == 1):
-            c_to_y += 1
+            r_to_y += 5
         else:
             break
 
@@ -101,7 +79,7 @@ while play:
 
         # 이동 모션 설정
         m_time += 1
-        if m_time > 5:                  
+        if m_time > 8:                  
             if m == 1 or m == 0 or m == 3:
                 m = 2
             elif m == 2:
@@ -132,12 +110,12 @@ while play:
             elif b_time > 0:
                 b = 1
                 p = 0
-
+    # 오른쪽
     if keys[pygame.K_RIGHT]:
         c_x = (r_x) // pix
         d = 1
         m_time += 1
-        if m_time > 5:
+        if m_time > 8:
             if m == 1 or m == 0 or m == 3:
                 m = 2
             elif m == 2:
@@ -163,15 +141,23 @@ while play:
                 p = 1
             elif b_time > 0:
                 b = 1
-    # 점프가 진자 심각함
+        # 점프가 진자 심각함
+    
+    # 점프는 어케구현해야할까
+    # 지금 구현에서는 점프하는게 아니라 그냥 위칸에 옮겨놓으면 중력으로 떨어지는듯
     if keys[pygame.K_UP]:
         if c_y > 0 and under_map[c_y - 1][c_x] == 1:
-           c_to_y = -1
+            jumping = 1
+            r_to_y -= 60
         else:
             pass
+
     # 약간 애매하게 걸쳐있으면 밑에 블록이 이상하게 깨지는듯
-    # 오른쪽 볼 때랑 왼쪽 볼 때 다른 블록이 깨지는데?
     if keys[pygame.K_DOWN]:
+        # 맨 아래 땅 파면 마그마 나오면서 종료
+        if (c_y + 1 == row):
+            func_fail_magma(window)
+            
         if d == 0: d = 2
         elif d == 1: d = 3
         if c_y < row and under_map[c_y + 1][c_x] == 1:
@@ -192,7 +178,9 @@ while play:
                 b = 1
                 p = 0
     r_x += r_to_x * character_speed
-    c_y += c_to_y
+    r_y += r_to_y
+    c_y = r_y // pix
+    #c_y += c_to_y
 
     # draw map
     window.blit(background, (0,0))
@@ -209,18 +197,36 @@ while play:
             
             else: window.blit(blocks[0], (j * pix, i * pix))
     
-    window.blit(characters[d][m], (r_x, (c_y) * 60))
+    #window.blit(characters[d][m], (r_x, (c_y) * 60))
+    window.blit(characters[d][m], (r_x, r_y))
+
     if b != 0:
         window.blit(picks[d][p],(r_x, (c_y) * 60))
 
+    # tab 키 누르면 인벤토리 뜨도록
+    if keys[pygame.K_TAB]:
+        for i in range(1, col // 2 - 1):
+            for j in range(1, row // 2 - 2):
+                window.blit(inven, (i * pix * 2, j * pix * 2))
+
+
     pygame.display.update()
 
-
-    '''
+'''
     아직 해야할 일
     1. 점프가 일단 이상함
+    2. 탭 누르면 인벤토리 -> 일단 했어 근데 인벤 몇개 정도 하는게 나을까
+    4. 용암설정 -> 이것도 일단 했는데 모션 넣고싶어
     5. 맵에 광물, 석유 넣기
-    6. 지하수, 용암 설정
+    6. 지하수 설정
     7. 맵을 확장할까
     8. 그 픽셀 안에서 좀 애매하게 있으면 아래로 땅이 이상하게 파져
+    9. 인벤에서 마우스 올려놓으면 정보 뜨게 하는 것도 ㄱㅊ을거같은데?
+    10. 땅 하나 남으면 무너지도록 구현
+    11. 그럼 두더지는 그냥 마이너스 요소로 하고싶네
+    12. 출입구 표시도 해야됨
+    
+    버그
+    1. 왜 x가 안되냐
+    2. 다시하기는 왜 한번밖에 안되는거지
     '''
