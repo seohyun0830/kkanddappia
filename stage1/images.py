@@ -28,6 +28,7 @@ pick_RD = pygame.image.load("stage1/assets/pick_RD.png")
 inven = pygame.image.load("stage1/assets/invenBlock.png")
 
 coal = pygame.image.load("stage1/assets/coal.png")
+ladder = pygame.image.load("stage1/assets/ladder.png")
 
 magma1 = pygame.image.load("stage1/assets/magma1.png")
 magma2 = pygame.image.load("stage1/assets/magma2.png")
