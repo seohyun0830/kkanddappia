@@ -1,6 +1,5 @@
-import pygame
-import images
-import fails
+from . import images
+from . import fails
 
 class Cplayer:
     def __init__(self, col, row, pix):
@@ -40,14 +39,18 @@ class Cplayer:
             return 1
         return 0
 
-    def f_isLblocked(self, under_map):
+    def f_isLblocked(self, under_map, itemMap):
         if (under_map[self.blockY][self.blockX - 1] == 0 and (self.realX - self.blockX * self.pix) < 1):
+            return 1
+        if (itemMap[self.blockY][self.blockX - 1] == 5 and (self.realX - self.blockX * self.pix) < 1):
             return 1
         return 0
 
-    def f_gravity(self, under_map):
+    def f_gravity(self, under_map, itemMap):
         for i in range(self.blockY + 1, self.row):
             if (under_map[i][self.blockX] == 1):
+                if (itemMap[i][self.blockX] == 5):
+                    continue
                 self.realY += 5
             else:
                 break
@@ -61,11 +64,11 @@ class Cplayer:
                 self.motion = 1
             self.motionTime = 0
 
-    def f_left(self, under_map):
+    def f_left(self, under_map, itemMap):
         self.direction = 0
         self.motionTime += 1
         self.f_motion()
-        if (self.f_isLblocked(under_map)): # 갈 수 없으면
+        if (self.f_isLblocked(under_map,itemMap)): # 갈 수 없으면
             self.motion = 3
             self.motionTime = 0
             self.f_breaking(under_map)
@@ -91,21 +94,16 @@ class Cplayer:
             self.toX = 1
         self.realX += self.toX
 
-    def f_down(self, window, underMap):
-        if (self.blockY >= self.row - 1):
-            fails.magma(window)
-                    
+    def f_down(self, underMap):        
         if self.direction == 0: self.direction = 2
         elif self.direction == 1: self.direction = 3
         self.f_breaking(underMap)
 
-    
-    def f_up(self, under_map):
-        if self.blockY > 0 and under_map[self.blockY - 1][self.blockX] == 1:
-            self.realY -= 60
-        else:
-
-            pass
+    def f_up(self, under_map, itemMap):
+        if (self.blockY > 0 and (under_map[self.blockY - 1][self.blockX] == 1 and itemMap[self.blockY - 1][self.blockX] != 5)):
+            self.toY = -60
+        self.realY += self.toY
+        self.toY = 0
 
     def f_breaking(self,under_map):
         self.blockTime += 1

@@ -1,4 +1,4 @@
-import images
+from . import images
 
 class Cmap:
     def __init__(self, window, pix):
@@ -6,22 +6,76 @@ class Cmap:
         self.windowHeight = window.get_height()
         self.col = (self.windowWidth + pix - 10) // pix
         self.row = (self.windowHeight + pix - 10) // pix
+        self.pix = pix
         self.underMap = [[0]* self.col for _ in range(self.row)]
+        self.itemMap = [[0]* self.col for _ in range(self.row)]
 
-    def f_drawMap(self,window, underMap, d, c_x, c_y, b, pix):
-        window.blit(images.background, (0,0))
+    def f_defaultItemMap(self):
+        # 광석
+        self.itemMap[0][3] = 1
+        self.itemMap[0][9] = 1
+        self.itemMap[0][10] = 1
+        self.itemMap[0][17] = 1
+        self.itemMap[1][0] = 1
+        self.itemMap[1][13] = 1
+        self.itemMap[2][4] = 1
+        self.itemMap[2][6] = 1
+        self.itemMap[2][16] = 1
+        self.itemMap[3][11] = 1
+        self.itemMap[4][7] = 1
+        self.itemMap[4][16] = 1
+        self.itemMap[4][19] = 1
+        self.itemMap[5][14] = 1
+        self.itemMap[6][3] = 1
+        self.itemMap[6][10] = 1
+        self.itemMap[6][17] = 1
+        self.itemMap[8][8] = 1
+        self.itemMap[8][9] = 1
+        self.itemMap[8][10] = 1
+        self.itemMap[8][14] = 1
+        self.itemMap[9][0] = 1
+        self.itemMap[9][4] = 1
+        self.itemMap[10][0] = 1
+        self.itemMap[11][8] = 1
+        self.itemMap[11][9] = 1
+        self.itemMap[11][13] = 1
+        self.itemMap[11][18] = 1
+        self.itemMap[12][12] = 1
+        self.itemMap[12][13] = 1
+        # 흙
+        self.itemMap[1][8] = 2
+        self.itemMap[4][10] = 2
+        self.itemMap[6][8] = 2
+        self.itemMap[7][5] = 2
+        self.itemMap[7][16] = 2
+        self.itemMap[10][6] = 2
+        self.itemMap[10][12] = 2
+        self.itemMap[12][5] = 2
+        # 석탄
+        self.itemMap[0][19] = 3
+        self.itemMap[5][4] = 3
+        # 돌
+        self.itemMap[1][15] = 5
+
+    
+    def f_drawItemMap(self, widow):
         for i in range(self.row):
             for j in range(self.col):
-                if (underMap[i][j] == 1):
+                if (self.itemMap[i][j] == 0):
+                    continue
+                elif (self.itemMap[i][j] > 0):                
+                    widow.blit(images.items[self.itemMap[i][j] - 1], (j * self.pix, i * self.pix))
+
+    def f_drawMap(self,window, d, c_x, c_y, b):
+        for i in range(self.row):
+            for j in range(self.col):
+                if (self.underMap[i][j] > 0):
                     continue
                 if (d == 0 and j == c_x - 1 and i == c_y):
-                    window.blit(images.blocks[b], ((j) * pix, i * pix))
+                    window.blit(images.blocks[b], ((j) * self.pix, i * self.pix))
                 elif (d == 1 and j == c_x + 1 and i == c_y):
-                    window.blit(images.blocks[b], ((j) * pix, i * pix))
+                    window.blit(images.blocks[b], ((j) * self.pix, i * self.pix))
                 elif ((d == 2 or d == 3) and j == c_x and i == c_y + 1):
-                    window.blit(images.blocks[b], ((j) * pix, i * pix))
+                    window.blit(images.blocks[b], ((j) * self.pix, i * self.pix))
                 else: 
-                    window.blit(images.blocks[0], (j * pix, i * pix))
-
-    def f_updateMap(self, c_x, c_y, value):
-        self.underMap[c_y][c_x] = value
+                    window.blit(images.blocks[0], (j * self.pix, i * self.pix))
