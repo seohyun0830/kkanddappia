@@ -55,9 +55,19 @@ class Cmap:
         self.itemMap[0][19] = 3
         self.itemMap[5][4] = 3
         # 돌
-        self.itemMap[1][15] = 5
+        self.itemMap[1][9] = 5
+        self.itemMap[5][18] = 5
+        self.itemMap[9][8] = 5
+        self.itemMap[9][10] = 5
+        self.itemMap[12][7] = 5
+        # 사다리
+        self.itemMap[3][18] = 4
+        # 지하수
+        self.itemMap[9][9] = -1
+    # 이 코드만 쓰고 제출하자
+    def f_putLadder(self, invenList, invenRow, invenCol):
+        pass
 
-    
     def f_drawItemMap(self, widow):
         for i in range(self.row):
             for j in range(self.col):
@@ -79,3 +89,4 @@ class Cmap:
                     window.blit(images.blocks[b], ((j) * self.pix, i * self.pix))
                 else: 
                     window.blit(images.blocks[0], (j * self.pix, i * self.pix))
+        window.blit(images.enter, ((self.col - 2) * self.pix, 0))

@@ -4,7 +4,6 @@ from . import player
 from . import map
 from . import images
 
-
 def f_stage1(window):
     # 기본세팅
     fps = pygame.time.Clock()
@@ -29,6 +28,7 @@ def f_stage1(window):
         for event in pygame.event.get():        
             if event.type == pygame.QUIT:
                 play = False
+                return 0
             # 키를 뗐을 때
             if event.type == pygame.KEYUP:
                 Player.f_setDefault()
@@ -40,6 +40,8 @@ def f_stage1(window):
         Player.f_gravity(Map.underMap, Map.itemMap)
         if (Player.blockY >= Player.row - 1):
             return 1
+        if (Map.itemMap[Player.blockY][Player.blockX] == -1):
+            return 2
             
         # 왼쪽 키가 눌렸을 때
         if keys[pygame.K_LEFT]:
@@ -48,12 +50,12 @@ def f_stage1(window):
         # 오른쪽
         if keys[pygame.K_RIGHT]:
             Player.blockX = (Player.realX) // pix
-            Player.f_right(Map.underMap)
-
+            Player.f_right(Map.underMap, Map.itemMap)
         # 지금 구현에서는 점프하는게 아니라 그냥 위칸에 옮겨놓으면 중력으로 떨어짐
         if keys[pygame.K_UP]:
+            if (Player.blockX == col - 2 and Player.blockY == 0):
+                return -1
             Player.f_up(Map.underMap,Map.itemMap)
-
         # 약간 애매하게 걸쳐있으면 밑에 블록이 이상하게 깨지는듯
         if keys[pygame.K_DOWN]:
             Player.f_down(Map.underMap)
@@ -80,12 +82,10 @@ def f_stage1(window):
     아직 해야할 일
     6. 지하수 설정
     9. 인벤에서 마우스 올려놓으면 정보 뜨게 하는 것도 ㄱㅊ을거같은데?
-    10. 땅 하나 남으면 무너지도록 구현
     12. 출입구 표시도 해야됨
     13. 사다리
 
     버그
     1. 점프
     2. blockX 설정
-    2. 다시하기는 왜 한번밖에 안되는거지
     '''

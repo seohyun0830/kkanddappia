@@ -34,8 +34,10 @@ class Cplayer:
         if self.direction == 2: self.direction = 0
         elif self.direction == 3: self.direction = 1
 
-    def f_isRblocked(self, under_map):
+    def f_isRblocked(self, under_map, itemMap):
         if (under_map[self.blockY][self.blockX + 1] == 0 and (self.blockX * self.pix - self.realX) < 1):
+            return 1
+        if (itemMap[self.blockY][self.blockX + 1] == 5 and (self.blockX * self.pix - self.realX) < 1):
             return 1
         return 0
 
@@ -47,6 +49,8 @@ class Cplayer:
         return 0
 
     def f_gravity(self, under_map, itemMap):
+        if (itemMap[self.blockY][self.blockX] == 4 and self.direction == 4):
+            return
         for i in range(self.blockY + 1, self.row):
             if (under_map[i][self.blockX] == 1):
                 if (itemMap[i][self.blockX] == 5):
@@ -79,11 +83,11 @@ class Cplayer:
             self.toX = 1
         self.realX -= self.toX
 
-    def f_right(self, under_map):
+    def f_right(self, under_map, itemMap):
         self.direction = 1
         self.motionTime += 1
         self.f_motion()
-        if (self.f_isRblocked(under_map)): # 갈 수 없으면
+        if (self.f_isRblocked(under_map, itemMap)): # 갈 수 없으면
             self.motion = 3
             self.motionTime = 0
             self.f_breaking(under_map)
@@ -100,8 +104,13 @@ class Cplayer:
         self.f_breaking(underMap)
 
     def f_up(self, under_map, itemMap):
-        if (self.blockY > 0 and (under_map[self.blockY - 1][self.blockX] == 1 and itemMap[self.blockY - 1][self.blockX] != 5)):
-            self.toY = -60
+        if (itemMap[self.blockY - 1][self.blockX] == 4):
+            self.direction = 4
+            self.f_motion()
+            self.toY = -10
+        elif (self.blockY > 0 and (under_map[self.blockY - 1][self.blockX] == 1 and itemMap[self.blockY - 1][self.blockX] != 5)):
+            self.toY = -10
+            self.blockY -= 1        
         self.realY += self.toY
         self.toY = 0
 
@@ -131,4 +140,5 @@ class Cplayer:
         window.blit(images.characters[self.direction][self.motion], (self.realX, self.realY))
         if (self.blockMotion != 0):
             window.blit(images.blocks[self.blockMotion], (self.blockX, self.blockY))
-        window.blit(images.picks[self.direction][self.pickMotion], (self.realX, self.realY))
+        if (self.direction != 4):
+            window.blit(images.picks[self.direction][self.pickMotion], (self.realX, self.realY))
