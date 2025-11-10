@@ -28,6 +28,7 @@ meteor_collision=pygame.image.load(os.path.join(image_path,"meteor_collision.png
 meteor_collision=pygame.transform.scale(meteor_collision,(1200,800))
 kkanttapia=pygame.image.load(os.path.join(image_path,"kkanttapia.png"))
 
+
 alien = pygame.transform.scale(alien, (100, 100))
 alien_radius = 100 / 2 * 0.8
 alien_x_pos = 0 
@@ -91,6 +92,12 @@ life_images=[
 for i in range(len(life_images)):
     life_images[i] = pygame.transform.scale(life_images[i], (200, 40))
 
+move_success_images=[
+    pygame.image.load(os.path.join(image_path,"move_success1.png")),   
+    pygame.image.load(os.path.join(image_path,"move_success2.png")),  
+    pygame.image.load(os.path.join(image_path,"move_success3.png")),
+    pygame.image.load(os.path.join(image_path,"move_success4.png"))] 
+
 
 #운석 생성
 def create_meteor(current_time):
@@ -133,7 +140,9 @@ start_ticks = pygame.time.get_ticks()
 
 
 is_defect_event = False     #결함 체크할 변수
-
+was_defect_paused = False 
+pause_start_ticks = 0     
+total_paused_ms = 0       
 font_path = os.path.join(current_path, "font")
 game_font = pygame.font.Font(os.path.join(font_path, "DungGeunMo.ttf"), 40)
 TOTAL_GAME_TIME = 100 
@@ -144,9 +153,28 @@ running = True
 while running:
     dt=clock.tick(60)
 
-    elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000   #경과시간
+    current_ticks = pygame.time.get_ticks() # 현재 실제 시간
+    real_elapsed_time = (current_ticks - start_ticks) / 1000.0
+    
 
-    remaining_seconds = max(0, TOTAL_GAME_TIME - elapsed_time)  #남은 시간
+    # 진짜 게임 시간을 기준으로 결함 이벤트 체크
+    if 15 <= real_elapsed_time < 20: 
+        is_defect_event = True
+        if not was_defect_paused: # 방금 멈추기 시작했다면
+            pause_start_ticks = current_ticks # 멈춘 순간의 실제 시간 기록
+            was_defect_paused = True
+    else: 
+        if was_defect_paused: #방금 멈춤이 끝났다면
+            total_paused_ms += (current_ticks - pause_start_ticks) #멈춰있던 시간을 총합에 더함
+            spaceship_to_x=0
+            spaceship_to_y=0
+        is_defect_event = False
+        was_defect_paused = False
+    # 진짜 게임 시간 = (현재시간 - 시작시간 - 총 멈췄던 시간)
+    game_elapsed_ms = current_ticks - start_ticks - total_paused_ms
+    game_elapsed_time = game_elapsed_ms / 1000.0 # 초 단위
+
+    remaining_seconds = max(0, TOTAL_GAME_TIME - game_elapsed_time)  #남은 시간
     minutes = int(remaining_seconds // 60)
     seconds = int(remaining_seconds % 60)
     timer_text_str = f"{minutes:02}:{seconds:02}"
@@ -158,9 +186,11 @@ while running:
         pygame.time.delay(3000) 
         running = False 
 
-    if elapsed_time >= next_rotation:
+    if game_elapsed_time >= next_rotation:
         keyborad_rotation = (keyborad_rotation + 1) % 4 # 4가지 로테이션
-        next_rotation += 25.0 # 다음 회전 시간을 5초 뒤로 일단
+        next_rotation += 25.0 
+        spaceship_to_y=0
+        spaceship_to_x=0
 
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
@@ -183,8 +213,8 @@ while running:
                     elif event.key==pygame.K_DOWN: spaceship_to_y = -spaceship_speed
                     elif event.key==pygame.K_UP: spaceship_to_y = spaceship_speed
                 else:
-                    if event.key ==pygame.K_LEFT: spaceship_to_y = -spaceship_speed
-                    elif event.key==pygame.K_RIGHT: spaceship_to_y = spaceship_speed
+                    if event.key ==pygame.K_LEFT: spaceship_to_y = spaceship_speed
+                    elif event.key==pygame.K_RIGHT: spaceship_to_y = -spaceship_speed
                     elif event.key==pygame.K_DOWN: spaceship_to_x = spaceship_speed
                     elif event.key==pygame.K_UP: spaceship_to_x = -spaceship_speed
                 
@@ -202,23 +232,17 @@ while running:
                     if event.key == pygame.K_UP or event.key == pygame.K_DOWN: spaceship_to_x = 0
                     elif event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: spaceship_to_y = 0
 
-    
-
-    if 15 <= elapsed_time < 20:     #일단 15~20초 사이에 결함문구 뜨게 하고
-        is_defect_event = True  
-    else:       #이후에 다시 운석피하기
-        is_defect_event = False
 
     if not is_defect_event: #이것도 결함 아닐 때
         #무적 시간 끝났나
-        if is_invincible and elapsed_time - invincible_start_time > 2: # 2초간 무적
+        if is_invincible and game_elapsed_time - invincible_start_time > 2: # 2초간 무적
             is_invincible = False
         # 운석 생성
-        if elapsed_time < 5: #5초 이하일 때는 3개만 만들고
+        if game_elapsed_time < 5: #5초 이하일 때는 3개만 만들고
             max_meteors = 3 
         else: max_meteors = 10 #이후에는 10개씩
 
-        if elapsed_time > 30 and not alien_appeared:    #30초 넘으면 외계인 나오게
+        if game_elapsed_time > 30 and not alien_appeared:    #30초 넘으면 외계인 나오게
             alien_appeared = True 
 
             # 화면 중앙 위쪽에서 등장  (일단은....)
@@ -235,10 +259,10 @@ while running:
         
             if distance < spaceship_radius + alien_radius:  #우주선랑 외계인이랑 충돌됐다고 판단되면
                 is_shield_active = True # 쉴드 활성화
-                shield_start_time = elapsed_time # 쉴드 시작 시간 기록
+                shield_start_time = game_elapsed_time # 쉴드 시작 시간 기록
                 alien_x_pos = -2000 #외계인 날려버리기..
                 alien_y_pos = -2000
-        if elapsed_time >= 10 and not blackhole_appeared:   #블랙홀 생성
+        if game_elapsed_time >= 40 and game_elapsed_time<=48 and not blackhole_appeared:   #블랙홀 생성
             blackhole_appeared = True 
             # 안전하게 화면 가장자리 근처 랜덤 위치에 생성 (플레이어 피할 시간 주기)
             side = random.choice(['top', 'bottom', 'left', 'right'])
@@ -261,7 +285,7 @@ while running:
 
         if is_shield_active:
         # 쉴드 시작 후 5초가 지났으면 쉴드 해제
-            if elapsed_time - shield_start_time > 5:
+            if game_elapsed_time - shield_start_time > 5:
                 is_shield_active = False
 
         if blackhole_appeared:
@@ -271,16 +295,126 @@ while running:
             sp_center_y = spaceship_y_pos + spaceship_radius
             distance = math.sqrt((sp_center_x - bh_center_x)**2 + (sp_center_y - bh_center_y)**2)
 
-            # 블랙홀에 닿으면 게임 성공
-            if distance < spaceship_radius + blackhole_radius:
-                success_rect = success.get_rect(center=(screen_width / 2, screen_height / 2))
-                screen.blit(success, success_rect) # 성공 이미지 표시
+            if distance < spaceship_radius + blackhole_radius and running:
+
+                animation_start_time = pygame.time.get_ticks()
+                animation_duration = 1500 # 1.5초
+                
+                start_x, start_y = spaceship_x_pos, spaceship_y_pos
+                start_width, start_height = spaceship_width, spaceship_height
+                fade_surface = pygame.Surface((screen_width, screen_height))
+                fade_surface.fill((0, 0, 0)) 
+                
+                animating = True
+                while animating:
+                    elapsed = pygame.time.get_ticks() - animation_start_time
+                    progress = min(1.0, elapsed / animation_duration) # 0.0 ~ 1.0
+                    ease_progress = progress * progress 
+            
+                    current_width = int(start_width * (1.0 - ease_progress))
+                    current_height = int(start_height * (1.0 - ease_progress))
+                    if current_width < 1: current_width = 1
+                    if current_height < 1: current_height = 1
+                    current_x = start_x + (bh_center_x - (start_x + spaceship_radius)) * ease_progress
+                    current_y = start_y + (bh_center_y - (start_y + spaceship_radius)) * ease_progress
+                    
+                    current_ship_image = spaceship_images[keyborad_rotation]
+                    scaled_ship = pygame.transform.scale(current_ship_image, (current_width, current_height))
+                    
+                    screen.blit(background,(0,0))
+                    for meteor in meteors:
+                        screen.blit(meteor_images[meteor["img_idx"]], (meteor["pos_x"], meteor["pos_y"]))
+                    if alien_appeared:
+                        screen.blit(alien, (alien_x_pos, alien_y_pos))
+                    screen.blit(blackhole, (blackhole_x_pos, blackhole_y_pos))
+                    
+                    scaled_rect = scaled_ship.get_rect(center = (current_x + start_width/2, current_y + start_height/2))
+                    screen.blit(scaled_ship, scaled_rect)
+                    
+                    alpha = int(ease_progress * 255) 
+                    fade_surface.set_alpha(alpha)
+                    screen.blit(fade_surface, (0, 0)) 
+                    
+                    pygame.display.update()
+                    clock.tick(60)
+                    
+                    if progress >= 1.0:
+                        animating = False
+            
+                white_fade_surface = pygame.Surface((screen_width, screen_height))
+                white_fade_surface.fill((255, 255, 255))
+                
+                fade_in_start_time = pygame.time.get_ticks()
+                fade_in_duration = 1000 
+                
+                fading_in = True
+                while fading_in:
+                    elapsed = pygame.time.get_ticks() - fade_in_start_time
+                    progress = min(1.0, elapsed / fade_in_duration)
+                    
+                    alpha = int(progress * 255) 
+                    white_fade_surface.set_alpha(alpha)
+                    
+                    screen.fill((0, 0, 0)) 
+                    screen.blit(white_fade_surface, (0, 0)) 
+                    
+                    pygame.display.update()
+                    clock.tick(60)
+                    
+                    if progress >= 1.0:
+                        fading_in = False
+
+                
+                kkanttapia_rect = kkanttapia.get_rect(center=(screen_width / 2, screen_height / 2))
+                screen.blit(kkanttapia, kkanttapia_rect)
                 pygame.display.update()
-                pygame.time.delay(3000) # 3초 보여주고
-                running = False # 게임 종료
+                pygame.time.delay(1500) 
+
+                fade_to_black_start = pygame.time.get_ticks()
+                fade_duration = 1000 
+                fading_to_black = True
+                
+                fade_surface = pygame.Surface((screen_width, screen_height))
+                fade_surface.fill((0, 0, 0)) 
+                
+                while fading_to_black:
+                    elapsed = pygame.time.get_ticks() - fade_to_black_start
+                    progress = min(1.0, elapsed / fade_duration)
+                    alpha = int(progress * 255) 
+                    
+                    screen.blit(kkanttapia, kkanttapia_rect)
+                    
+                    fade_surface.set_alpha(alpha)
+                    screen.blit(fade_surface, (0, 0))
+                    
+                    pygame.display.update()
+                    clock.tick(60)
+                    
+                    if progress >= 1.0:
+                        fading_to_black = False
+
+                move_success_cnt = 0
+                
+                success_font = pygame.font.Font(os.path.join(font_path, "DungGeunMo.ttf"), 70)
+                success_text_surface = success_font.render("깐따삐아에 이주 성공하다!", True, (255, 255, 255))
+                
+                text_rect = success_text_surface.get_rect(center=(screen_width / 2, screen_height/3 - 100))
+                
+                while move_success_cnt < 3:
+                    for img in move_success_images: 
+                        screen.blit(img, (0,0)) 
+                        screen.blit(success_text_surface,text_rect)
+                        pygame.display.update() 
+                        pygame.time.delay(500)
+                    
+                    move_success_cnt += 1
+                
+
+                pygame.time.delay(1500) 
+                running = False
         #운석 계속 만들기
         if len(meteors) < max_meteors:
-            meteors.append(create_meteor(elapsed_time))
+            meteors.append(create_meteor(game_elapsed_time))
 
         #우주선 위치 업뎃
         spaceship_x_pos += spaceship_to_x
@@ -309,7 +443,7 @@ while running:
                 
                 if distance < spaceship_radius + meteor_radius: #우주선이랑 충돌했는지
                     meteors.remove(meteor) # 부딪힌 운석 제거
-                    meteors.append(create_meteor(elapsed_time)) # 새 운석 생성
+                    meteors.append(create_meteor(game_elapsed_time)) # 새 운석 생성
             else:
             #쉴드 안켜져있을 때
                 #무적 상태면 건너뛰기
@@ -339,24 +473,24 @@ while running:
                         break
                     else:
                         is_invincible=True
-                        invincible_start_time=elapsed_time
+                        invincible_start_time=game_elapsed_time
     if not running:
         break
 
     screen.blit(background,(0,0))
 
     if left_life==4:
-        screen.blit(life_images[3],(0,10))
+        screen.blit(life_images[3],(1000,10))
     elif left_life==3:
-        screen.blit(life_images[2],(0,10))
+        screen.blit(life_images[2],(1000,10))
     elif left_life==2:
-        screen.blit(life_images[1],(0,10))
+        screen.blit(life_images[1],(1000,10))
     else:
-        screen.blit(life_images[0],(0,10))
+        screen.blit(life_images[0],(1000,10))
 
     timer_surface = game_font.render(timer_text_str, True, TIMER_COLOR)
-    timer_rect = timer_surface.get_rect(topright=(screen_width - 20, 20)) 
-    screen.blit(timer_surface, timer_rect)
+   
+    screen.blit(timer_surface, (10, 10))
     for meteor in meteors:
         screen.blit(meteor_images[meteor["img_idx"]], (meteor["pos_x"], meteor["pos_y"]))
 
