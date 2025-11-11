@@ -37,7 +37,7 @@ while stageFlag != -1:
         elif (stage1 == 2):
             stageFlag = fails.f_water(window)
         elif (stage1 == -1):
-            stageFlag = 20
+            stageFlag = 20  
     elif (stageFlag == 20):
         print("2스테이지")
         break

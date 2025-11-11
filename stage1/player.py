@@ -103,6 +103,7 @@ class Cplayer:
         elif self.direction == 1: self.direction = 3
         self.f_breaking(underMap)
 
+    # 이게 제일 심각하다 좀 고치자
     def f_up(self, under_map, itemMap):
         if (itemMap[self.blockY - 1][self.blockX] == 4):
             self.direction = 4

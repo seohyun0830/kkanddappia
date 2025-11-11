@@ -35,6 +35,29 @@ class Cinven:
                                 text = self.font.render(f"ladder", True, (255, 255, 255))
                         window.blit(text, (mouse_x, mouse_y - 30))
 
+    def f_isLadder(self, clickX, clickY):
+        for i in range(1, self.invenCol):
+            for j in range(1, self.invenRow):
+                if ((i - 1) + (j - 1) * self.invenCol) < len(self.invenList):
+                    if (clickX > i * self.invenPix and clickX < (i + 1) * self.invenPix
+                         and clickY > j * self.invenPix and clickY < (j + 1) * self.invenPix):
+                        if (self.invenList[(i - 1) + (j - 1) * self.invenCol] == 4):
+                            return 1
+        return 0
+    
+    def f_ladder(self, mouseX, mouseY, window):
+        window.blit(items[3], (mouseX - 30, mouseY - 30))
+        for i in range(len(self.invenList)):
+            if (self.invenList[i] == 4):
+                del self.invenList[i]
+
+    def f_putLadder(self, underMap, itemMap, upX, upY):
+        if (underMap[upY // 60][upX // 60] == 1 and itemMap[upY // 60][upX // 60] == 0):
+            itemMap[upY // 60][upX // 60] = 4
+        elif (underMap[upY // 60][upX // 60] == 0):
+            self.invenList.append(4)
+            self.invenList.sort()
+
     def f_getItem(self, itemMap, realX, realY):
         if (itemMap[realY // 60][realX // 60] > 0 and itemMap[realY // 60][realX //60] <3):
             self.invenList.append(itemMap[realY // 60][realX // 60])

@@ -22,6 +22,10 @@ def f_stage1(window):
     Map.underMap[bY][bX] = 1
     Map.f_defaultItemMap()
 
+    isLadder = False
+    isDragging = False
+    upX, upY = -1, -1
+
     play = True
     while play:
         deltaTime = fps.tick(120)                # fps 설정
@@ -32,6 +36,15 @@ def f_stage1(window):
             # 키를 뗐을 때
             if event.type == pygame.KEYUP:
                 Player.f_setDefault()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                clickX, clickY = event.pos
+                isDragging = True
+                isLadder = Inven.f_isLadder(clickX, clickY)
+                upX, upY = -1, -1
+            if event.type == pygame.MOUSEBUTTONUP:
+                upX, upY = event.pos
+                isDragging = False
 
         # 눌러진 키 값 받아옴
         keys = pygame.key.get_pressed() 
@@ -67,25 +80,17 @@ def f_stage1(window):
         Map.f_drawMap(window, Player.direction, Player.blockX, Player.blockY, Player.blockMotion)
 
         Player.f_drawPlayer(window)
-
+        
+        if (isDragging):
+            mouseX, mouseY = pygame.mouse.get_pos()
         # tab 키 누르면 인벤토리 뜨도록
         if keys[pygame.K_TAB]:
             Inven.f_inven(window)
             Inven.f_invenInfo(window)
+        if isDragging and isLadder:
+            Inven.f_ladder(mouseX, mouseY, window)
+        if upX != -1 and upY != -1 and isLadder:
+            Inven.f_putLadder(Map.underMap, Map.itemMap, upX, upY)
+            upX, upY = -1, -1
             
         pygame.display.update()
-
-'''
-버그 고치고, 광물 배치하기, 인벤구현, 지하수 터지는 실패
-
-
-    아직 해야할 일
-    6. 지하수 설정
-    9. 인벤에서 마우스 올려놓으면 정보 뜨게 하는 것도 ㄱㅊ을거같은데?
-    12. 출입구 표시도 해야됨
-    13. 사다리
-
-    버그
-    1. 점프
-    2. blockX 설정
-    '''

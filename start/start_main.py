@@ -23,7 +23,7 @@ def f_start(window):
         window.blit(btn_background, (800, 600)) 
         window.blit(font.render(f"START", True, (255, 255, 255)), (850, 620))
 
-        window.blit(FONT.render(f"KKANDDAPPIA!", True, (255, 255, 255)), (80, 200))
+        window.blit(FONT.render(f"KKANDDAPPIA!", True, (255, 255, 255)), (100, 200))
         pygame.display.update()
 
 def f_modeSelect(window):

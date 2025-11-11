@@ -15,7 +15,7 @@ def f_magma(window):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 play = False
-                return 0
+                return -1
             if event.type == pygame.MOUSEBUTTONDOWN:
                 xPos, yPos = pygame.mouse.get_pos()
         window.blit(magma_back, (0,0))
@@ -27,7 +27,7 @@ def f_magma(window):
             play = False
 
         pygame.display.update()
-    return 1
+    return 10
     
 
 def f_water(window):
@@ -39,7 +39,7 @@ def f_water(window):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 play = False
-                return 0
+                return -1
             if event.type == pygame.MOUSEBUTTONDOWN:
                 xPos, yPos = pygame.mouse.get_pos()
         window.blit(water_back, (0,0))
@@ -51,4 +51,4 @@ def f_water(window):
             play = False
 
         pygame.display.update()
-    return 1
+    return 10
