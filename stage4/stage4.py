@@ -29,6 +29,10 @@ meteor_collision=pygame.image.load(os.path.join(image_path,"meteor_collision.png
 meteor_collision=pygame.transform.scale(meteor_collision,(1200,800))
 kkanttapia=pygame.image.load(os.path.join(image_path,"kkanttapia.png"))
 
+#네비게이션
+navigation_screen=pygame.image.load(os.path.join(image_path,"navigation_screen.png"))
+navi=pygame.image.load(os.path.join(image_path,"spaceship_navi.png"))
+navigation_movement=ui.navigation(navi)
 
 fuelgauge=pygame.image.load(os.path.join(image_path, "fuelgauge.png")) #일단 눈대중으로.. 각도 맞춰놓긴 햇는데 계산해야할 듯
 fuel_gauge=ui.fuelgauge(0,660,fuelgauge)
@@ -187,12 +191,7 @@ while running:
     seconds = int(remaining_seconds % 60)
     timer_text_str = f"{minutes:02}:{seconds:02}"
     left_fuel=remaining_seconds
-    if remaining_seconds <= 0 and running:
-        kkanttapia_rect = kkanttapia.get_rect(center=(screen_width / 2, screen_height / 2))
-        screen.blit(kkanttapia, kkanttapia_rect) 
-        pygame.display.update()
-        pygame.time.delay(3000) 
-        running = False 
+   
 
     if game_elapsed_time >= next_rotation:
         keyborad_rotation = (keyborad_rotation + 1) % 4 # 4가지 로테이션
@@ -272,7 +271,7 @@ while running:
                 alien_y_pos = -2000
         if game_elapsed_time >= 40 and game_elapsed_time<=48 and not blackhole_appeared:   #블랙홀 생성
             blackhole_appeared = True 
-            # 안전하게 화면 가장자리 근처 랜덤 위치에 생성 (플레이어 피할 시간 주기)
+            # 안전하게 화면 가장자리 근처 랜덤 위치에 생성 (플레이어에 바로 닿지 않게)
             side = random.choice(['top', 'bottom', 'left', 'right'])
             blackhole_width = blackhole.get_width() # 100
             blackhole_height = blackhole.get_height() # 100
@@ -295,7 +294,8 @@ while running:
         # 쉴드 시작 후 5초가 지났으면 쉴드 해제
             if game_elapsed_time - shield_start_time > 5:
                 is_shield_active = False
-
+        
+        #블랙홀 성공화면 
         if blackhole_appeared:
             bh_center_x = blackhole_x_pos + blackhole_radius
             bh_center_y = blackhole_y_pos + blackhole_radius
@@ -420,6 +420,70 @@ while running:
 
                 pygame.time.delay(1500) 
                 running = False
+                
+        # 기본 성공 
+        if remaining_seconds <= 0 and running:
+            
+            fade_surface = pygame.Surface((screen_width, screen_height))
+            fade_surface.fill((0, 0, 0)) # 검은색
+            
+            fade_start = pygame.time.get_ticks()
+            fade_duration = 1000 
+            
+            while True:
+                elapsed = pygame.time.get_ticks() - fade_start
+                if elapsed >= fade_duration:
+                    break
+                    
+                progress = elapsed / fade_duration
+                alpha = int(progress * 255) 
+                
+                fade_surface.set_alpha(alpha)
+                screen.blit(fade_surface, (0, 0))
+                pygame.display.update()
+                clock.tick(60)
+                
+            pygame.time.delay(1000) 
+            kkanttapia_rect = kkanttapia.get_rect(center=(screen_width / 2, screen_height / 2))
+            
+            fade_start = pygame.time.get_ticks()
+            fade_duration = 1500 #
+            
+            while True:
+                elapsed = pygame.time.get_ticks() - fade_start
+                if elapsed >= fade_duration:
+                    break
+                
+                progress = elapsed / fade_duration
+                alpha = int(255 - (progress * 255)) 
+                
+                screen.blit(kkanttapia, kkanttapia_rect)
+                fade_surface.set_alpha(alpha)
+                screen.blit(fade_surface, (0, 0))
+                
+                pygame.display.update()
+                clock.tick(60)
+            move_success_cnt = 0
+            
+            success_font = pygame.font.Font(os.path.join(font_path, "DungGeunMo.ttf"), 70)
+            success_text_surface = success_font.render("깐따삐아에 이주 성공하다!", True, (255, 255, 255))
+            text_rect = success_text_surface.get_rect(center=(screen_width / 2, screen_height/3 - 100))
+            
+            while move_success_cnt < 3:
+                for img in move_success_images: 
+                    screen.blit(kkanttapia, kkanttapia_rect) 
+                    screen.blit(img, (0,0)) 
+                    screen.blit(success_text_surface, text_rect)
+                    
+                    pygame.display.update() 
+                    pygame.time.delay(500) 
+                
+                move_success_cnt += 1
+
+            pygame.time.delay(1500) 
+            running = False
+
+
         #운석 계속 만들기
         if len(meteors) < max_meteors:
             meteors.append(create_meteor(game_elapsed_time))
@@ -489,6 +553,22 @@ while running:
     fuel_gauge.draw(screen)
     fuel_Indicator.update(left_fuel)
     fuel_Indicator.draw(screen)
+
+    screen.blit(navigation_screen,(950,550))
+    if game_elapsed_time<=16:
+        navigation_movement.update(1)
+    elif game_elapsed_time<=32:
+        navigation_movement.update(2)
+    elif game_elapsed_time<=48:
+        navigation_movement.update(3)
+    elif game_elapsed_time<=64:
+        navigation_movement.update(4)
+    elif game_elapsed_time<=80:
+        navigation_movement.update(5)
+    elif game_elapsed_time<=100:
+        navigation_movement.update(6)
+    navigation_movement.draw(screen)
+
     if left_life==4:
         screen.blit(life_images[3],(1000,10))
     elif left_life==3:
@@ -511,16 +591,21 @@ while running:
 
     current_spaceship_image = spaceship_images[keyborad_rotation]
 
-    
+    #무적
     if is_invincible:
         if (pygame.time.get_ticks() // 100) % 2 == 0: 
             screen.blit(current_spaceship_image,(spaceship_x_pos,spaceship_y_pos)) 
     else:
         screen.blit(current_spaceship_image,(spaceship_x_pos,spaceship_y_pos))
+    #쉴드
     
     if is_shield_active:
         bubble_rect = bubble.get_rect(center = (spaceship_x_pos + spaceship_width/2, spaceship_y_pos + spaceship_height/2))
         screen.blit(bubble, bubble_rect)
+
+
+
+    
     if is_defect_event: #결함이벤트 발생하면
         flicker_value = (pygame.time.get_ticks() // 200) % 2    #짝수 초일 때
         if flicker_value == 0:
