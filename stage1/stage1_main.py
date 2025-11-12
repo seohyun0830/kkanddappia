@@ -28,7 +28,7 @@ def f_stage1(window):
 
     play = True
     while play:
-        deltaTime = fps.tick(120)                # fps 설정
+        deltaTime = fps.tick(250)                # fps 설정
         for event in pygame.event.get():        
             if event.type == pygame.QUIT:
                 play = False
