@@ -2,6 +2,7 @@ import pygame
 import os
 import random
 import math
+import ui
 
 pygame.init()
 
@@ -28,6 +29,13 @@ meteor_collision=pygame.image.load(os.path.join(image_path,"meteor_collision.png
 meteor_collision=pygame.transform.scale(meteor_collision,(1200,800))
 kkanttapia=pygame.image.load(os.path.join(image_path,"kkanttapia.png"))
 
+
+fuelgauge=pygame.image.load(os.path.join(image_path, "fuelgauge.png")) #일단 눈대중으로.. 각도 맞춰놓긴 햇는데 계산해야할 듯
+fuel_gauge=ui.fuelgauge(0,660,fuelgauge)
+
+left_fuel=100   #일단 100
+fuelindicator_img=pygame.image.load(os.path.join(image_path, "fuel_indicator.png")) 
+fuel_Indicator=ui.fuel_indicator(78,760,fuelindicator_img,left_fuel)
 
 alien = pygame.transform.scale(alien, (100, 100))
 alien_radius = 100 / 2 * 0.8
@@ -178,7 +186,7 @@ while running:
     minutes = int(remaining_seconds // 60)
     seconds = int(remaining_seconds % 60)
     timer_text_str = f"{minutes:02}:{seconds:02}"
-
+    left_fuel=remaining_seconds
     if remaining_seconds <= 0 and running:
         kkanttapia_rect = kkanttapia.get_rect(center=(screen_width / 2, screen_height / 2))
         screen.blit(kkanttapia, kkanttapia_rect) 
@@ -478,7 +486,9 @@ while running:
         break
 
     screen.blit(background,(0,0))
-
+    fuel_gauge.draw(screen)
+    fuel_Indicator.update(left_fuel)
+    fuel_Indicator.draw(screen)
     if left_life==4:
         screen.blit(life_images[3],(1000,10))
     elif left_life==3:
