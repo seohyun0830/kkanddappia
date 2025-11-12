@@ -28,22 +28,27 @@ def f_puzzle(window):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 clickedX, clickedY = mouseX, mouseY
                 clicked = True
-                print(clickedX, clickedY)
-        flag = 0
+        flag = 1
         if (clicked):
             for i in range(len(ans)):
                 if (ans[i][0][0] <= clickedX <= ans[i][1][0]) and (ans[i][0][1] <= clickedY <= ans[i][1][1]):
                     res[i] = 1
                     flag = 1
+                    break
                 elif (ans[i][0][0] <= clickedX - 500 <= ans[i][1][0]) and (ans[i][0][1] <= clickedY <= ans[i][1][1]):
                     res[i] = 1
                     flag = 1
+                    break
+                elif (clickedX > 100 and clickedX < 590 and clickedY >= 150 and clickedY <= 550):
+                    flag = 0
+                elif (clickedX > 600 and clickedX < 1090 and clickedY >= 150 and clickedY <= 550):
+                    flag = 0
             if (flag == 0):
                 delay += 5
 
         window.blit(puzzle1, (100,150))
         window.blit(puzzle2, (600,150))
-        window.blit(outline2, (90,90))
+        window.blit(outline3, (90,90))
 
         for i in range(len(res)):
             if (res[i] == 1):
@@ -64,6 +69,10 @@ def f_puzzle(window):
         default_text = font.render(f"고장난 곳을 찾아주세요!", False, (0,0,0))
         window.blit(default_text, (300, 110))
 
+        for i in range(sum(res)):
+            window.blit(found, (1050 - i * 40, 655))
+        for i in range(6 - sum(res)):
+            window.blit(notFound, (1050 - i * 40 - 40 * sum(res), 655))
         if (sum(res) == 6):
             play = False
         

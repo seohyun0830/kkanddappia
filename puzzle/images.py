@@ -5,6 +5,7 @@ puzzle2 = pygame.image.load("puzzle/assets/puzzle2.png")
 
 outline1 = pygame.image.load("puzzle/assets/outline1.png")
 outline2 = pygame.image.load("puzzle/assets/outline2.png")
+outline3 = pygame.image.load("puzzle/assets/outline3.png")
 
 check1 = pygame.image.load("puzzle/assets/check1.png")
 check2 = pygame.image.load("puzzle/assets/check2.png") 
@@ -14,3 +15,6 @@ check5 = pygame.image.load("puzzle/assets/check5.png")
 check6 = pygame.image.load("puzzle/assets/check6.png")
 
 checks = [check1, check2, check3, check4, check5, check6]
+
+found = pygame.image.load("puzzle/assets/found.png")
+notFound = pygame.image.load("puzzle/assets/notFound.png")
