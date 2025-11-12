@@ -4,6 +4,7 @@ import random
 import math
 import ui
 
+from puzzle import puzzle_main
 pygame.init()
 
 screen_width=1200
@@ -167,24 +168,19 @@ while running:
 
     current_ticks = pygame.time.get_ticks() # 현재 실제 시간
     real_elapsed_time = (current_ticks - start_ticks) / 1000.0
-    
-
-    # 진짜 게임 시간을 기준으로 결함 이벤트 체크
-    if 15 <= real_elapsed_time < 20: 
-        is_defect_event = True
-        if not was_defect_paused: # 방금 멈추기 시작했다면
-            pause_start_ticks = current_ticks # 멈춘 순간의 실제 시간 기록
-            was_defect_paused = True
-    else: 
-        if was_defect_paused: #방금 멈춤이 끝났다면
-            total_paused_ms += (current_ticks - pause_start_ticks) #멈춰있던 시간을 총합에 더함
-            spaceship_to_x=0
-            spaceship_to_y=0
-        is_defect_event = False
-        was_defect_paused = False
-    # 진짜 게임 시간 = (현재시간 - 시작시간 - 총 멈췄던 시간)
     game_elapsed_ms = current_ticks - start_ticks - total_paused_ms
     game_elapsed_time = game_elapsed_ms / 1000.0 # 초 단위
+
+   
+    if 10 <= game_elapsed_time < 10.1 and not is_defect_event:  #결함 발생
+        is_defect_event = True
+        spaceship_to_x = 0
+        spaceship_to_y = 0
+        if not was_defect_paused:
+            pause_start_ticks = current_ticks
+            was_defect_paused = True
+
+   
 
     remaining_seconds = max(0, TOTAL_GAME_TIME - game_elapsed_time)  #남은 시간
     minutes = int(remaining_seconds // 60)
@@ -202,7 +198,25 @@ while running:
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
             running=False 
-        if not is_defect_event: #결함 없을 때 키보드 먹도록..(운석 충돌 때문에 일단 이렇게 둠)
+        if is_defect_event:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_TAB: 
+                    puzzle_start_tick = pygame.time.get_ticks()
+                    result = puzzle_main.f_puzzle(screen) 
+                    if result!=1:
+                       running=False
+
+                    # 정지 시간 보정
+                    puzzle_end_tick = pygame.time.get_ticks()
+                    total_paused_ms += (puzzle_end_tick - pause_start_ticks)
+                    game_elapsed_ms = current_ticks - start_ticks - total_paused_ms
+                    game_elapsed_time = game_elapsed_ms / 1000.0 # 초 단위
+                    is_defect_event = False
+                    was_defect_paused = False
+
+            # 1초 대기 후 게임 다시
+                    pygame.time.delay(1000)
+        else: #결함 없을 때 키보드 먹도록..(운석 충돌 때문에 일단 이렇게 둠)
             if event.type ==pygame.KEYDOWN:
                 if keyborad_rotation==0:
                     if event.key ==pygame.K_LEFT: spaceship_to_x = -spaceship_speed
@@ -241,6 +255,19 @@ while running:
 
 
     if not is_defect_event: #이것도 결함 아닐 때
+        if remaining_seconds>=84:
+            navigation_movement.update(1)
+        elif remaining_seconds>=68:
+            navigation_movement.update(2)
+        elif remaining_seconds>=52:
+                navigation_movement.update(3)
+        elif remaining_seconds>=36:
+            navigation_movement.update(4)
+        elif remaining_seconds>=20:
+                navigation_movement.update(5)
+        elif remaining_seconds>=0:
+                navigation_movement.update(6)
+        navigation_movement.draw(screen)    #왜 근데 여기에 넣는데 안그려지는 거지?
         #무적 시간 끝났나
         if is_invincible and game_elapsed_time - invincible_start_time > 2: # 2초간 무적
             is_invincible = False
@@ -269,6 +296,7 @@ while running:
                 shield_start_time = game_elapsed_time # 쉴드 시작 시간 기록
                 alien_x_pos = -2000 #외계인 날려버리기..
                 alien_y_pos = -2000
+        navigation_movement.draw(screen)
         if game_elapsed_time >= 40 and game_elapsed_time<=48 and not blackhole_appeared:   #블랙홀 생성
             blackhole_appeared = True 
             # 안전하게 화면 가장자리 근처 랜덤 위치에 생성 (플레이어에 바로 닿지 않게)
@@ -420,7 +448,7 @@ while running:
 
                 pygame.time.delay(1500) 
                 running = False
-                
+
         # 기본 성공 
         if remaining_seconds <= 0 and running:
             
@@ -555,18 +583,6 @@ while running:
     fuel_Indicator.draw(screen)
 
     screen.blit(navigation_screen,(950,550))
-    if game_elapsed_time<=16:
-        navigation_movement.update(1)
-    elif game_elapsed_time<=32:
-        navigation_movement.update(2)
-    elif game_elapsed_time<=48:
-        navigation_movement.update(3)
-    elif game_elapsed_time<=64:
-        navigation_movement.update(4)
-    elif game_elapsed_time<=80:
-        navigation_movement.update(5)
-    elif game_elapsed_time<=100:
-        navigation_movement.update(6)
     navigation_movement.draw(screen)
 
     if left_life==4:
@@ -603,17 +619,22 @@ while running:
         bubble_rect = bubble.get_rect(center = (spaceship_x_pos + spaceship_width/2, spaceship_y_pos + spaceship_height/2))
         screen.blit(bubble, bubble_rect)
 
-
-
+    defect_font = pygame.font.Font(os.path.join(font_path, "DungGeunMo.ttf"), 60)
+    defect_text_surface = defect_font.render("TAB 키를 눌러 우주선을 수리하십시오!", True, (255, 255, 255))
+    text_rect = defect_text_surface.get_rect(center=(screen_width / 2, screen_height/2+20))
     
-    if is_defect_event: #결함이벤트 발생하면
-        flicker_value = (pygame.time.get_ticks() // 200) % 2    #짝수 초일 때
+    if is_defect_event: 
+        defect_str_switch=True
+
+        flicker_value = (pygame.time.get_ticks() // 200) % 2 
         if flicker_value == 0:
             screen.blit(warning_img1, (0,0))
-        else:   #홀수 초일 때
+        else: 
             screen.blit(warning_img2, (0,0))
+        
+        screen.blit(defect_text_surface,text_rect)
+  
     
-
     pygame.display.update()
 
 pygame.quit()
