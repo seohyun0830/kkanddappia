@@ -7,15 +7,22 @@ class Cinven:
         self.invenRow = row // 2 - 2
         self.invenCol = col // 2 - 1
         self.invenPix = pix * 2
-        self.font = pygame.font.Font(None, 30)
+        self.font = pygame.font.Font("DungGeunMO.ttf", 30)
+
+        self.ladderCount = 0
 
     def f_inven(self, window):
+        text = self.font.render(f"10", True, (255, 255, 255))
         for i in range(1, self.invenCol):
             for j in range(1, self.invenRow):
                 window.blit(inven, (i * self.invenPix, j * self.invenPix))
                 if ((j - 1) * self.invenCol + (i - 1)) < len(self.invenList):
                     window.blit(items[self.invenList[(j - 1) * self.invenCol + (i - 1)] - 1], (i * self.invenPix + 30, j * self.invenPix + 30))
-    
+                    if (self.invenList[(j - 1) * self.invenCol + (i - 1)] == 4):
+                        pass
+                    else:
+                        window.blit(text, ((i * self.invenPix + 70, j * self.invenPix + 75)))
+
     def f_invenInfo(self, window):
         mouse_x, mouse_y = pygame.mouse.get_pos()
         text = self.font.render(f"Nothing", True, (255, 255, 255))
@@ -58,8 +65,8 @@ class Cinven:
             self.invenList.append(4)
             self.invenList.sort()
 
-    def f_getItem(self, itemMap, realX, realY):
-        if (itemMap[realY // 60][realX // 60] > 0 and itemMap[realY // 60][realX //60] <3):
-            self.invenList.append(itemMap[realY // 60][realX // 60])
+    def f_getItem(self, itemMap, blockX, blockY):
+        if (itemMap[blockY][blockX] > 0 and itemMap[blockY][blockX] <3):
+            self.invenList.append(itemMap[blockY][blockX])
             self.invenList.sort()
-            itemMap[realY // 60][realX // 60] = 0
+            itemMap[blockY][blockX] = 0

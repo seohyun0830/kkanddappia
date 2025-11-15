@@ -7,7 +7,7 @@ class Cplayer:
         self.col = col
 
         self.pix = pix
-        self.blockX = (col - 2)
+        self.blockX = (col - 3)
         self.blockY = 0
 
         self.realX = self.blockX * pix
@@ -24,6 +24,11 @@ class Cplayer:
         self.blockTime = 0
 
         self.pickMotion = 1
+
+        self.velocityY = 0
+        self.gravity = 1
+        self.jumpPower = -11
+        self.isOnGround = True
     
     def f_setDefault(self):
         self.pickMotion = 1
@@ -48,21 +53,9 @@ class Cplayer:
             return 1
         return 0
 
-    def f_gravity(self, under_map, itemMap):
-        if (itemMap[self.blockY][self.blockX] == 4 and self.direction == 4):
-            return
-        for i in range(self.blockY + 1, self.row):
-            if (under_map[i][self.blockX] == 1):
-                if (itemMap[i][self.blockX] == 5):
-                    continue
-                self.realY += 5
-            else:
-                break
-        self.blockY = (self.realY) // self.pix
-
     def f_motion(self):         # 움직임
         if self.motionTime > 8:                  
-            if self.motion == 1 or self.motion == 0 or self.motion == 3:
+            if self.motion == 1 or self.motion == 3 or self.motion == 0:
                 self.motion = 2
             elif self.motion == 2:
                 self.motion = 1
@@ -72,6 +65,8 @@ class Cplayer:
         self.direction = 0
         self.motionTime += 1
         self.f_motion()
+        if (self.realX <= 0):
+            return
         if (self.f_isLblocked(under_map,itemMap)): # 갈 수 없으면
             self.motion = 3
             self.motionTime = 0
@@ -80,13 +75,15 @@ class Cplayer:
         else:   # 갈 수 있으면
             self.blockTime = 0
             self.blockMotion = 0
-            self.toX = 1
+            self.toX = 3
         self.realX -= self.toX
 
     def f_right(self, under_map, itemMap):
         self.direction = 1
         self.motionTime += 1
         self.f_motion()
+        if (self.realX >= 1200 - self.pix):
+            return
         if (self.f_isRblocked(under_map, itemMap)): # 갈 수 없으면
             self.motion = 3
             self.motionTime = 0
@@ -95,25 +92,82 @@ class Cplayer:
         else:   # 갈 수 있으면
             self.blockTime = 0
             self.blockMotion = 0
-            self.toX = 1
+            self.toX = 3
         self.realX += self.toX
 
     def f_down(self, underMap):        
         if self.direction == 0: self.direction = 2
         elif self.direction == 1: self.direction = 3
+        elif self.direction == 4: self.direction = 0
         self.f_breaking(underMap)
+        self.isOnGround = False
 
-    # 이게 제일 심각하다 좀 고치자
-    def f_up(self, under_map, itemMap):
-        if (itemMap[self.blockY - 1][self.blockX] == 4):
+    def f_jump(self):
+        if self.isOnGround:
+            self.velocityY = self.jumpPower
+            self.isOnGround = False
+
+    def f_gravity(self, under_map, itemMap):
+        # 1. 사다리 체크
+        if (itemMap[self.blockY][self.blockX] == 4) and self.direction == 4:
+            self.isOnGround = True
+            self.velocityY = 0
+            return 
+        
+        # 2. 중력 적용
+        self.velocityY += self.gravity
+        if self.velocityY > 10: self.velocityY = 10
+        
+        # 3. Y 값 갱신 (물리 적용)
+        self.realY += self.velocityY
+        
+        # 4. ★★★ Y 블록 좌표 "즉시" 갱신 (가장 중요) ★★★
+        self.blockY = int(self.realY // self.pix) 
+
+        # --- (플레이어 너비가 self.pix라고 가정) ---
+        # "왼쪽"과 "오른쪽" X 블록 좌표 계산
+        left_x_block = int((self.realX + 10) // self.pix)
+        # (self.pix - 1) -> 0~59픽셀 너비일 때, 59번째 픽셀을 의미
+        right_x_block = int((self.realX - 10 + self.pix - 1) // self.pix)
+
+        # 5. ★★★★★ 천장 충돌 검사 (2점 확인) ★★★★★
+        if self.velocityY < 0: # 상승 중일 때
+            # "머리 위 왼쪽" 또는 "머리 위 오른쪽"이 땅(0)인지 확인
+            is_ceil_left = (under_map[self.blockY][left_x_block] == 0 or itemMap[self.blockY][left_x_block] == 5)
+            is_ceil_right = (under_map[self.blockY][right_x_block] == 0 or itemMap[self.blockY][right_x_block] == 5)
+            
+            if is_ceil_left or is_ceil_right:
+                self.velocityY = 0 # 상승 중단
+                self.realY = (self.blockY * self.pix) + self.pix # 위치 보정
+                self.blockY = int(self.realY // self.pix) # Y 블록 좌표 "재"갱신
+
+        # 6. ★★★★★ 바닥 충돌 검사 (2점 확인) ★★★★★
+        check_y = self.blockY + 1 # "발"이 닿을 블록 Y
+        
+        if check_y >= self.row: # 맵 바닥에 닿음
+            self.isOnGround = True
+            self.velocityY = 0
+            self.realY = (self.row - 1) * self.pix 
+        
+        else:
+            # "발 아래 왼쪽" 또는 "발 아래 오른쪽"이 땅(0)인지 확인
+            is_ground_left = (under_map[check_y][left_x_block] == 0 or itemMap[check_y][left_x_block] == 5)
+            is_ground_right = (under_map[check_y][right_x_block] == 0 or itemMap[check_y][right_x_block] == 5)
+            
+            # "왼발"이나 "오른발" 중 하나라도 땅(0)에 닿아있다면
+            if is_ground_left or is_ground_right:
+                self.isOnGround = True # 땅에 닿았음
+                self.velocityY = 0
+                self.realY = self.blockY * self.pix # 위치 보정
+            else:
+                self.isOnGround = False # (두 발 모두 공중에 있음)
+
+    def f_up(self, itemMap):
+        if (itemMap[self.blockY + 1][self.blockX] == 4) or (itemMap[self.blockY][self.blockX] == 4):
             self.direction = 4
+            self.motionTime += 1
             self.f_motion()
-            self.toY = -10
-        elif (self.blockY > 0 and (under_map[self.blockY - 1][self.blockX] == 1 and itemMap[self.blockY - 1][self.blockX] != 5)):
-            self.toY = -10
-            self.blockY -= 1        
-        self.realY += self.toY
-        self.toY = 0
+            self.realY -= 5 # (20은 너무 빠르니 5 정도로 조절)
 
     def f_breaking(self,under_map):
         self.blockTime += 1

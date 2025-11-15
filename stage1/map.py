@@ -4,7 +4,7 @@ class Cmap:
     def __init__(self, window, pix):
         self.windowWidth = window.get_width()
         self.windowHeight = window.get_height()
-        self.col = (self.windowWidth + pix - 10) // pix
+        self.col = (self.windowWidth + pix - 10) // pix + 1
         self.row = (self.windowHeight + pix - 10) // pix
         self.pix = pix
         self.underMap = [[0]* self.col for _ in range(self.row)]
@@ -84,4 +84,4 @@ class Cmap:
                     window.blit(images.blocks[b], ((j) * self.pix, i * self.pix))
                 else: 
                     window.blit(images.blocks[0], (j * self.pix, i * self.pix))
-        window.blit(images.enter, ((self.col - 2) * self.pix, 0))
+        window.blit(images.enter, ((self.col - 3) * self.pix, 0))

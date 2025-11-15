@@ -28,7 +28,7 @@ def f_stage1(window):
 
     play = True
     while play:
-        deltaTime = fps.tick(250)                # fps 설정
+        deltaTime = fps.tick(100)                # fps 설정
         for event in pygame.event.get():        
             if event.type == pygame.QUIT:
                 play = False
@@ -49,31 +49,38 @@ def f_stage1(window):
         # 눌러진 키 값 받아옴
         keys = pygame.key.get_pressed() 
         
-        # 중력 설정 (같은 x 값에서 가장 밑으로 가도록)
+        # 중력 설정
         Player.f_gravity(Map.underMap, Map.itemMap)
+        # 마그마 실패
         if (Player.blockY >= Player.row - 1):
             return 1
+        # 지하수 실패
         if (Map.itemMap[Player.blockY][Player.blockX] == -1):
             return 2
-            
+        
+        Player.blockX = (Player.realX + 30) // pix
+        Player.blockY = (Player.realY) // pix
+
         # 왼쪽 키가 눌렸을 때
         if keys[pygame.K_LEFT]:
-            Player.blockX = (Player.realX) // pix
             Player.f_left(Map.underMap, Map.itemMap)
         # 오른쪽
         if keys[pygame.K_RIGHT]:
-            Player.blockX = (Player.realX) // pix
             Player.f_right(Map.underMap, Map.itemMap)
-        # 지금 구현에서는 점프하는게 아니라 그냥 위칸에 옮겨놓으면 중력으로 떨어짐
         if keys[pygame.K_UP]:
-            if (Player.blockX == col - 2 and Player.blockY == 0):
+            if (Player.blockX == col - 3 and Player.blockY == 0):
                 return -1
-            Player.f_up(Map.underMap,Map.itemMap)
+            if (Map.itemMap[Player.blockY][Player.blockX] == 4):
+                Player.f_up(Map.itemMap)
+            else:
+                Player.f_jump()
+            
+
         # 약간 애매하게 걸쳐있으면 밑에 블록이 이상하게 깨지는듯
         if keys[pygame.K_DOWN]:
             Player.f_down(Map.underMap)
         
-        Inven.f_getItem(Map.itemMap, Player.realX, Player.realY)
+        Inven.f_getItem(Map.itemMap, Player.blockX, Player.blockY)
         
         window.blit(images.background, (0,0))
         Map.f_drawItemMap(window)

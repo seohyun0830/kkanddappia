@@ -27,7 +27,7 @@ while stageFlag != -1:
             stageFlag = -1
         elif (mode != -1):
             stageFlag = 10
-
+    # 10번대 == 1스테이지
     elif (stageFlag == 10):
         stage1 = f_stage1(window)
         if (stage1 == 0):
