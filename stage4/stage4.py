@@ -3,7 +3,7 @@ import os
 import random
 import math
 import ui
-
+import meteor_util
 from puzzle import puzzle_main
 pygame.init()
 
@@ -71,11 +71,15 @@ meteor_images=[
     pygame.image.load(os.path.join(image_path,"meteor2.png")),  #왼쪽 위
     pygame.image.load(os.path.join(image_path,"meteor3.png")),  #오른쪽 아래
     pygame.image.load(os.path.join(image_path,"meteor4.png"))]  #왼쪽 아래
+
 meteor_size = 70
 meteor_radius = meteor_size / 2 *0.8    #충돌 판정할 때 원 거리 공식 이용해서..
 for i in range(len(meteor_images)):
     meteor_images[i] = pygame.transform.scale(meteor_images[i], (meteor_size, meteor_size)) # 운석 램덤으로 뿌리기 . . . <----10개?
 
+meteor_util.Meteor.images=meteor_images
+
+meteors=[]
 #  우주선 이미지 불러오기
 spaceship_images=[
     pygame.image.load(os.path.join(image_path,"spaceship_0.png")),   
@@ -111,44 +115,8 @@ move_success_images=[
     pygame.image.load(os.path.join(image_path,"move_success3.png")),
     pygame.image.load(os.path.join(image_path,"move_success4.png"))] 
 
-
-#운석 생성
-def create_meteor(current_time):
-    img_idx = random.randint(0, 3)  # 이미지 중에 랜덤 불러와서
-    if current_time < 10:  
-        speed = random.randint(2, 5) # 5초 미만일 때는 느리다가
-    else:
-        speed = random.randint(1, 3) # 5초 이상이면 빠르게
-    if img_idx == 0:  # 오른쪽 위
-        pos_x = random.randint(screen_width, screen_width + 200)
-        pos_y = random.randint(-200, 0)
-        to_x = -speed
-        to_y = speed
-    elif img_idx == 1:  # 왼쪽 위
-        pos_x = random.randint(-200, 0)
-        pos_y = random.randint(-200, 0)
-        to_x = speed
-        to_y = speed
-    elif img_idx == 2:  # 오른쪽 아래
-        pos_x = random.randint(screen_width, screen_width + 200)
-        pos_y = random.randint(screen_height, screen_height + 200)
-        to_x = -speed
-        to_y = -speed
-    else:  # 왼쪽 아래
-        pos_x = random.randint(-200, 0)
-        pos_y = random.randint(screen_height, screen_height + 200)
-        to_x = speed
-        to_y = -speed
-        
-    return {
-        "pos_x": pos_x, "pos_y": pos_y,
-        "img_idx": img_idx,
-        "to_x": to_x, "to_y": to_y
-    }
-
-
 #1200x800
-meteors=[]
+
 start_ticks = pygame.time.get_ticks()
 
 
@@ -171,15 +139,15 @@ while running:
     game_elapsed_ms = current_ticks - start_ticks - total_paused_ms
     game_elapsed_time = game_elapsed_ms / 1000.0 # 초 단위
 
-   
+    
     if 10 <= game_elapsed_time < 10.1 and not is_defect_event:  #결함 발생
         is_defect_event = True
         spaceship_to_x = 0
         spaceship_to_y = 0
         if not was_defect_paused:
-            pause_start_ticks = current_ticks
-            was_defect_paused = True
-
+           pause_start_ticks = current_ticks
+        was_defect_paused = True
+###
    
 
     remaining_seconds = max(0, TOTAL_GAME_TIME - game_elapsed_time)  #남은 시간
@@ -201,8 +169,11 @@ while running:
         if is_defect_event:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_TAB: 
+                    screen.blit(warning_img2, (0,0))
+                    pygame.display.update()
                     puzzle_start_tick = pygame.time.get_ticks()
                     result = puzzle_main.f_puzzle(screen) 
+                    
                     if result!=1:
                        running=False
 
@@ -213,6 +184,7 @@ while running:
                     game_elapsed_time = game_elapsed_ms / 1000.0 # 초 단위
                     is_defect_event = False
                     was_defect_paused = False
+                    remaining_seconds = max(0, TOTAL_GAME_TIME - game_elapsed_time)  #남은 시간
 
             # 1초 대기 후 게임 다시
                     pygame.time.delay(1000)
@@ -253,7 +225,7 @@ while running:
                     if event.key == pygame.K_UP or event.key == pygame.K_DOWN: spaceship_to_x = 0
                     elif event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: spaceship_to_y = 0
 
-
+    remaining_seconds = max(0, TOTAL_GAME_TIME - game_elapsed_time)  #남은 시간
     if not is_defect_event: #이것도 결함 아닐 때
         if remaining_seconds>=84:
             navigation_movement.update(1)
@@ -267,21 +239,27 @@ while running:
                 navigation_movement.update(5)
         elif remaining_seconds>=0:
                 navigation_movement.update(6)
+
+        
         navigation_movement.draw(screen)    #왜 근데 여기에 넣는데 안그려지는 거지?
         #무적 시간 끝났나
         if is_invincible and game_elapsed_time - invincible_start_time > 2: # 2초간 무적
             is_invincible = False
+        
         # 운석 생성
         if game_elapsed_time < 5: #5초 이하일 때는 3개만 만들고
             max_meteors = 3 
         else: max_meteors = 10 #이후에는 10개씩
 
-        if game_elapsed_time > 30 and not alien_appeared:    #30초 넘으면 외계인 나오게
+        if game_elapsed_time > 30 and game_elapsed_time<35 and not alien_appeared:    #30초 넘으면 외계인 나오게
             alien_appeared = True 
 
             # 화면 중앙 위쪽에서 등장  (일단은....)
             alien_x_pos = screen_width / 2 - alien.get_width() / 2
             alien_y_pos = 100
+        if game_elapsed_time >35:    #30초 넘으면 외계인 나오게
+            alien_appeared = False 
+        
 
         if alien_appeared and not is_shield_active: #쉴드 받기 전
         # 충돌 계산
@@ -296,7 +274,9 @@ while running:
                 shield_start_time = game_elapsed_time # 쉴드 시작 시간 기록
                 alien_x_pos = -2000 #외계인 날려버리기..
                 alien_y_pos = -2000
-        navigation_movement.draw(screen)
+        #
+        # navigation_movement.draw(screen)
+
         if game_elapsed_time >= 40 and game_elapsed_time<=48 and not blackhole_appeared:   #블랙홀 생성
             blackhole_appeared = True 
             # 안전하게 화면 가장자리 근처 랜덤 위치에 생성 (플레이어에 바로 닿지 않게)
@@ -359,7 +339,8 @@ while running:
                     
                     screen.blit(background,(0,0))
                     for meteor in meteors:
-                        screen.blit(meteor_images[meteor["img_idx"]], (meteor["pos_x"], meteor["pos_y"]))
+                        meteor.update() 
+                        meteor.draw(screen)
                     if alien_appeared:
                         screen.blit(alien, (alien_x_pos, alien_y_pos))
                     screen.blit(blackhole, (blackhole_x_pos, blackhole_y_pos))
@@ -514,7 +495,7 @@ while running:
 
         #운석 계속 만들기
         if len(meteors) < max_meteors:
-            meteors.append(create_meteor(game_elapsed_time))
+            meteors.append(meteor_util.Meteor(game_elapsed_time, screen_width, screen_height))
 
         #우주선 위치 업뎃
         spaceship_x_pos += spaceship_to_x
@@ -528,22 +509,21 @@ while running:
 
         # 운석 처리
         for meteor in meteors[:]:
-            meteor["pos_x"] += meteor["to_x"]
-            meteor["pos_y"] += meteor["to_y"]
-            if not (-200 < meteor["pos_x"] < screen_width + 200 and -200 < meteor["pos_y"] < screen_height + 200):  #운석이 완전히 벗어나게
+            meteor.update()
+            if meteor.is_off_screen(screen_width,screen_height):
                 meteors.remove(meteor)
                 continue
             if is_shield_active:
             # 쉴드가 켜져 있을 때 운석과 부딪히면 운석만 파괴
                 shield_center_x = spaceship_x_pos + spaceship_radius # 쉴드 중심 우주선과 같도록 설졍..
                 shield_center_y = spaceship_y_pos + spaceship_radius
-                meteor_center_x = meteor["pos_x"] + meteor_radius
-                meteor_center_y = meteor["pos_y"] + meteor_radius
+                meteor_center_x = meteor.center_x 
+                meteor_center_y = meteor.center_y
                 distance = math.sqrt((shield_center_x - meteor_center_x)**2 + (shield_center_y - meteor_center_y)**2)
                 
                 if distance < spaceship_radius + meteor_radius: #우주선이랑 충돌했는지
                     meteors.remove(meteor) # 부딪힌 운석 제거
-                    meteors.append(create_meteor(game_elapsed_time)) # 새 운석 생성
+                    meteors.append(meteor_util.Meteor(game_elapsed_time, screen_width, screen_height))
             else:
             #쉴드 안켜져있을 때
                 #무적 상태면 건너뛰기
@@ -552,8 +532,8 @@ while running:
             # 충돌 판정
                 spaceship_center_x = spaceship_x_pos + spaceship_radius
                 spaceship_center_y = spaceship_y_pos + spaceship_radius
-                meteor_center_x = meteor["pos_x"] + meteor_radius
-                meteor_center_y = meteor["pos_y"] + meteor_radius
+                meteor_center_x = meteor.center_x
+                meteor_center_y = meteor.center_y
                 distance = math.sqrt((spaceship_center_x - meteor_center_x)**2 + (spaceship_center_y - meteor_center_y)**2)
 
                 if distance < spaceship_radius + meteor_radius: #충돌하면 겜 오버
@@ -597,8 +577,9 @@ while running:
     timer_surface = game_font.render(timer_text_str, True, TIMER_COLOR)
    
     screen.blit(timer_surface, (10, 10))
+
     for meteor in meteors:
-        screen.blit(meteor_images[meteor["img_idx"]], (meteor["pos_x"], meteor["pos_y"]))
+        meteor.draw(screen)
 
     if alien_appeared:
         screen.blit(alien, (alien_x_pos, alien_y_pos))
@@ -624,8 +605,6 @@ while running:
     text_rect = defect_text_surface.get_rect(center=(screen_width / 2, screen_height/2+20))
     
     if is_defect_event: 
-        defect_str_switch=True
-
         flicker_value = (pygame.time.get_ticks() // 200) % 2 
         if flicker_value == 0:
             screen.blit(warning_img1, (0,0))

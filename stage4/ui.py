@@ -18,10 +18,10 @@ class navigation:
 
         self.rel_x = 200.0
         self.rel_y = 210.0
-        
+
         self.angle = -60
         self.rect = image.get_rect(center=(self.base_x + self.rel_x, self.base_y + self.rel_y))
-    
+
     def update(self,mode):
         if mode == 1:
             self.angle = 60 
@@ -55,8 +55,6 @@ class navigation:
         r_image=pygame.transform.rotozoom(self.original_image,self.angle,1)
         new_rect=r_image.get_rect(center=self.rect.center)
         screen.blit(r_image,new_rect)
-
-
 # 연료 게이지 클래스
 class fuelgauge:
     def __init__(self,x,y,image):
