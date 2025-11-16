@@ -42,7 +42,7 @@ left_fuel=100   #일단 100
 fuelindicator_img=pygame.image.load(os.path.join(image_path, "fuel_indicator.png")) 
 fuel_Indicator=ui.fuel_indicator(78,760,fuelindicator_img,left_fuel)
 
-alien = pygame.transform.scale(alien, (100, 100))
+alien = pygame.transform.scale(alien, (75, 100))
 alien_radius = 100 / 2 * 0.8
 alien_x_pos = 0 
 alien_y_pos = 0
@@ -52,8 +52,8 @@ bubble = pygame.transform.scale(bubble, (120, 120)) # 우주선보다 살짝 크
 is_shield_active = False # 쉴드가 활성화됐는지 알려주는 변수
 shield_start_time = 0 # 쉴드가 언제 시작됐는지 기록할 변수
 
-blackhole= pygame.transform.scale(blackhole, (100, 100)) # 블랙홀 크기 조절
-blackhole_radius = 100 / 2 * 0.4 # 충돌 판정 범위 (살짝 작게)
+blackhole= pygame.transform.scale(blackhole, (120, 120)) # 블랙홀 크기 조절
+blackhole_radius = 120 / 2 * 0.4 # 충돌 판정 범위 (살짝 작게)
 blackhole_x_pos = 0
 blackhole_y_pos = 0
 blackhole_appeared = False # 블랙홀 등장 스위치
@@ -251,7 +251,7 @@ while running:
             max_meteors = 3 
         else: max_meteors = 10 #이후에는 10개씩
 
-        if game_elapsed_time > 30 and game_elapsed_time<35 and not alien_appeared:    #30초 넘으면 외계인 나오게
+        if game_elapsed_time > 30 and game_elapsed_time<38 and not alien_appeared:    #30초 넘으면 외계인 나오게
             alien_appeared = True 
 
             # 화면 중앙 위쪽에서 등장  (일단은....)
@@ -277,7 +277,7 @@ while running:
         #
         # navigation_movement.draw(screen)
 
-        if game_elapsed_time >= 40 and game_elapsed_time<=48 and not blackhole_appeared:   #블랙홀 생성
+        if game_elapsed_time >= 45 and game_elapsed_time<=55 and not blackhole_appeared:   #블랙홀 생성
             blackhole_appeared = True 
             # 안전하게 화면 가장자리 근처 랜덤 위치에 생성 (플레이어에 바로 닿지 않게)
             side = random.choice(['top', 'bottom', 'left', 'right'])
@@ -297,6 +297,8 @@ while running:
             else: # right
                 blackhole_x_pos = screen_width - blackhole_width - margin # 오른쪽 가장자리 근처
                 blackhole_y_pos = random.randint(margin, screen_height - blackhole_height - margin)
+        if game_elapsed_time >55  and blackhole_appeared:
+            blackhole_appeared=False
 
         if is_shield_active:
         # 쉴드 시작 후 5초가 지났으면 쉴드 해제
