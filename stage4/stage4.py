@@ -6,6 +6,7 @@ import ui
 import meteor_util
 from puzzle import puzzle_main
 pygame.init()
+pygame.mixer.init()
 
 screen_width=1200
 screen_height=800
@@ -17,6 +18,18 @@ clock = pygame.time.Clock()
  
 current_path = os.path.dirname(__file__)    #현재 파일 위치 반환
 image_path = os.path.join(current_path,"images")    # images 폴더 위치 반환
+audio_path=os.path.join(current_path,"audios")    
+
+rotate_sound=pygame.mixer.Sound(os.path.join(audio_path,"rotate.mp3"))
+background_music=pygame.mixer.music.load(os.path.join(audio_path, "cosmic_zoo.mp3"))
+defect_sound=pygame.mixer.Sound(os.path.join(audio_path,"machine_call.mp3"))
+collision_sound=pygame.mixer.Sound(os.path.join(audio_path,"collision.mp3"))
+bubble_collision_sound=pygame.mixer.Sound(os.path.join(audio_path,"bubble_collision.mp3"))
+to_blackhole_sound=pygame.mixer.Sound(os.path.join(audio_path,"to_blackhole.mp3"))
+landed_sound=pygame.mixer.Sound(os.path.join(audio_path,"landed.mp3"))
+alien_sound=pygame.mixer.Sound(os.path.join(audio_path,"contact_alien.mp3"))
+explosion_sound=pygame.mixer.Sound(os.path.join(audio_path,"explosion.mp3"))
+
 
 background = pygame.image.load(os.path.join(image_path,"background_color.png"))
 gameover = pygame.image.load(os.path.join(image_path, "gameover.png")) 
@@ -38,11 +51,13 @@ navigation_movement=ui.navigation(navi)
 fuelgauge=pygame.image.load(os.path.join(image_path, "fuelgauge.png")) #일단 눈대중으로.. 각도 맞춰놓긴 햇는데 계산해야할 듯
 fuel_gauge=ui.fuelgauge(0,660,fuelgauge)
 
-left_fuel=100   #일단 100
-fuelindicator_img=pygame.image.load(os.path.join(image_path, "fuel_indicator.png")) 
-fuel_Indicator=ui.fuel_indicator(78,760,fuelindicator_img,left_fuel)
+left_fuel=80   #일단 80
+last_fuel_drop_time = 0 # 마지막으로 연료 깎인 시간
 
-alien = pygame.transform.scale(alien, (75, 100))
+fuelindicator_img=pygame.image.load(os.path.join(image_path, "fuel_indicator.png")) 
+fuel_Indicator=ui.fuel_indicator(78,760,fuelindicator_img,left_fuel,100)
+
+alien = pygame.transform.scale(alien, (60, 100))
 alien_radius = 100 / 2 * 0.8
 alien_x_pos = 0 
 alien_y_pos = 0
@@ -126,8 +141,10 @@ pause_start_ticks = 0
 total_paused_ms = 0       
 font_path = os.path.join(current_path, "font")
 game_font = pygame.font.Font(os.path.join(font_path, "DungGeunMo.ttf"), 40)
+fuel_font = pygame.font.Font(os.path.join(font_path, "DungGeunMo.ttf"), 30)
 TOTAL_GAME_TIME = 100 
 TIMER_COLOR = (200, 200, 200) 
+pygame.mixer.music.play(-1)
 
 #메인 게임 루프
 running = True
@@ -138,31 +155,27 @@ while running:
     real_elapsed_time = (current_ticks - start_ticks) / 1000.0
     game_elapsed_ms = current_ticks - start_ticks - total_paused_ms
     game_elapsed_time = game_elapsed_ms / 1000.0 # 초 단위
+    if not is_defect_event and game_elapsed_time - last_fuel_drop_time > 2:
+        if left_fuel > 0:
+            left_fuel -= 1
+        last_fuel_drop_time = game_elapsed_time
 
-    
-    if 10 <= game_elapsed_time < 10.1 and not is_defect_event:  #결함 발생
+    if 20 <= game_elapsed_time < 20.1 and not is_defect_event:  #결함 발생
         is_defect_event = True
+        pygame.mixer.music.pause()
+        defect_sound.play(loops=-1)
         spaceship_to_x = 0
         spaceship_to_y = 0
         if not was_defect_paused:
            pause_start_ticks = current_ticks
         was_defect_paused = True
-###
-   
 
     remaining_seconds = max(0, TOTAL_GAME_TIME - game_elapsed_time)  #남은 시간
     minutes = int(remaining_seconds // 60)
     seconds = int(remaining_seconds % 60)
     timer_text_str = f"{minutes:02}:{seconds:02}"
-    left_fuel=remaining_seconds
-   
-
-    if game_elapsed_time >= next_rotation:
-        keyborad_rotation = (keyborad_rotation + 1) % 4 # 4가지 로테이션
-        next_rotation += 25.0 
-        spaceship_to_y=0
-        spaceship_to_x=0
-
+    
+ 
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
             running=False 
@@ -171,6 +184,7 @@ while running:
                 if event.key == pygame.K_TAB: 
                     screen.blit(warning_img2, (0,0))
                     pygame.display.update()
+                    defect_sound.stop()
                     puzzle_start_tick = pygame.time.get_ticks()
                     result = puzzle_main.f_puzzle(screen) 
                     
@@ -184,10 +198,12 @@ while running:
                     game_elapsed_time = game_elapsed_ms / 1000.0 # 초 단위
                     is_defect_event = False
                     was_defect_paused = False
+                    
                     remaining_seconds = max(0, TOTAL_GAME_TIME - game_elapsed_time)  #남은 시간
 
-            # 1초 대기 후 게임 다시
+                # 1초 대기 후 게임 다시
                     pygame.time.delay(1000)
+                    pygame.mixer.music.unpause()
         else: #결함 없을 때 키보드 먹도록..(운석 충돌 때문에 일단 이렇게 둠)
             if event.type ==pygame.KEYDOWN:
                 if keyborad_rotation==0:
@@ -226,7 +242,14 @@ while running:
                     elif event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: spaceship_to_y = 0
 
     remaining_seconds = max(0, TOTAL_GAME_TIME - game_elapsed_time)  #남은 시간
+
     if not is_defect_event: #이것도 결함 아닐 때
+        if game_elapsed_time >= next_rotation:
+            keyborad_rotation = (keyborad_rotation + 1) % 4 # 4가지 로테이션
+            rotate_sound.play()
+            next_rotation += 25.0 
+            spaceship_to_y=0
+            spaceship_to_x=0
         if remaining_seconds>=84:
             navigation_movement.update(1)
         elif remaining_seconds>=68:
@@ -259,7 +282,6 @@ while running:
             alien_y_pos = 100
         if game_elapsed_time >35:    #30초 넘으면 외계인 나오게
             alien_appeared = False 
-        
 
         if alien_appeared and not is_shield_active: #쉴드 받기 전
         # 충돌 계산
@@ -270,33 +292,44 @@ while running:
             distance = math.sqrt((spaceship_center_x - alien_center_x)**2 + (spaceship_center_y - alien_center_y)**2)
         
             if distance < spaceship_radius + alien_radius:  #우주선랑 외계인이랑 충돌됐다고 판단되면
+                alien_sound.play()
                 is_shield_active = True # 쉴드 활성화
                 shield_start_time = game_elapsed_time # 쉴드 시작 시간 기록
                 alien_x_pos = -2000 #외계인 날려버리기..
                 alien_y_pos = -2000
         #
         # navigation_movement.draw(screen)
-
-        if game_elapsed_time >= 45 and game_elapsed_time<=55 and not blackhole_appeared:   #블랙홀 생성
+        ####################
+        if game_elapsed_time >= 45 and game_elapsed_time<=55 and not blackhole_appeared:  #블랙홀 생성
             blackhole_appeared = True 
-            # 안전하게 화면 가장자리 근처 랜덤 위치에 생성 (플레이어에 바로 닿지 않게)
+            
+            margin_top = 100    
+            margin_bottom = 250 
+            margin_left = 200    
+            margin_right = 250    
+            
+            blackhole_width = blackhole.get_width() # 120
+            blackhole_height = blackhole.get_height() # 120
+
+            safe_x_min = margin_left
+            safe_x_max = screen_width - margin_right - blackhole_width
+            safe_y_min = margin_top
+            safe_y_max = screen_height - margin_bottom - blackhole_height
+
             side = random.choice(['top', 'bottom', 'left', 'right'])
-            blackhole_width = blackhole.get_width() # 100
-            blackhole_height = blackhole.get_height() # 100
-            margin = 50 # 화면 가장자리에서 얼마나 떨어뜨릴지
 
             if side == 'top':
-                blackhole_x_pos = random.randint(margin, screen_width - blackhole_width - margin)
-                blackhole_y_pos = margin # 위쪽 가장자리 근처
+                blackhole_x_pos = random.randint(safe_x_min, safe_x_max)
+                blackhole_y_pos = safe_y_min 
             elif side == 'bottom':
-                blackhole_x_pos = random.randint(margin, screen_width - blackhole_width - margin)
-                blackhole_y_pos = screen_height - blackhole_height - margin # 아래쪽 가장자리 근처
+                blackhole_x_pos = random.randint(safe_x_min, safe_x_max)
+                blackhole_y_pos = safe_y_max
             elif side == 'left':
-                blackhole_x_pos = margin # 왼쪽 가장자리 근처
-                blackhole_y_pos = random.randint(margin, screen_height - blackhole_height - margin)
-            else: # right
-                blackhole_x_pos = screen_width - blackhole_width - margin # 오른쪽 가장자리 근처
-                blackhole_y_pos = random.randint(margin, screen_height - blackhole_height - margin)
+                blackhole_x_pos = safe_x_min
+                blackhole_y_pos = random.randint(safe_y_min, safe_y_max)
+            else: 
+                blackhole_x_pos = safe_x_max
+                blackhole_y_pos = random.randint(safe_y_min, safe_y_max)
         if game_elapsed_time >55  and blackhole_appeared:
             blackhole_appeared=False
 
@@ -314,7 +347,8 @@ while running:
             distance = math.sqrt((sp_center_x - bh_center_x)**2 + (sp_center_y - bh_center_y)**2)
 
             if distance < spaceship_radius + blackhole_radius and running:
-
+                pygame.mixer.music.pause()
+                to_blackhole_sound.play()
                 animation_start_time = pygame.time.get_ticks()
                 animation_duration = 1500 # 1.5초
                 
@@ -386,6 +420,7 @@ while running:
                 
                 kkanttapia_rect = kkanttapia.get_rect(center=(screen_width / 2, screen_height / 2))
                 screen.blit(kkanttapia, kkanttapia_rect)
+                landed_sound.play()
                 pygame.display.update()
                 pygame.time.delay(1500) 
 
@@ -440,6 +475,7 @@ while running:
             
             fade_start = pygame.time.get_ticks()
             fade_duration = 1000 
+            pygame.mixer.music.pause()
             
             while True:
                 elapsed = pygame.time.get_ticks() - fade_start
@@ -455,6 +491,7 @@ while running:
                 clock.tick(60)
                 
             pygame.time.delay(1000) 
+            landed_sound.play()
             kkanttapia_rect = kkanttapia.get_rect(center=(screen_width / 2, screen_height / 2))
             
             fade_start = pygame.time.get_ticks()
@@ -524,6 +561,7 @@ while running:
                 distance = math.sqrt((shield_center_x - meteor_center_x)**2 + (shield_center_y - meteor_center_y)**2)
                 
                 if distance < spaceship_radius + meteor_radius: #우주선이랑 충돌했는지
+                    bubble_collision_sound.play()
                     meteors.remove(meteor) # 부딪힌 운석 제거
                     meteors.append(meteor_util.Meteor(game_elapsed_time, screen_width, screen_height))
             else:
@@ -542,24 +580,31 @@ while running:
                     left_life = left_life - 1 
                     meteors.remove(meteor)    # 부딪힌 운석은 일단 제거
                     if left_life==0:
+                        pygame.mixer.music.pause()
+                        explosion_sound.play()
                         collision_rect = meteor_collision.get_rect(center=(screen_width / 2, screen_height / 2))
                         screen.blit(meteor_collision, collision_rect)
                         pygame.display.update() # 화면 업데이트해서 보여주기
-                        pygame.time.delay(2000) # 2초 대기
+                        pygame.time.delay(1500) # 2초 대기
 
                         game_over_rect = gameover.get_rect(center=(screen_width / 2, screen_height / 2))
                         screen.blit(gameover, game_over_rect)
                         pygame.display.update() # 화면 업데이트해서 보여주기
-                        pygame.time.delay(2000) # 2초 대기
+                        pygame.time.delay(1500) # 2초 대기
                         running = False
                         break
                     else:
                         is_invincible=True
+                        collision_sound.play()
                         invincible_start_time=game_elapsed_time
     if not running:
         break
 
     screen.blit(background,(0,0))
+    fuel_text_str = f"{left_fuel}%"
+    fuel_surface = fuel_font.render(fuel_text_str, True, (255, 255, 255))
+    fuel_rect = fuel_surface.get_rect(center=(80, 650)) 
+    screen.blit(fuel_surface, fuel_rect)
     fuel_gauge.draw(screen)
     fuel_Indicator.update(left_fuel)
     fuel_Indicator.draw(screen)

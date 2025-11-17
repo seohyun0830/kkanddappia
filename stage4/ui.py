@@ -64,18 +64,22 @@ class fuelgauge:
         screen.blit(self.image,self.rect)
 # 인디케이터 클래스:
 class fuel_indicator:
-    def __init__(self,x,y,image,max_val):   #x,y 중심
+    def __init__(self, x, y, image, current_val, max_val): 
         self.original_image = image 
         self.x = x
         self.y = y
-        self.max_val = max_val
-        self.angle = -75
+        self.max_val = max_val 
+        self.angle = 0 # 임시값
+    
+        self.update(current_val) 
 
-    def update(self,val):
-        ratio=val/self.max_val
-        self.angle=75-(ratio*150)
+    def update(self, val):
+        val = max(0, min(val, self.max_val)) 
+        
+        ratio = val / self.max_val
+        self.angle = 75 - (ratio * 150) # (100%일 때 -75, 0%일 때 75)
 
-    def draw(self,screen):
-        r_image=pygame.transform.rotozoom(self.original_image,self.angle,1)
-        new_rect=r_image.get_rect(center=(self.x,self.y))
-        screen.blit(r_image,new_rect)
+    def draw(self, screen):
+        r_image = pygame.transform.rotozoom(self.original_image, self.angle, 1)
+        new_rect = r_image.get_rect(center=(self.x, self.y))
+        screen.blit(r_image, new_rect)

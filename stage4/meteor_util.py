@@ -11,9 +11,9 @@ class Meteor:
         self.idx = random.randint(0, 3) 
         
         if current_time < 10: 
-            self.speed = random.randint(2, 5) 
+            self.speed = random.randint(2, 3) 
         else:
-            self.speed = random.randint(3, 7) 
+            self.speed = random.randint(3, 4) 
         
         if self.idx == 0:  # 오른쪽 위
             self.pos_x = random.randint(screen_width, screen_width + 200)
