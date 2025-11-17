@@ -1,8 +1,7 @@
-#renderer.py
 import pygame
 import assets
-from constants import *
-
+import constants
+import random
 
 def draw_maze(SCREEN, maze_data, grid_size, tile_size, offset_x, offset_y, iron_gates=None, broken_tiles=None):
     for i in range(grid_size):
@@ -11,12 +10,30 @@ def draw_maze(SCREEN, maze_data, grid_size, tile_size, offset_x, offset_y, iron_
             tile = maze_data[i][j]
 
             # 벽
-            if tile == WALL:
-                if assets.bg_img is None:
-                    pygame.draw.rect(SCREEN, (40, 40, 40), (x, y, tile_size, tile_size))
-                else:
-                    SCREEN.blit(pygame.transform.scale(assets.bg_img, (tile_size, tile_size)), (x, y))
+            if tile == constants.WALL:
+                SCREEN.blit(pygame.transform.scale(assets.bg_img, (tile_size, tile_size)), (x, y))
                 continue
+
+            if tile == constants.BROKEN:
+                SCREEN.blit(pygame.transform.scale(assets.bg_img, (tile_size, tile_size)), (x, y))
+                #스파크이미지 깜빡이도록
+                spark = assets.pipe_images[constants.BROKEN].copy()
+                spark_alpha = random.randint(150, 255)
+                spark.set_alpha(spark_alpha)
+
+                SCREEN.blit(
+                    pygame.transform.scale(spark, (tile_size, tile_size)),
+                    (x, y)
+                )
+
+                continue
+
+            if tile == constants.IRON_GATE:
+                is_closed = any(g[0] == i and g[1] == j and g[2] for g in iron_gates)
+                if is_closed:
+                    SCREEN.blit(pygame.transform.scale(assets.pipe_images[constants.IRON_GATE], (tile_size, tile_size)), (x, y))
+                    continue
+    
 
             img = get_tile_image(i, j, maze_data, grid_size, iron_gates, broken_tiles)
             SCREEN.blit(pygame.transform.scale(img, (tile_size, tile_size)), (x, y))
@@ -24,18 +41,12 @@ def draw_maze(SCREEN, maze_data, grid_size, tile_size, offset_x, offset_y, iron_
 def get_tile_image(i, j, maze_data, grid_size, iron_gates, broken_tiles):
     from assets import pipe_images
     tile = maze_data[i][j]
-
-    if tile == IRON_GATE:
-        is_closed = any(g[0] == i and g[1] == j and g[2] for g in iron_gates)
-        if is_closed: return pipe_images[IRON_GATE]
-    elif tile == BROKEN:
-        exists = any(b[0]==i and b[1]==j and b[2] for b in broken_tiles)
-        if exists: return pipe_images[BROKEN]
-
-    up = (i>0 and maze_data[i-1][j] in [PATH, IRON_GATE, BROKEN])
-    down = (i<grid_size-1 and maze_data[i+1][j] in [PATH, IRON_GATE, BROKEN])
-    left = (j>0 and maze_data[i][j-1] in [PATH, IRON_GATE, BROKEN])
-    right = (j<grid_size-1 and maze_data[i][j+1] in [PATH, IRON_GATE, BROKEN])
+    
+    up = (i>0 and maze_data[i-1][j] in [constants.PATH, constants.IRON_GATE, constants.BROKEN])
+    down = (i<grid_size-1 and maze_data[i+1][j] in [constants.PATH, constants.IRON_GATE, constants.BROKEN])
+    left = (j>0 and maze_data[i][j-1] in [constants.PATH, constants.IRON_GATE, constants.BROKEN])
+    right = (j<grid_size-1 and maze_data[i][j+1] in [constants.PATH, constants.IRON_GATE, constants.BROKEN])
+    
     img_key = choose_pipe(up, down, left, right)
     return pipe_images[img_key]
 
