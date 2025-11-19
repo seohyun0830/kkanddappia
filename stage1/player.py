@@ -1,5 +1,4 @@
 from . import images
-from . import fails
 
 class Cplayer:
     def __init__(self, col, row, pix):

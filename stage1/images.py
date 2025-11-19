@@ -49,6 +49,8 @@ water_back = pygame.image.load("stage1/assets/water_background.png")
 
 restart_btn = pygame.image.load("stage1/assets/restart_btn.png")
 
+
+
 # 각 이미지들 배열에 저장
 characters = [[LDc, LW1c, LW2c,LDPc], [RDc, RW1c, RW2c,RDPc], [DLc,DLc,DLc,DLc], [DRc,DRc,DRc,DRc], [U1,U1,U2,U2]]
 blocks = [block1, block2, block3, block4]
