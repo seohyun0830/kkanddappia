@@ -42,6 +42,9 @@ success=pygame.image.load(os.path.join(image_path,"success.png"))
 meteor_collision=pygame.image.load(os.path.join(image_path,"meteor_collision.png"))
 meteor_collision=pygame.transform.scale(meteor_collision,(1200,800))
 kkanttapia=pygame.image.load(os.path.join(image_path,"kkanttapia.png"))
+puzzle_fail=pygame.image.load(os.path.join(image_path,"puzzle_failure.png"))
+restart_img=pygame.image.load(os.path.join(image_path,"restart_button.png"))
+fuel_failure_img=pygame.image.load(os.path.join(image_path,"fuel_failure.png"))
 
 #네비게이션
 navigation_screen=pygame.image.load(os.path.join(image_path,"navigation_screen.png"))
@@ -155,6 +158,14 @@ while running:
     real_elapsed_time = (current_ticks - start_ticks) / 1000.0
     game_elapsed_ms = current_ticks - start_ticks - total_paused_ms
     game_elapsed_time = game_elapsed_ms / 1000.0 # 초 단위
+
+    if left_fuel<20:    #20보다 적을 때
+            pygame.mixer.music.pause()
+            screen.blit(fuel_failure_img,(0,0))
+            pygame.display.update()
+            pygame.time.delay(1500)
+            running=False
+    
     if not is_defect_event and game_elapsed_time - last_fuel_drop_time > 2:
         if left_fuel > 0:
             left_fuel -= 1
@@ -188,7 +199,11 @@ while running:
                     puzzle_start_tick = pygame.time.get_ticks()
                     result = puzzle_main.f_puzzle(screen) 
                     
-                    if result!=1:
+                    if result==-1:
+                       screen.blit(puzzle_fail,(0,0))
+                       screen.blit(restart_img,(800,600))
+                       pygame.display.update()
+                       pygame.time.delay(1500)
                        running=False
 
                     # 정지 시간 보정
@@ -300,9 +315,10 @@ while running:
         #
         # navigation_movement.draw(screen)
         ####################
-        if game_elapsed_time >= 45 and game_elapsed_time<=55 and not blackhole_appeared:  #블랙홀 생성
-            blackhole_appeared = True 
-            
+        if game_elapsed_time >= 45 and game_elapsed_time<=53 and not blackhole_appeared:  #블랙홀 생성
+            blackhole_appeared = True
+            for meteor in meteors:
+                meteor.blackhole_appeared_func()
             margin_top = 100    
             margin_bottom = 250 
             margin_left = 200    
@@ -330,7 +346,7 @@ while running:
             else: 
                 blackhole_x_pos = safe_x_max
                 blackhole_y_pos = random.randint(safe_y_min, safe_y_max)
-        if game_elapsed_time >55  and blackhole_appeared:
+        if game_elapsed_time >53  and blackhole_appeared:
             blackhole_appeared=False
 
         if is_shield_active:
@@ -534,7 +550,7 @@ while running:
 
         #운석 계속 만들기
         if len(meteors) < max_meteors:
-            meteors.append(meteor_util.Meteor(game_elapsed_time, screen_width, screen_height))
+            meteors.append(meteor_util.Meteor(game_elapsed_time, screen_width, screen_height,blackhole_appeared))
 
         #우주선 위치 업뎃
         spaceship_x_pos += spaceship_to_x
@@ -599,7 +615,8 @@ while running:
                         invincible_start_time=game_elapsed_time
     if not running:
         break
-
+    ####################33
+    #연료 
     screen.blit(background,(0,0))
     fuel_text_str = f"{left_fuel}%"
     fuel_surface = fuel_font.render(fuel_text_str, True, (255, 255, 255))
