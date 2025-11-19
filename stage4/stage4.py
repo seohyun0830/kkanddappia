@@ -2,9 +2,13 @@ import pygame
 import os
 import random
 import math
-import ui
-import meteor_util
-from puzzle import puzzle_main
+#import ui
+#import meteor_util
+
+from . import ui
+from . import meteor_util
+from .puzzle import puzzle_main
+#from puzzle import puzzle_main
 pygame.init()
 pygame.mixer.init()
 

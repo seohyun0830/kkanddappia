@@ -1,6 +1,6 @@
 import pygame
 import os
-from puzzle.images import *
+from .images import *
 
 
 pygame.init()

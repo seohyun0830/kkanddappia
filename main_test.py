@@ -56,8 +56,7 @@ while current_state != STATE_EXIT:
     
     # 4. 2스테이지 (예정)
     elif current_state == STATE_STAGE2:
-        print("🎉 2스테이지 진입! (개발 중)")
-        # stage2 = f_stage2(window) ... 이런 식으로 확장
+        import stage4.stage4
         break # 임시 종료
 
 # 종료 처리
