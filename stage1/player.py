@@ -1,4 +1,5 @@
 from . import images
+from . import sounds
 
 class Cplayer:
     def __init__(self, col, row, pix):
@@ -59,6 +60,7 @@ class Cplayer:
             elif self.motion == 2:
                 self.motion = 1
             self.motionTime = 0
+            sounds.sfx_step.play()
 
     def f_left(self, under_map, itemMap):
         self.direction = 0
@@ -103,6 +105,7 @@ class Cplayer:
 
     def f_jump(self):
         if self.isOnGround:
+            sounds.sfx_jump.play()
             self.velocityY = self.jumpPower
             self.isOnGround = False
 
@@ -171,6 +174,7 @@ class Cplayer:
     def f_breaking(self,under_map):
         self.blockTime += 1
         if self.blockTime > 30:
+            sounds.sfx_break.play()
             self.blockMotion = 0
             self.pickMotion = 1
             self.blockTime = 0
@@ -181,12 +185,15 @@ class Cplayer:
             elif (self.direction == 2 or self.direction == 3):
                 under_map[self.blockY + 1][self.blockX] = 1
         elif self.blockTime > 20:
+            sounds.sfx_break.play()
             self.blockMotion = 3
             self.pickMotion = 0
         elif self.blockTime > 10:
+            sounds.sfx_break.play()
             self.blockMotion = 2
             self.pickMotion = 1
         elif self.blockTime > 0:
+            sounds.sfx_break.play()
             self.blockMotion = 1
             self.pickMotion = 0
 

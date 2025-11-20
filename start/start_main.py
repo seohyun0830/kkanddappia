@@ -1,6 +1,6 @@
 import pygame
 from button.images import btn_background
-from .images import background, background2
+from .images import background, background2, sfx_click
 from button.isClicked import f_isClicked
 
 def f_start(window):
@@ -41,6 +41,7 @@ def f_start(window):
                 return 0
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if is_hover: # 미리 계산된 호버 상태 사용
+                    sfx_click.play()
                     return 1 # START
 
         # 5. 그리기
@@ -58,7 +59,6 @@ def f_start(window):
         window.blit(txt_title_white, (150, 200))
 
         pygame.display.update()
-
 
 def f_modeSelect(window):
     # --- [초기화] ---
@@ -94,8 +94,10 @@ def f_modeSelect(window):
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if is_hover_easy:
+                    sfx_click.play()
                     return 1 # EASY 모드 리턴
                 elif is_hover_hard:
+                    sfx_click.play()
                     return 2 # HARD 모드 리턴
 
         # 그리기

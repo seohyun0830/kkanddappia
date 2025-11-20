@@ -1,6 +1,6 @@
 import pygame
 from stage1.images import *
-from .images import btn_background
+from .images import btn_background, sfx_click
 
 def f_isClicked(btnX, btnY, xPos, yPos):
     if xPos > btnX and xPos < btnX + 360 and yPos > btnY and yPos < btnY + 108:
@@ -33,6 +33,7 @@ def f_isFail(window, reson):
             if event.type == pygame.MOUSEBUTTONDOWN:  
                 # 3. 미리 계산해둔 hover 상태를 확인합니다.
                 if is_hover:
+                    sfx_click.play()
                     return 11 # (메인 루프의 1스테이지 코드가 11번이라면 11로, 10이면 10으로 맞추세요)
 
         # 4. 그리기
