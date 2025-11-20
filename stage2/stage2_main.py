@@ -3,13 +3,13 @@ import sys
 import math
 
 # --- 모듈 불러오기 ---
-from setting import *
-import images
-from player import Player
-from map import MapManager
-from inven import Inventory
-from make import CraftingManager
-from dic import Dictionary
+from .setting import *
+from . import images
+from .player import Player
+from .map import MapManager
+from .inven import Inventory
+from .make import CraftingManager
+from .dic import Dictionary
 
 # --- 초기화 ---
 pygame.init()

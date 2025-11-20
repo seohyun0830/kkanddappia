@@ -1,7 +1,7 @@
 import pygame
 from collections import Counter
-from setting import *
-import images
+from .setting import *
+from . import images
 
 class Inventory:
     def __init__(self):

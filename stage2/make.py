@@ -1,6 +1,6 @@
 import pygame
-from setting import *
-import images
+from .setting import *
+from . import images
 
 class CraftingManager:
     def __init__(self):

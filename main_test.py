@@ -56,7 +56,8 @@ while current_state != STATE_EXIT:
     
     # 4. 2스테이지 (예정)
     elif current_state == STATE_STAGE2:
-        import stage4.stage4
+        import stage2.stage2_main
+        #import stage4.stage4
         break # 임시 종료
 
 # 종료 처리

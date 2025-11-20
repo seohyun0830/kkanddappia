@@ -1,6 +1,6 @@
 import pygame
 import os
-from setting import *
+from .setting import *
 
 # --- 전역 이미지 저장소 ---
 backgrounds = {}
