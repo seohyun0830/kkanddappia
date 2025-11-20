@@ -4,10 +4,26 @@ import random
 import math
 import ui
 import meteor_util
+import Alien
 from puzzle import puzzle_main
 pygame.init()
 pygame.mixer.init()
 
+#############전역변수 해야할 거###############
+# easy,hard
+#연료 게이지
+#다시하기
+#############################################
+
+#############################################
+#클래스 분리
+#블랙홀
+#외계인
+#우주선
+#시?간? 해야되나? 음 안해도 되는 듯
+#쉴드
+#애니메이션들
+#############################################
 screen_width=1200
 screen_height=800
 screen=pygame.display.set_mode((screen_width,screen_height))
@@ -35,8 +51,9 @@ background = pygame.image.load(os.path.join(image_path,"background_color.png"))
 gameover = pygame.image.load(os.path.join(image_path, "gameover.png")) 
 warning_img1 = pygame.image.load(os.path.join(image_path, "warning1.png")) 
 warning_img2 = pygame.image.load(os.path.join(image_path, "warning2.png")) 
-alien = pygame.image.load(os.path.join(image_path,"alien.png"))
+alien_img = pygame.image.load(os.path.join(image_path,"alien.png"))
 bubble = pygame.image.load(os.path.join(image_path,"bubble.png"))
+#블랙홀
 blackhole =pygame.image.load(os.path.join(image_path,"blackhole.png"))
 success=pygame.image.load(os.path.join(image_path,"success.png"))
 meteor_collision=pygame.image.load(os.path.join(image_path,"meteor_collision.png"))
@@ -60,11 +77,7 @@ last_fuel_drop_time = 0 # 마지막으로 연료 깎인 시간
 fuelindicator_img=pygame.image.load(os.path.join(image_path, "fuel_indicator.png")) 
 fuel_Indicator=ui.fuel_indicator(78,760,fuelindicator_img,left_fuel,100)
 
-alien = pygame.transform.scale(alien, (60, 100))
-alien_radius = 100 / 2 * 0.8
-alien_x_pos = 0 
-alien_y_pos = 0
-alien_appeared = False # 외계인이 한 번만 나타나게 할 변수
+alien=Alien.Alien(alien_img)
 
 bubble = pygame.transform.scale(bubble, (120, 120)) # 우주선보다 살짝 크게
 is_shield_active = False # 쉴드가 활성화됐는지 알려주는 변수
@@ -137,7 +150,7 @@ move_success_images=[
 
 start_ticks = pygame.time.get_ticks()
 
-
+alien_once = False
 is_defect_event = False     #결함 체크할 변수
 was_defect_paused = False 
 pause_start_ticks = 0     
@@ -288,31 +301,20 @@ while running:
         if game_elapsed_time < 5: #5초 이하일 때는 3개만 만들고
             max_meteors = 3 
         else: max_meteors = 10 #이후에는 10개씩
-
-        if game_elapsed_time > 30 and game_elapsed_time<38 and not alien_appeared:    #30초 넘으면 외계인 나오게
-            alien_appeared = True 
-
-            # 화면 중앙 위쪽에서 등장  (일단은....)
-            alien_x_pos = screen_width / 2 - alien.get_width() / 2
-            alien_y_pos = 100
-        if game_elapsed_time >35:    #30초 넘으면 외계인 나오게
-            alien_appeared = False 
-
-        if alien_appeared and not is_shield_active: #쉴드 받기 전
-        # 충돌 계산
-            alien_center_x = alien_x_pos + alien_radius
-            alien_center_y = alien_y_pos + alien_radius
-            spaceship_center_x = spaceship_x_pos + spaceship_radius
-            spaceship_center_y = spaceship_y_pos + spaceship_radius
-            distance = math.sqrt((spaceship_center_x - alien_center_x)**2 + (spaceship_center_y - alien_center_y)**2)
         
-            if distance < spaceship_radius + alien_radius:  #우주선랑 외계인이랑 충돌됐다고 판단되면
+
+        if game_elapsed_time > 5 and game_elapsed_time<38 and not alien.is_active and not alien_once:    #30초 넘으면 외계인 나오게
+           alien.appearance()
+        if game_elapsed_time >38:    #30초 넘으면 외계인 나오게
+            alien.is_active=False
+
+        if alien.is_active and not is_shield_active: #쉴드 받기 전
+            if alien.detect_collision(spaceship_x_pos,spaceship_y_pos,spaceship_radius,alien.is_active):
                 alien_sound.play()
-                is_shield_active = True # 쉴드 활성화
-                shield_start_time = game_elapsed_time # 쉴드 시작 시간 기록
-                alien_x_pos = -2000 #외계인 날려버리기..
-                alien_y_pos = -2000
-        #
+                is_shield_active=True
+                alien_once=True
+                shield_start_time=game_elapsed_time
+        
         # navigation_movement.draw(screen)
         ####################
         if game_elapsed_time >= 45 and game_elapsed_time<=53 and not blackhole_appeared:  #블랙홀 생성
@@ -390,11 +392,8 @@ while running:
                     scaled_ship = pygame.transform.scale(current_ship_image, (current_width, current_height))
                     
                     screen.blit(background,(0,0))
-                    for meteor in meteors:
-                        meteor.update() 
-                        meteor.draw(screen)
-                    if alien_appeared:
-                        screen.blit(alien, (alien_x_pos, alien_y_pos))
+
+                    
                     screen.blit(blackhole, (blackhole_x_pos, blackhole_y_pos))
                     
                     scaled_rect = scaled_ship.get_rect(center = (current_x + start_width/2, current_y + start_height/2))
@@ -644,9 +643,9 @@ while running:
 
     for meteor in meteors:
         meteor.draw(screen)
-
-    if alien_appeared:
-        screen.blit(alien, (alien_x_pos, alien_y_pos))
+    #외계인
+    if alien.is_active:
+        alien.draw(screen)
     if blackhole_appeared:
         screen.blit(blackhole, (blackhole_x_pos, blackhole_y_pos))
 
