@@ -6,6 +6,7 @@ import ui
 import meteor_util
 import Alien
 import Bubble
+import Success_animation
 from puzzle import puzzle_main
 pygame.init()
 pygame.mixer.init()
@@ -319,7 +320,7 @@ while running:
         
         # navigation_movement.draw(screen)
         ####################
-        if game_elapsed_time >= 45 and game_elapsed_time<=53 and not blackhole_appeared:  #블랙홀 생성
+        if game_elapsed_time >= 47 and game_elapsed_time<=53 and not blackhole_appeared:  #블랙홀 생성
             blackhole_appeared = True
             for meteor in meteors:
                 meteor.blackhole_appeared_func()
@@ -367,185 +368,34 @@ while running:
             distance = math.sqrt((sp_center_x - bh_center_x)**2 + (sp_center_y - bh_center_y)**2)
 
             if distance < spaceship_radius + blackhole_radius and running:
-                pygame.mixer.music.pause()
-                to_blackhole_sound.play()
-                animation_start_time = pygame.time.get_ticks()
-                animation_duration = 1500 # 1.5초
-                
-                start_x, start_y = spaceship_x_pos, spaceship_y_pos
-                start_width, start_height = spaceship_width, spaceship_height
-                fade_surface = pygame.Surface((screen_width, screen_height))
-                fade_surface.fill((0, 0, 0)) 
-                
-                animating = True
-                while animating:
-                    elapsed = pygame.time.get_ticks() - animation_start_time
-                    progress = min(1.0, elapsed / animation_duration) # 0.0 ~ 1.0
-                    ease_progress = progress * progress 
-            
-                    current_width = int(start_width * (1.0 - ease_progress))
-                    current_height = int(start_height * (1.0 - ease_progress))
-                    if current_width < 1: current_width = 1
-                    if current_height < 1: current_height = 1
-                    current_x = start_x + (bh_center_x - (start_x + spaceship_radius)) * ease_progress
-                    current_y = start_y + (bh_center_y - (start_y + spaceship_radius)) * ease_progress
-                    
-                    current_ship_image = spaceship_images[keyborad_rotation]
-                    scaled_ship = pygame.transform.scale(current_ship_image, (current_width, current_height))
-                    
-                    screen.blit(background,(0,0))
-
-                    
-                    screen.blit(blackhole, (blackhole_x_pos, blackhole_y_pos))
-                    
-                    scaled_rect = scaled_ship.get_rect(center = (current_x + start_width/2, current_y + start_height/2))
-                    screen.blit(scaled_ship, scaled_rect)
-                    
-                    alpha = int(ease_progress * 255) 
-                    fade_surface.set_alpha(alpha)
-                    screen.blit(fade_surface, (0, 0)) 
-                    
-                    pygame.display.update()
-                    clock.tick(60)
-                    
-                    if progress >= 1.0:
-                        animating = False
-            
-                white_fade_surface = pygame.Surface((screen_width, screen_height))
-                white_fade_surface.fill((255, 255, 255))
-                
-                fade_in_start_time = pygame.time.get_ticks()
-                fade_in_duration = 1000 
-                
-                fading_in = True
-                while fading_in:
-                    elapsed = pygame.time.get_ticks() - fade_in_start_time
-                    progress = min(1.0, elapsed / fade_in_duration)
-                    
-                    alpha = int(progress * 255) 
-                    white_fade_surface.set_alpha(alpha)
-                    
-                    screen.fill((0, 0, 0)) 
-                    screen.blit(white_fade_surface, (0, 0)) 
-                    
-                    pygame.display.update()
-                    clock.tick(60)
-                    
-                    if progress >= 1.0:
-                        fading_in = False
-
-                
-                kkanttapia_rect = kkanttapia.get_rect(center=(screen_width / 2, screen_height / 2))
-                screen.blit(kkanttapia, kkanttapia_rect)
-                landed_sound.play()
-                pygame.display.update()
-                pygame.time.delay(1500) 
-
-                fade_to_black_start = pygame.time.get_ticks()
-                fade_duration = 1000 
-                fading_to_black = True
-                
-                fade_surface = pygame.Surface((screen_width, screen_height))
-                fade_surface.fill((0, 0, 0)) 
-                
-                while fading_to_black:
-                    elapsed = pygame.time.get_ticks() - fade_to_black_start
-                    progress = min(1.0, elapsed / fade_duration)
-                    alpha = int(progress * 255) 
-                    
-                    screen.blit(kkanttapia, kkanttapia_rect)
-                    
-                    fade_surface.set_alpha(alpha)
-                    screen.blit(fade_surface, (0, 0))
-                    
-                    pygame.display.update()
-                    clock.tick(60)
-                    
-                    if progress >= 1.0:
-                        fading_to_black = False
-
-                move_success_cnt = 0
-                
-                success_font = pygame.font.Font(os.path.join(font_path, "DungGeunMo.ttf"), 70)
-                success_text_surface = success_font.render("깐따삐아에 이주 성공하다!", True, (255, 255, 255))
-                
-                text_rect = success_text_surface.get_rect(center=(screen_width / 2, screen_height/3 - 100))
-                
-                while move_success_cnt < 3:
-                    for img in move_success_images: 
-                        screen.blit(img, (0,0)) 
-                        screen.blit(success_text_surface,text_rect)
-                        pygame.display.update() 
-                        pygame.time.delay(500)
-                    
-                    move_success_cnt += 1
-                
-
-                pygame.time.delay(1500) 
-                running = False
+                sounds = {'to_blackhole': to_blackhole_sound}
+                Success_animation.blackhole_ending(
+                screen, background, blackhole, 
+                current_spaceship_image, 
+                (spaceship_x_pos, spaceship_y_pos), 
+                (blackhole_x_pos, blackhole_y_pos),
+                (spaceship_width, spaceship_height),
+                sounds, move_success_images, font_path
+            )
+                sounds = {'landed': landed_sound}
+                Success_animation.default_ending(
+                screen, kkanttapia, sounds, 
+                move_success_images, font_path
+            )
+                Success_animation.draw_success_ui(screen, move_success_images, font_path)
+               
+                running = False 
 
         # 기본 성공 
         if remaining_seconds <= 0 and running:
             
-            fade_surface = pygame.Surface((screen_width, screen_height))
-            fade_surface.fill((0, 0, 0)) # 검은색
-            
-            fade_start = pygame.time.get_ticks()
-            fade_duration = 1000 
-            pygame.mixer.music.pause()
-            
-            while True:
-                elapsed = pygame.time.get_ticks() - fade_start
-                if elapsed >= fade_duration:
-                    break
-                    
-                progress = elapsed / fade_duration
-                alpha = int(progress * 255) 
-                
-                fade_surface.set_alpha(alpha)
-                screen.blit(fade_surface, (0, 0))
-                pygame.display.update()
-                clock.tick(60)
-                
-            pygame.time.delay(1000) 
-            landed_sound.play()
-            kkanttapia_rect = kkanttapia.get_rect(center=(screen_width / 2, screen_height / 2))
-            
-            fade_start = pygame.time.get_ticks()
-            fade_duration = 1500 #
-            
-            while True:
-                elapsed = pygame.time.get_ticks() - fade_start
-                if elapsed >= fade_duration:
-                    break
-                
-                progress = elapsed / fade_duration
-                alpha = int(255 - (progress * 255)) 
-                
-                screen.blit(kkanttapia, kkanttapia_rect)
-                fade_surface.set_alpha(alpha)
-                screen.blit(fade_surface, (0, 0))
-                
-                pygame.display.update()
-                clock.tick(60)
-            move_success_cnt = 0
-            
-            success_font = pygame.font.Font(os.path.join(font_path, "DungGeunMo.ttf"), 70)
-            success_text_surface = success_font.render("깐따삐아에 이주 성공하다!", True, (255, 255, 255))
-            text_rect = success_text_surface.get_rect(center=(screen_width / 2, screen_height/3 - 100))
-            
-            while move_success_cnt < 3:
-                for img in move_success_images: 
-                    screen.blit(kkanttapia, kkanttapia_rect) 
-                    screen.blit(img, (0,0)) 
-                    screen.blit(success_text_surface, text_rect)
-                    
-                    pygame.display.update() 
-                    pygame.time.delay(500) 
-                
-                move_success_cnt += 1
+            sounds = {'landed': landed_sound}
 
-            pygame.time.delay(1500) 
+            Success_animation.default_ending(
+                screen, kkanttapia, sounds, 
+                move_success_images, font_path
+            )
+            Success_animation.draw_success_ui(screen, move_success_images, font_path)
             running = False
 
 
