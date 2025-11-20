@@ -5,6 +5,7 @@ import math
 import ui
 import meteor_util
 import Alien
+import Bubble
 from puzzle import puzzle_main
 pygame.init()
 pygame.mixer.init()
@@ -52,7 +53,9 @@ gameover = pygame.image.load(os.path.join(image_path, "gameover.png"))
 warning_img1 = pygame.image.load(os.path.join(image_path, "warning1.png")) 
 warning_img2 = pygame.image.load(os.path.join(image_path, "warning2.png")) 
 alien_img = pygame.image.load(os.path.join(image_path,"alien.png"))
-bubble = pygame.image.load(os.path.join(image_path,"bubble.png"))
+bubble_img = pygame.image.load(os.path.join(image_path,"bubble.png"))
+
+bubble=Bubble.Bubble(bubble_img)
 #블랙홀
 blackhole =pygame.image.load(os.path.join(image_path,"blackhole.png"))
 success=pygame.image.load(os.path.join(image_path,"success.png"))
@@ -79,7 +82,6 @@ fuel_Indicator=ui.fuel_indicator(78,760,fuelindicator_img,left_fuel,100)
 
 alien=Alien.Alien(alien_img)
 
-bubble = pygame.transform.scale(bubble, (120, 120)) # 우주선보다 살짝 크게
 is_shield_active = False # 쉴드가 활성화됐는지 알려주는 변수
 shield_start_time = 0 # 쉴드가 언제 시작됐는지 기록할 변수
 
@@ -569,13 +571,9 @@ while running:
                 continue
             if is_shield_active:
             # 쉴드가 켜져 있을 때 운석과 부딪히면 운석만 파괴
-                shield_center_x = spaceship_x_pos + spaceship_radius # 쉴드 중심 우주선과 같도록 설졍..
-                shield_center_y = spaceship_y_pos + spaceship_radius
-                meteor_center_x = meteor.center_x 
-                meteor_center_y = meteor.center_y
-                distance = math.sqrt((shield_center_x - meteor_center_x)**2 + (shield_center_y - meteor_center_y)**2)
-                
-                if distance < spaceship_radius + meteor_radius: #우주선이랑 충돌했는지
+                shield_cx = spaceship_x_pos + spaceship_radius
+                shield_cy = spaceship_y_pos + spaceship_radius
+                if meteor.check_collision(shield_cx, shield_cy, spaceship_radius):
                     bubble_collision_sound.play()
                     meteors.remove(meteor) # 부딪힌 운석 제거
                     meteors.append(meteor_util.Meteor(game_elapsed_time, screen_width, screen_height))
@@ -587,11 +585,8 @@ while running:
             # 충돌 판정
                 spaceship_center_x = spaceship_x_pos + spaceship_radius
                 spaceship_center_y = spaceship_y_pos + spaceship_radius
-                meteor_center_x = meteor.center_x
-                meteor_center_y = meteor.center_y
-                distance = math.sqrt((spaceship_center_x - meteor_center_x)**2 + (spaceship_center_y - meteor_center_y)**2)
 
-                if distance < spaceship_radius + meteor_radius: #충돌하면 겜 오버
+                if meteor.check_collision(spaceship_center_x, spaceship_center_y, spaceship_radius):
                     left_life = left_life - 1 
                     meteors.remove(meteor)    # 부딪힌 운석은 일단 제거
                     if left_life==0:
@@ -660,8 +655,7 @@ while running:
     #쉴드
     
     if is_shield_active:
-        bubble_rect = bubble.get_rect(center = (spaceship_x_pos + spaceship_width/2, spaceship_y_pos + spaceship_height/2))
-        screen.blit(bubble, bubble_rect)
+        bubble.draw(spaceship_x_pos, spaceship_y_pos, spaceship_width,spaceship_height, screen)
 
     defect_font = pygame.font.Font(os.path.join(font_path, "DungGeunMo.ttf"), 60)
     defect_text_surface = defect_font.render("TAB 키를 눌러 우주선을 수리하십시오!", True, (255, 255, 255))

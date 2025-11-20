@@ -1,6 +1,7 @@
 import pygame
 import random
 import math
+
 class Meteor:
     images=[]
     def __init__(self, current_time, screen_width, screen_height,is_blackhole_active=False):
@@ -51,7 +52,12 @@ class Meteor:
         self.to_x *= ratio
         self.to_y *= ratio
 
-
+    def check_collision(self, target_x, target_y, target_radius):
+        distance = math.sqrt((self.center_x - target_x)**2 + (self.center_y - target_y)**2)
+        if distance<self.radius+target_radius:
+            return 1
+        return 0
+    
     def update(self):
         #음 어떻게 해야 운석의 움직임이 좀 자연스럽게 보이려나ㅏㅏㅏㅏㅏ..
         self.to_x += random.uniform(-0.3, 0.3) 
