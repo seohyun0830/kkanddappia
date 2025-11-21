@@ -1,6 +1,6 @@
 import pygame
 import os
-
+import Blackhole
 def draw_success_ui(screen, move_success_images, font_path):
    
     success_font = pygame.font.Font(os.path.join(font_path, "DungGeunMo.ttf"), 70)
@@ -77,8 +77,8 @@ def blackhole_ending(screen, background, blackhole_img, spaceship_img, spaceship
     
     screen_width, screen_height = screen.get_size()
 
-    bh_center_x = bh_x + blackhole_img.get_width() / 2
-    bh_center_y = bh_y + blackhole_img.get_height() / 2
+    bh_center_x = bh_x + 120 / 2
+    bh_center_y = bh_y +120/2
     
     spaceship_radius = start_width / 2 * 0.7
 

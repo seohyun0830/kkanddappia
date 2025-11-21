@@ -6,6 +6,7 @@ import ui
 import meteor_util
 import Alien
 import Bubble
+import Blackhole
 import Success_animation
 from puzzle import puzzle_main
 pygame.init()
@@ -58,7 +59,7 @@ bubble_img = pygame.image.load(os.path.join(image_path,"bubble.png"))
 
 bubble=Bubble.Bubble(bubble_img)
 #블랙홀
-blackhole =pygame.image.load(os.path.join(image_path,"blackhole.png"))
+blackhole_img =pygame.image.load(os.path.join(image_path,"blackhole.png"))
 success=pygame.image.load(os.path.join(image_path,"success.png"))
 meteor_collision=pygame.image.load(os.path.join(image_path,"meteor_collision.png"))
 meteor_collision=pygame.transform.scale(meteor_collision,(1200,800))
@@ -86,10 +87,10 @@ alien=Alien.Alien(alien_img)
 is_shield_active = False # 쉴드가 활성화됐는지 알려주는 변수
 shield_start_time = 0 # 쉴드가 언제 시작됐는지 기록할 변수
 
-blackhole= pygame.transform.scale(blackhole, (120, 120)) # 블랙홀 크기 조절
-blackhole_radius = 120 / 2 * 0.4 # 충돌 판정 범위 (살짝 작게)
-blackhole_x_pos = 0
-blackhole_y_pos = 0
+
+#블랙홀 
+blackhole=Blackhole.Blackhole(blackhole_img)
+#######전역변수
 blackhole_appeared = False # 블랙홀 등장 스위치
 
 keyborad_rotation=0 #키보드 회전 변수
@@ -152,7 +153,7 @@ move_success_images=[
 #1200x800
 
 start_ticks = pygame.time.get_ticks()
-
+#이것들도 다 전역으로 써야될 듯
 alien_once = False
 is_defect_event = False     #결함 체크할 변수
 was_defect_paused = False 
@@ -324,33 +325,8 @@ while running:
             blackhole_appeared = True
             for meteor in meteors:
                 meteor.blackhole_appeared_func()
-            margin_top = 100    
-            margin_bottom = 250 
-            margin_left = 200    
-            margin_right = 250    
-            
-            blackhole_width = blackhole.get_width() # 120
-            blackhole_height = blackhole.get_height() # 120
+            blackhole.make_blackhole()
 
-            safe_x_min = margin_left
-            safe_x_max = screen_width - margin_right - blackhole_width
-            safe_y_min = margin_top
-            safe_y_max = screen_height - margin_bottom - blackhole_height
-
-            side = random.choice(['top', 'bottom', 'left', 'right'])
-
-            if side == 'top':
-                blackhole_x_pos = random.randint(safe_x_min, safe_x_max)
-                blackhole_y_pos = safe_y_min 
-            elif side == 'bottom':
-                blackhole_x_pos = random.randint(safe_x_min, safe_x_max)
-                blackhole_y_pos = safe_y_max
-            elif side == 'left':
-                blackhole_x_pos = safe_x_min
-                blackhole_y_pos = random.randint(safe_y_min, safe_y_max)
-            else: 
-                blackhole_x_pos = safe_x_max
-                blackhole_y_pos = random.randint(safe_y_min, safe_y_max)
         if game_elapsed_time >53  and blackhole_appeared:
             blackhole_appeared=False
 
@@ -361,19 +337,19 @@ while running:
         
         #블랙홀 성공화면 
         if blackhole_appeared:
-            bh_center_x = blackhole_x_pos + blackhole_radius
-            bh_center_y = blackhole_y_pos + blackhole_radius
+            bh_center_x = blackhole.center_x
+            bh_center_y = blackhole.center_y
             sp_center_x = spaceship_x_pos + spaceship_radius
             sp_center_y = spaceship_y_pos + spaceship_radius
             distance = math.sqrt((sp_center_x - bh_center_x)**2 + (sp_center_y - bh_center_y)**2)
 
-            if distance < spaceship_radius + blackhole_radius and running:
+            if distance < spaceship_radius + blackhole.radius and running:
                 sounds = {'to_blackhole': to_blackhole_sound}
                 Success_animation.blackhole_ending(
-                screen, background, blackhole, 
+                screen, background, blackhole.image, 
                 current_spaceship_image, 
                 (spaceship_x_pos, spaceship_y_pos), 
-                (blackhole_x_pos, blackhole_y_pos),
+                (blackhole.x_pos, blackhole.y_pos),
                 (spaceship_width, spaceship_height),
                 sounds, move_success_images, font_path
             )
@@ -492,7 +468,8 @@ while running:
     if alien.is_active:
         alien.draw(screen)
     if blackhole_appeared:
-        screen.blit(blackhole, (blackhole_x_pos, blackhole_y_pos))
+        blackhole.draw(screen)
+
 
     current_spaceship_image = spaceship_images[keyborad_rotation]
 
