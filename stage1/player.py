@@ -71,7 +71,7 @@ class Cplayer:
         if (self.f_isLblocked(under_map,itemMap)): # 갈 수 없으면
             self.motion = 3
             self.motionTime = 0
-            self.f_breaking(under_map)
+            if (self.isOnGround): self.f_breaking(under_map)
             self.toX = 0
         else:   # 갈 수 있으면
             self.blockTime = 0
@@ -80,6 +80,8 @@ class Cplayer:
         self.realX -= self.toX
 
     def f_right(self, under_map, itemMap):
+        if (not self.isOnGround): return
+
         self.direction = 1
         self.motionTime += 1
         self.f_motion()
@@ -88,7 +90,7 @@ class Cplayer:
         if (self.f_isRblocked(under_map, itemMap)): # 갈 수 없으면
             self.motion = 3
             self.motionTime = 0
-            self.f_breaking(under_map)
+            if (self.isOnGround): self.f_breaking(under_map)
             self.toX = 0
         else:   # 갈 수 있으면
             self.blockTime = 0

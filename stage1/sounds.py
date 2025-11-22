@@ -9,4 +9,4 @@ pygame.mixer.init() # 믹서 초기화
 # 효과음은 객체로 미리 로드
 sfx_jump = pygame.mixer.Sound("stage1/assets/jump.wav")
 sfx_step = pygame.mixer.Sound("stage1/assets/step.wav")
-sfx_breaking = pygame.mixer.Sound("stage1/assets/breaking.mp3")
+sfx_break = pygame.mixer.Sound("stage1/assets/breaking.mp3")
