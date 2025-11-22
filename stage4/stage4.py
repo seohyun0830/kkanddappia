@@ -8,24 +8,15 @@ import Alien
 import Bubble
 import Blackhole
 import Success_animation
+import collision_ending
+import Spaceship
 from puzzle import puzzle_main
 pygame.init()
 pygame.mixer.init()
+'''
+틀린그림 찾기가 넘 많음
 
-#############전역변수 해야할 거###############
-# easy,hard
-#연료 게이지
-#다시하기
-#############################################
-
-#############################################
-#클래스 분리
-#블랙홀
-#외계인
-#우주선
-#시?간? 해야되나? 음 안해도 되는 듯
-#쉴드
-#애니메이션들
+'''
 #############################################
 screen_width=1200
 screen_height=800
@@ -48,7 +39,6 @@ to_blackhole_sound=pygame.mixer.Sound(os.path.join(audio_path,"to_blackhole.mp3"
 landed_sound=pygame.mixer.Sound(os.path.join(audio_path,"landed.mp3"))
 alien_sound=pygame.mixer.Sound(os.path.join(audio_path,"contact_alien.mp3"))
 explosion_sound=pygame.mixer.Sound(os.path.join(audio_path,"explosion.mp3"))
-
 
 background = pygame.image.load(os.path.join(image_path,"background_color.png"))
 gameover = pygame.image.load(os.path.join(image_path, "gameover.png")) 
@@ -73,7 +63,7 @@ navigation_screen=pygame.image.load(os.path.join(image_path,"navigation_screen.p
 navi=pygame.image.load(os.path.join(image_path,"spaceship_navi.png"))
 navigation_movement=ui.navigation(navi)
 
-fuelgauge=pygame.image.load(os.path.join(image_path, "fuelgauge.png")) #일단 눈대중으로.. 각도 맞춰놓긴 햇는데 계산해야할 듯
+fuelgauge=pygame.image.load(os.path.join(image_path, "fuelgauge.png")) 
 fuel_gauge=ui.fuelgauge(0,660,fuelgauge)
 
 left_fuel=80   #일단 80
@@ -87,10 +77,8 @@ alien=Alien.Alien(alien_img)
 is_shield_active = False # 쉴드가 활성화됐는지 알려주는 변수
 shield_start_time = 0 # 쉴드가 언제 시작됐는지 기록할 변수
 
-
 #블랙홀 
 blackhole=Blackhole.Blackhole(blackhole_img)
-#######전역변수
 blackhole_appeared = False # 블랙홀 등장 스위치
 
 keyborad_rotation=0 #키보드 회전 변수
@@ -116,25 +104,13 @@ meteor_util.Meteor.images=meteor_images
 
 meteors=[]
 #  우주선 이미지 불러오기
-spaceship_images=[
-    pygame.image.load(os.path.join(image_path,"spaceship_0.png")),   
-    pygame.image.load(os.path.join(image_path,"spaceship_90.png")),  
-    pygame.image.load(os.path.join(image_path,"spaceship_180.png")), 
-    pygame.image.load(os.path.join(image_path,"spaceship_270.png"))] 
-
-for i in range(len(spaceship_images)):
-    spaceship_images[i] = pygame.transform.scale(spaceship_images[i], (80, 80))
-
-#일단 기본 우주선 모양으로 . . .
-spaceship_size = spaceship_images[0].get_rect().size
-spaceship_width = spaceship_size[0]
-spaceship_height = spaceship_size[1]
-spaceship_radius = spaceship_width / 2 *0.7
-spaceship_x_pos = (screen_width-spaceship_width)/2
-spaceship_y_pos =(screen_height-spaceship_height)/2
-spaceship_to_x = 0  
-spaceship_to_y = 0 
-spaceship_speed = 7
+spaceship_img_paths = [
+    os.path.join(image_path,"spaceship_0.png"),
+    os.path.join(image_path,"spaceship_90.png"),
+    os.path.join(image_path,"spaceship_180.png"),
+    os.path.join(image_path,"spaceship_270.png")
+]
+spaceship = Spaceship.Spaceship(spaceship_img_paths)
 
 life_images=[
     pygame.image.load(os.path.join(image_path,"life1.png")),   
@@ -202,7 +178,6 @@ while running:
     minutes = int(remaining_seconds // 60)
     seconds = int(remaining_seconds % 60)
     timer_text_str = f"{minutes:02}:{seconds:02}"
-    
  
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
@@ -237,51 +212,17 @@ while running:
                     pygame.time.delay(1000)
                     pygame.mixer.music.unpause()
         else: #결함 없을 때 키보드 먹도록..(운석 충돌 때문에 일단 이렇게 둠)
-            if event.type ==pygame.KEYDOWN:
-                if keyborad_rotation==0:
-                    if event.key ==pygame.K_LEFT: spaceship_to_x = -spaceship_speed
-                    elif event.key==pygame.K_RIGHT: spaceship_to_x = spaceship_speed
-                    elif event.key==pygame.K_DOWN: spaceship_to_y = spaceship_speed
-                    elif event.key==pygame.K_UP: spaceship_to_y = -spaceship_speed
-                elif keyborad_rotation==1:
-                    if event.key ==pygame.K_LEFT: spaceship_to_y = -spaceship_speed
-                    elif event.key==pygame.K_RIGHT: spaceship_to_y = spaceship_speed
-                    elif event.key==pygame.K_DOWN: spaceship_to_x = -spaceship_speed
-                    elif event.key==pygame.K_UP: spaceship_to_x = spaceship_speed
-                elif keyborad_rotation==2:
-                    if event.key ==pygame.K_LEFT: spaceship_to_x = spaceship_speed
-                    elif event.key==pygame.K_RIGHT: spaceship_to_x = -spaceship_speed
-                    elif event.key==pygame.K_DOWN: spaceship_to_y = -spaceship_speed
-                    elif event.key==pygame.K_UP: spaceship_to_y = spaceship_speed
-                else:
-                    if event.key ==pygame.K_LEFT: spaceship_to_y = spaceship_speed
-                    elif event.key==pygame.K_RIGHT: spaceship_to_y = -spaceship_speed
-                    elif event.key==pygame.K_DOWN: spaceship_to_x = spaceship_speed
-                    elif event.key==pygame.K_UP: spaceship_to_x = -spaceship_speed
-                
-            if event.type==pygame.KEYUP:
-                if keyborad_rotation==0: # 기본
-                    if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: spaceship_to_x = 0
-                    elif event.key == pygame.K_UP or event.key == pygame.K_DOWN: spaceship_to_y = 0
-                elif keyborad_rotation==1: # 90도
-                    if event.key == pygame.K_UP or event.key == pygame.K_DOWN: spaceship_to_x = 0
-                    elif event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: spaceship_to_y = 0
-                elif keyborad_rotation==2: # 180도
-                    if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: spaceship_to_x = 0
-                    elif event.key == pygame.K_UP or event.key == pygame.K_DOWN: spaceship_to_y = 0
-                else: # 270도
-                    if event.key == pygame.K_UP or event.key == pygame.K_DOWN: spaceship_to_x = 0
-                    elif event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: spaceship_to_y = 0
+            spaceship.hard_handle_input(event)
 
     remaining_seconds = max(0, TOTAL_GAME_TIME - game_elapsed_time)  #남은 시간
 
     if not is_defect_event: #이것도 결함 아닐 때
         if game_elapsed_time >= next_rotation:
-            keyborad_rotation = (keyborad_rotation + 1) % 4 # 4가지 로테이션
+            spaceship.idx=(spaceship.idx+1)%4
             rotate_sound.play()
             next_rotation += 25.0 
-            spaceship_to_y=0
-            spaceship_to_x=0
+            spaceship.to_x=0
+            spaceship.to_y=0
         if remaining_seconds>=84:
             navigation_movement.update(1)
         elif remaining_seconds>=68:
@@ -294,9 +235,8 @@ while running:
                 navigation_movement.update(5)
         elif remaining_seconds>=0:
                 navigation_movement.update(6)
-
         
-        navigation_movement.draw(screen)    #왜 근데 여기에 넣는데 안그려지는 거지?
+        navigation_movement.draw(screen)    
         #무적 시간 끝났나
         if is_invincible and game_elapsed_time - invincible_start_time > 2: # 2초간 무적
             is_invincible = False
@@ -305,22 +245,19 @@ while running:
         if game_elapsed_time < 5: #5초 이하일 때는 3개만 만들고
             max_meteors = 3 
         else: max_meteors = 10 #이후에는 10개씩
-        
 
-        if game_elapsed_time > 5 and game_elapsed_time<38 and not alien.is_active and not alien_once:    #30초 넘으면 외계인 나오게
+        if game_elapsed_time > 25 and game_elapsed_time<38 and not alien.is_active and not alien_once:    #30초 넘으면 외계인 나오게
            alien.appearance()
         if game_elapsed_time >38:    #30초 넘으면 외계인 나오게
             alien.is_active=False
 
         if alien.is_active and not is_shield_active: #쉴드 받기 전
-            if alien.detect_collision(spaceship_x_pos,spaceship_y_pos,spaceship_radius,alien.is_active):
+            if alien.detect_collision(spaceship.x_pos,spaceship.y_pos,spaceship.radius,alien.is_active):
                 alien_sound.play()
                 is_shield_active=True
                 alien_once=True
                 shield_start_time=game_elapsed_time
         
-        # navigation_movement.draw(screen)
-        ####################
         if game_elapsed_time >= 47 and game_elapsed_time<=53 and not blackhole_appeared:  #블랙홀 생성
             blackhole_appeared = True
             for meteor in meteors:
@@ -337,20 +274,16 @@ while running:
         
         #블랙홀 성공화면 
         if blackhole_appeared:
-            bh_center_x = blackhole.center_x
-            bh_center_y = blackhole.center_y
-            sp_center_x = spaceship_x_pos + spaceship_radius
-            sp_center_y = spaceship_y_pos + spaceship_radius
-            distance = math.sqrt((sp_center_x - bh_center_x)**2 + (sp_center_y - bh_center_y)**2)
+            distance = math.sqrt((spaceship.center_x - blackhole.center_x)**2 + (spaceship.center_y - blackhole.center_y)**2)
 
-            if distance < spaceship_radius + blackhole.radius and running:
+            if distance < spaceship.radius + blackhole.radius and running:
                 sounds = {'to_blackhole': to_blackhole_sound}
                 Success_animation.blackhole_ending(
                 screen, background, blackhole.image, 
-                current_spaceship_image, 
-                (spaceship_x_pos, spaceship_y_pos), 
+                spaceship.images[spaceship.idx], 
+                (spaceship.x_pos, spaceship.y_pos), 
                 (blackhole.x_pos, blackhole.y_pos),
-                (spaceship_width, spaceship_height),
+                (spaceship.width, spaceship.height),
                 sounds, move_success_images, font_path
             )
                 sounds = {'landed': landed_sound}
@@ -373,21 +306,9 @@ while running:
             )
             Success_animation.draw_success_ui(screen, move_success_images, font_path)
             running = False
-
-
         #운석 계속 만들기
         if len(meteors) < max_meteors:
             meteors.append(meteor_util.Meteor(game_elapsed_time, screen_width, screen_height,blackhole_appeared))
-
-        #우주선 위치 업뎃
-        spaceship_x_pos += spaceship_to_x
-        spaceship_y_pos += spaceship_to_y 
-
-        # 화면 경계 처리 (우주선이 화면 못 벗어나게)
-        if spaceship_x_pos < 0: spaceship_x_pos = 0
-        elif spaceship_x_pos > screen_width - spaceship_width: spaceship_x_pos = screen_width - spaceship_width
-        if spaceship_y_pos < 0: spaceship_y_pos = 0
-        elif spaceship_y_pos > screen_height - spaceship_height: spaceship_y_pos = screen_height - spaceship_height
 
         # 운석 처리
         for meteor in meteors[:]:
@@ -397,45 +318,30 @@ while running:
                 continue
             if is_shield_active:
             # 쉴드가 켜져 있을 때 운석과 부딪히면 운석만 파괴
-                shield_cx = spaceship_x_pos + spaceship_radius
-                shield_cy = spaceship_y_pos + spaceship_radius
-                if meteor.check_collision(shield_cx, shield_cy, spaceship_radius):
+                shield_cx =spaceship.center_x
+                shield_cy =spaceship.center_y
+                if meteor.check_collision(shield_cx, shield_cy, spaceship.radius):
                     bubble_collision_sound.play()
                     meteors.remove(meteor) # 부딪힌 운석 제거
                     meteors.append(meteor_util.Meteor(game_elapsed_time, screen_width, screen_height))
             else:
             #쉴드 안켜져있을 때
                 #무적 상태면 건너뛰기
-                if is_invincible:
+                if spaceship.is_invincible:
                     continue
-            # 충돌 판정
-                spaceship_center_x = spaceship_x_pos + spaceship_radius
-                spaceship_center_y = spaceship_y_pos + spaceship_radius
-
-                if meteor.check_collision(spaceship_center_x, spaceship_center_y, spaceship_radius):
+                if meteor.check_collision(spaceship.center_x, spaceship.center_y, spaceship.radius):
                     left_life = left_life - 1 
                     meteors.remove(meteor)    # 부딪힌 운석은 일단 제거
                     if left_life==0:
-                        pygame.mixer.music.pause()
-                        explosion_sound.play()
-                        collision_rect = meteor_collision.get_rect(center=(screen_width / 2, screen_height / 2))
-                        screen.blit(meteor_collision, collision_rect)
-                        pygame.display.update() # 화면 업데이트해서 보여주기
-                        pygame.time.delay(1500) # 2초 대기
-
-                        game_over_rect = gameover.get_rect(center=(screen_width / 2, screen_height / 2))
-                        screen.blit(gameover, game_over_rect)
-                        pygame.display.update() # 화면 업데이트해서 보여주기
-                        pygame.time.delay(1500) # 2초 대기
+                        collision_ending.collision_ending(screen,meteor_collision,gameover,explosion_sound)
                         running = False
                         break
                     else:
-                        is_invincible=True
+                        spaceship.set_invincible(game_elapsed_time)
                         collision_sound.play()
                         invincible_start_time=game_elapsed_time
     if not running:
         break
-    ####################33
     #연료 
     screen.blit(background,(0,0))
     fuel_text_str = f"{left_fuel}%"
@@ -448,6 +354,9 @@ while running:
 
     screen.blit(navigation_screen,(950,550))
     navigation_movement.draw(screen)
+    spaceship.check_invincible_end(game_elapsed_time)
+    spaceship.update()
+    spaceship.draw(screen)
 
     if left_life==4:
         screen.blit(life_images[3],(1000,10))
@@ -469,35 +378,24 @@ while running:
         alien.draw(screen)
     if blackhole_appeared:
         blackhole.draw(screen)
-
-
-    current_spaceship_image = spaceship_images[keyborad_rotation]
-
-    #무적
-    if is_invincible:
-        if (pygame.time.get_ticks() // 100) % 2 == 0: 
-            screen.blit(current_spaceship_image,(spaceship_x_pos,spaceship_y_pos)) 
-    else:
-        screen.blit(current_spaceship_image,(spaceship_x_pos,spaceship_y_pos))
     #쉴드
-    
     if is_shield_active:
-        bubble.draw(spaceship_x_pos, spaceship_y_pos, spaceship_width,spaceship_height, screen)
+        bubble.draw(spaceship.x_pos, spaceship.y_pos, spaceship.width,spaceship.height, screen)
 
     defect_font = pygame.font.Font(os.path.join(font_path, "DungGeunMo.ttf"), 60)
     defect_text_surface = defect_font.render("TAB 키를 눌러 우주선을 수리하십시오!", True, (255, 255, 255))
     text_rect = defect_text_surface.get_rect(center=(screen_width / 2, screen_height/2+20))
     
     if is_defect_event: 
+        spaceship.to_x=0
+        spaceship.to_y=0
         flicker_value = (pygame.time.get_ticks() // 200) % 2 
         if flicker_value == 0:
             screen.blit(warning_img1, (0,0))
         else: 
             screen.blit(warning_img2, (0,0))
-        
         screen.blit(defect_text_surface,text_rect)
   
-    
     pygame.display.update()
 
 pygame.quit()

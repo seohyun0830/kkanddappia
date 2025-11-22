@@ -50,15 +50,4 @@ class Blackhole:
     def center_y(self):
         return self.y_pos+self.radius
     
-       
-
-
-
-
-
-
-
-
-
-            
-        
+    
