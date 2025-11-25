@@ -105,9 +105,9 @@ def f_stage1(window):
         # --- [3. 렌더링 (그리기)] ---
         window.blit(images.background, (0,0)) # 배경
 
+        Map.f_drawMap(window, Player.direction, bx, by, Player.blockMotion)
         Map.f_drawItemMap(window) # 아이템
         # 맵 그리기 (인자가 많으니 순서 주의)
-        Map.f_drawMap(window, Player.direction, bx, by, Player.blockMotion)
         
         Player.f_drawPlayer(window) # 플레이어
 

@@ -176,7 +176,8 @@ class Cplayer:
     def f_breaking(self,under_map):
         self.blockTime += 1
         if self.blockTime > 30:
-            sounds.sfx_break.play()
+            #if self.blockMotion == 3: 
+            #    sounds.sfx_break.play()
             self.blockMotion = 0
             self.pickMotion = 1
             self.blockTime = 0
@@ -187,15 +188,18 @@ class Cplayer:
             elif (self.direction == 2 or self.direction == 3):
                 under_map[self.blockY + 1][self.blockX] = 1
         elif self.blockTime > 20:
-            sounds.sfx_break.play()
+            if (self.blockMotion == 2):
+                sounds.sfx_break.play() 
             self.blockMotion = 3
             self.pickMotion = 0
         elif self.blockTime > 10:
-            sounds.sfx_break.play()
+            if (self.blockMotion == 1):
+                sounds.sfx_break.play()
             self.blockMotion = 2
             self.pickMotion = 1
         elif self.blockTime > 0:
-            sounds.sfx_break.play()
+            if (self.blockMotion == 0):
+                sounds.sfx_break.play()
             self.blockMotion = 1
             self.pickMotion = 0
 
