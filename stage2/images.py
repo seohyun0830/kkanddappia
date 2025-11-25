@@ -1,6 +1,6 @@
 import pygame
 import os
-from setting import *
+from .setting import *
 
 class ImageManager:
     def __init__(self):

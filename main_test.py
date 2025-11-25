@@ -5,6 +5,8 @@ from stage1.stage1_main import f_stage1
 from button.isClicked import f_isFail
 from stage1.images import water_back, magma_back
 
+from stage2.stage2_main import *
+
 # --- [상수 정의] 상태를 나타내는 숫자들에 이름을 붙입니다 ---
 STATE_EXIT   = -1  # 게임 종료  
 STATE_START  = 0   # 시작 화면
@@ -26,6 +28,8 @@ pygame.display.set_caption("Kkanddappia!")
 # --- [메인 루프] ---
 current_state = STATE_START # 현재 상태 (기존 stageFlag)
 mode = -1                   # 난이도 (1: Easy, 2: Hard)
+
+stage2 = Stage2(window)
 
 while current_state != STATE_EXIT:
     
@@ -71,9 +75,7 @@ while current_state != STATE_EXIT:
     
     # 4. 2스테이지 (예정)
     elif current_state == STATE_STAGE2:
-        import stage2.stage2_main
-        #import stage4.stage4
-        break # 임시 종료
+        stage2.run()
 
 # 종료 처리
 pygame.quit()

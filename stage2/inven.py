@@ -1,6 +1,6 @@
 import pygame
 from collections import Counter
-from setting import *
+from .setting import *
 
 class Inventory:
     def __init__(self, stage):

@@ -1,5 +1,5 @@
 import pygame
-from setting import *
+from .setting import *
 
 class Dictionary:
     def __init__(self, stage):

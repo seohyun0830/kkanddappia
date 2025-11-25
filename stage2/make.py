@@ -1,5 +1,5 @@
 import pygame
-from setting import *
+from .setting import *
 
 class Crafting:
     def __init__(self, stage):

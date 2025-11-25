@@ -1,6 +1,6 @@
 import pygame
 import math
-from setting import *
+from .setting import *
 
 class MapManager:
     def __init__(self, stage):

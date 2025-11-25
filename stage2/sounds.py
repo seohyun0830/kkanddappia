@@ -1,6 +1,6 @@
 import pygame
 import os
-from setting import ASSETS_PATH
+from .setting import ASSETS_PATH
 
 class SoundManager:
     def __init__(self):

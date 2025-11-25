@@ -1,15 +1,15 @@
 import pygame
 import sys
-from setting import *
-from images import ImageManager
-from sounds import SoundManager
+from .setting import *
+from .images import ImageManager
+from .sounds import SoundManager
 
-from player import Player
-from map import MapManager
-from dic import Dictionary
-from inven import Inventory
-from make import Crafting
-from sounds import SoundManager
+from .player import Player
+from .map import MapManager
+from .dic import Dictionary
+from .inven import Inventory
+from .make import Crafting
+from .sounds import SoundManager
 
 #제발되거라제발
 
