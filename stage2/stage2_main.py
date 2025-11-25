@@ -11,6 +11,8 @@ from inven import Inventory
 from make import Crafting
 from sounds import SoundManager
 
+#제발되거라제발
+
 class Stage2:
     def __init__(self, screen):
         self.screen = screen
