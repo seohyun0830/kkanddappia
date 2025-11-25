@@ -23,23 +23,30 @@ class Meteor:
             self.pos_y = random.randint(-200, 0)
             self.to_x = -self.speed
             self.to_y = self.speed
+            self.base_angle = 135
+
         elif self.idx == 1:  # 왼쪽 위
             self.pos_x = random.randint(-200, 0)
             self.pos_y = random.randint(-200, 0)
             self.to_x = self.speed
             self.to_y = self.speed
+            self.base_angle = 45
+
         elif self.idx == 2:  # 오른쪽 아래
             self.pos_x = random.randint(screen_width, screen_width + 200)
             self.pos_y = random.randint(screen_height, screen_height + 200)
             self.to_x = -self.speed
             self.to_y = -self.speed
+            self.base_angle = -135
         else:  # 왼쪽 아래
             self.pos_x = random.randint(-200, 0)
             self.pos_y = random.randint(screen_height, screen_height + 200)
             self.to_x = self.speed
             self.to_y = -self.speed
+            self.base_angle = -45
             
-        self.image = Meteor.images[self.idx]
+        self.original_image = Meteor.images[self.idx]
+        self.image = self.original_image
 
     
     def blackhole_appeared_func(self):
@@ -59,16 +66,24 @@ class Meteor:
         return 0
     
     def update(self):
-        #음 어떻게 해야 운석의 움직임이 좀 자연스럽게 보이려나ㅏㅏㅏㅏㅏ..
-        self.to_x += random.uniform(-0.3, 0.3) 
-        self.to_y += random.uniform(-0.5, 0.5)
+        
+        self.to_x += random.uniform(-0.15, 0.15) 
+        self.to_y += random.uniform(-0.12, 0.12)
 
         self.pos_x += self.to_x
         self.pos_y += self.to_y
 
+        move_angle = math.degrees(math.atan2(self.to_y, self.to_x))
+       
+        final_angle = -move_angle + self.base_angle
+        self.image = pygame.transform.rotate(self.original_image, final_angle)
+
+
 
     def draw(self, screen):
-        screen.blit(self.image, (self.pos_x, self.pos_y))
+        new_rect = self.image.get_rect(center=(self.center_x, self.center_y))
+        screen.blit(self.image, new_rect.topleft)
+        #screen.blit(self.image, (self.pos_x, self.pos_y))
 
 
     def is_off_screen(self, screen_width, screen_height):
