@@ -3,6 +3,8 @@ from . import inven
 from . import player
 from . import map
 from . import images
+from . import sounds
+
 
 def f_stage1(window):
     # --- [초기화] ---
@@ -31,7 +33,7 @@ def f_stage1(window):
 
     play = True
     while play:
-        deltaTime = fps.tick(60)
+        deltaTime = fps.tick(50)
         
         # --- [1. 이벤트 처리] ---
         for event in pygame.event.get():        
@@ -86,7 +88,9 @@ def f_stage1(window):
         if keys[pygame.K_UP]:
             if bx == col - 3 and by == 0: return -1 # 탈출 성공
             if Map.itemMap[by][bx] == 4: Player.f_up(Map.itemMap) # 사다리 타기
-            else: Player.f_jump() # 점프
+            else: 
+                Player.f_jump() # 점프
+                
 
         # ★ 최적화: 플레이어 위치가 변했을 때만 아이템 획득 시도
         if (bx != prev_bx) or (by != prev_by):
@@ -101,9 +105,9 @@ def f_stage1(window):
         # --- [3. 렌더링 (그리기)] ---
         window.blit(images.background, (0,0)) # 배경
 
+        Map.f_drawMap(window, Player.direction, bx, by, Player.blockMotion)
         Map.f_drawItemMap(window) # 아이템
         # 맵 그리기 (인자가 많으니 순서 주의)
-        Map.f_drawMap(window, Player.direction, bx, by, Player.blockMotion)
         
         Player.f_drawPlayer(window) # 플레이어
 

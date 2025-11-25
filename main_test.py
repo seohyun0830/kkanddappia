@@ -1,5 +1,6 @@
 import pygame
 from start.start_main import f_start, f_modeSelect
+from start.story import f_easy, f_hard, f_story1, f_story2
 from stage1.stage1_main import f_stage1
 from button.isClicked import f_isFail
 from stage1.images import water_back, magma_back
@@ -8,6 +9,10 @@ from stage1.images import water_back, magma_back
 STATE_EXIT   = -1  # 게임 종료  
 STATE_START  = 0   # 시작 화면
 STATE_MODE   = 1   # 난이도 선택
+STATE_EASY   = 5
+STATE_HARD   = 6
+STATE_STORY1  = 8
+STATE_STORY2  = 9
 STATE_STAGE1 = 11  # 1스테이지 게임 플레이
 STATE_STAGE2 = 20  # 2스테이지 (예정)
 
@@ -32,10 +37,20 @@ while current_state != STATE_EXIT:
 
     # 2. 모드(난이도) 선택 화면
     elif current_state == STATE_MODE:
-        mode = f_modeSelect(window                                                  )
+        mode = f_modeSelect(window)
         if mode == 0:     current_state = STATE_EXIT
-        elif mode != -1:  current_state = STATE_STAGE1 # 모드 선택 완료 -> 1스테이지로
-            
+        elif mode == 1:  current_state = STATE_EASY # 모드 선택 완료 -> 1스테이지로
+        elif mode == 2:  current_state = STATE_HARD
+    
+    # 스토리 연결
+    elif current_state == STATE_EASY:
+        current_state = f_easy(window)
+    elif current_state == STATE_HARD:
+        current_state = f_hard(window)
+    elif current_state == STATE_STORY1:
+        current_state = f_story1(window)
+    elif current_state == STATE_STORY2:
+        current_state = f_story2(window)
     # 3. 1스테이지 플레이         
     elif current_state == STATE_STAGE1:
         # (나중에 f_stage1에 mode를 넘겨줘야 할 수도 있습니다)
