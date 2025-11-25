@@ -33,6 +33,7 @@ inven = pygame.image.load("stage1/assets/invenBlock.png")
 sand = pygame.image.load("stage1/assets/sand.png")
 gem = pygame.image.load("stage1/assets/gem.png")
 fossil = pygame.image.load("stage1/assets/fossil.png")
+paper = pygame.image.load("stage1/assets/paper.png")
 ladder = pygame.image.load("stage1/assets/ladder.png")
 
 rock = pygame.image.load("stage1/assets/rock.png")
@@ -49,12 +50,28 @@ water_back = pygame.image.load("stage1/assets/water_background.png")
 
 restart_btn = pygame.image.load("stage1/assets/restart_btn.png")
 
+rockBlock1 = pygame.image.load("stage1/assets/rock1.png")
+rockBlock2 = pygame.image.load("stage1/assets/rock2.png")
+rockBlock3 = pygame.image.load("stage1/assets/rock3.png")
+rockBlock4 = pygame.image.load("stage1/assets/rock4.png")
+rockBlock5 = pygame.image.load("stage1/assets/rock5.png")
 
+soilBlock1 = pygame.image.load("stage1/assets/soil1.png")
+soilBlock2 = pygame.image.load("stage1/assets/soil2.png")
+soilBlock3 = pygame.image.load("stage1/assets/soil3.png")
+soilBlock4 = pygame.image.load("stage1/assets/soil4.png")
+
+special1 = pygame.image.load("stage1/assets/special1.png")
+special2 = pygame.image.load("stage1/assets/special2.png")
+special3 = pygame.image.load("stage1/assets/special3.png")
 
 # 각 이미지들 배열에 저장
 characters = [[LDc, LW1c, LW2c,LDPc], [RDc, RW1c, RW2c,RDPc], [DLc,DLc,DLc,DLc], [DRc,DRc,DRc,DRc], [U1,U1,U2,U2]]
 blocks = [block1, block2, block3, block4]
 picks = [[pick_LF, pick_LB], [pick_RF, pick_RB],[pick_LF, pick_LD],[pick_RF, pick_RD]]
-items = [gem, sand, fossil, ladder, rock]
+items = [gem, sand, fossil, paper ,ladder, rock]
 magmas = [magma1, magma2, magma3]
 waters = [water1, water2, water3]
+rockBlocks = [rockBlock1, rockBlock2, rockBlock3, rockBlock4, rockBlock5]
+soilBlocks = [soilBlock1, soilBlock2, soilBlock3, soilBlock4]
+specialBlocks = [special1, special2, special3]

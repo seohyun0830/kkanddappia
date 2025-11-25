@@ -4,22 +4,22 @@ from .images import inven, items
 class Cinven:
     def __init__(self, pix, row, col):
         # 초기 아이템 (사다리)
-        self.invenList = [4]
+        self.invenList = [5]
         
         # 인벤토리 크기 설정
-        self.invenRow = row // 2 - 2
+        self.invenRow = row // 2 - 1
         self.invenCol = col // 2 - 1
         self.invenPix = pix * 2
         
         # 사다리 수
-        self.ladderCnt = 2
+        self.ladderCnt = 10
 
         # 폰트 미리 생성
         self.font = pygame.font.Font("DungGeunMO.ttf", 30)
         
         # 아이템 이름 매핑 (f_invenInfo 최적화용)
         self.item_names = {
-            1: "gem", 2: "sand", 3: "fossil", 4: "ladder"
+            1: "gem", 2: "sand", 3: "fossil", 4: "paper", 5: "ladder"
         }
 
     def f_inven(self, window):
@@ -33,7 +33,7 @@ class Cinven:
                 
                 # 1. 좌표 계산
                 x = i * self.invenPix
-                y = j * self.invenPix
+                y = j * self.invenPix - 30
                 
                 # 2. ★ 배경은 무조건 그립니다 ★
                 window.blit(inven, (x, y))
@@ -50,8 +50,10 @@ class Cinven:
                     window.blit(items[item_id - 1], (x + 30, y + 30))
                     
                     # 수량 표시
-                    if item_id == 4:
+                    if item_id == 5:
                         window.blit(ladder_text, (x + 70, y + 75))
+                    elif item_id == 4:
+                        pass
                     else:
                         window.blit(count_text, (x + 70, y + 75))
                        
@@ -80,7 +82,7 @@ class Cinven:
 
     def f_isLadder(self, clickX, clickY):
         for idx, item_id in enumerate(self.invenList):
-            if item_id == 4: # 사다리인 경우만 좌표 확인
+            if item_id == 5: # 사다리인 경우만 좌표 확인
                 col_idx = idx % (self.invenCol - 1)
                 row_idx = idx // (self.invenCol - 1)
                 
@@ -93,7 +95,7 @@ class Cinven:
 
     def f_ladder(self, mouseX, mouseY, window):
         # 드래그 중인 사다리 이미지 그리기
-        window.blit(items[3], (mouseX - 30, mouseY - 30))
+        window.blit(items[4], (mouseX - 30, mouseY - 30))
 
 
     def f_putLadder(self, underMap, itemMap, upX, upY):
@@ -108,13 +110,13 @@ class Cinven:
         # 설치 조건: 빈 공간(1)이고 아이템이 없어야(0) 함
         # (대장님 코드: underMap[..]==1 이 빈공간이라고 가정)
         if underMap[by][bx] == 1 and itemMap[by][bx] == 0:
-            itemMap[by][bx] = 4 # 사다리 설치 완료
+            itemMap[by][bx] = 5 # 사다리 설치 완료
             # (성공했으니 invenList에서 뺄 필요 없음. f_ladder에서 이미 뺐다고 가정)
             
         # 설치 실패: 땅(0)이거나 뭔가 있음 -> 사다리 돌려받기
         elif underMap[by][bx] == 0 or itemMap[by][bx] != 0:
             if (self.ladderCnt <= 0):
-                self.invenList.append(4)
+                self.invenList.append(5)
                 self.invenList.sort()
 
             self.ladderCnt += 1
@@ -124,7 +126,9 @@ class Cinven:
     def f_getItem(self, itemMap, blockX, blockY):
         # 아이템 획득 (1:광석, 2:흙)
         # 범위 체크 (3 미만 -> 1, 2)
-        if 0 < itemMap[blockY][blockX] < 3:
+        if (len(self.invenList) >= self.invenCol * self.invenRow):
+            return
+        if 0 < itemMap[blockY][blockX] < 5:
             self.invenList.append(itemMap[blockY][blockX])
             self.invenList.sort()
             itemMap[blockY][blockX] = 0 # 맵에서 아이템 제거

@@ -13,7 +13,7 @@ class Cmap:
         # 0: 땅(블록 있음), 1: 빈공간(블록 없음)
         self.underMap = [[0] * self.col for _ in range(self.row)]
         
-        # 0: 없음, 1:광석, 2:흙, 3:석탄, 4:사다리, 5:돌, -1:지하수
+        # 0: 없음, 1:광석, 2:흙, 3:석탄, 4:종이, 5:사다리, 6:돌, -1:지하수
         self.itemMap = [[0] * self.col for _ in range(self.row)]
 
     def f_defaultItemMap(self):
@@ -46,19 +46,23 @@ class Cmap:
         ]
         
         # 3. 석탄/화석 (ID: 3)
-        coals = [(0,19), (5,4)]
+        coals = [(0,19), (4,2), (5,4)]
         
-        # 5. 돌 (ID: 5)
-        stones = [(1,9), (5,18), (9,8), (9,10), (12,7)]
+        # 4. 종이 (ID: 4)
+        papers = [(4,5), (1,15), (11,3)]
+
+        # 6. 돌 (ID: 6)
+        stones = [(1,9), (1,3), (1,18), (2,2), (6,13), (5,18), (8,2), (9,8), (9,10), (10,15), (12,7)]
         
         # -1. 지하수 (ID: -1)
-        waters = [(9,9)]
+        waters = [(2,3), (5,19) ,(9,9)]
 
         # 리스트를 순회하며 맵에 적용 (일괄 처리)
         self._apply_items(ores, 1)
         self._apply_items(soils, 2)
         self._apply_items(coals, 3)
-        self._apply_items(stones, 5)
+        self._apply_items(papers, 4)
+        self._apply_items(stones, 6)
         self._apply_items(waters, -1)
 
     # 내부 헬퍼 함수: 리스트의 좌표들을 itemMap에 적용
@@ -68,7 +72,7 @@ class Cmap:
             if 0 <= y < self.row and 0 <= x < self.col:
                 self.itemMap[y][x] = item_id
 
-    def f_drawItemMap(self, window): # 오타 수정 widow -> window
+    def f_drawItemMap(self, window): 
         for i in range(self.row):
             for j in range(self.col):
                 item_id = self.itemMap[i][j]
@@ -97,12 +101,35 @@ class Cmap:
                 pos = (j * self.pix, i * self.pix)
                 
                 # ★ 단순 비교: 현재 그리는 블록이 타겟 블록인가?
-                if j == target_x and i == target_y:
-                    # 파괴 애니메이션 블록 그리기
-                    window.blit(images.blocks[blockMotion], pos)
-                else:
-                    # 일반 블록 그리기
-                    window.blit(images.blocks[0], pos)
-        
+                
+                if (self.itemMap[i][j] == 2):                                   # 흙
+                    if j == target_x and i == target_y:
+                        # 파괴 애니메이션 블록 그리기
+                        window.blit(images.blocks[blockMotion], pos)
+                    else:
+                        # 일반 블록 그리기
+                        window.blit(images.soilBlocks[(j + i) % 4], pos)
+                elif (self.itemMap[i][j] == 6 or self.itemMap[i][j] == 3):      # 돌, 화석
+                    if j == target_x and i == target_y:
+                        # 파괴 애니메이션 블록 그리기
+                        window.blit(images.blocks[blockMotion], pos)
+                    else:
+                        # 일반 블록 그리기
+                        window.blit(images.rockBlocks[(j + i) * j % 5], pos)
+                elif (self.itemMap[i][j] == 4):      # 종이
+                    if j == target_x and i == target_y:
+                        # 파괴 애니메이션 블록 그리기
+                        window.blit(images.blocks[blockMotion], pos)
+                    else:
+                        # 일반 블록 그리기
+                        window.blit(images.specialBlocks[(j + i) % 3], pos)
+                
+                else:                                                           # 일반
+                    if j == target_x and i == target_y:
+                        # 파괴 애니메이션 블록 그리기
+                        window.blit(images.blocks[blockMotion], pos)
+                    else:
+                        # 일반 블록 그리기
+                        window.blit(images.blocks[0], pos)
         # 탈출구(빛) 그리기
         window.blit(images.enter, ((self.col - 3) * self.pix, 0))

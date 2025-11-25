@@ -42,14 +42,14 @@ class Cplayer:
     def f_isRblocked(self, under_map, itemMap):
         if (under_map[self.blockY][self.blockX + 1] == 0 and (self.blockX * self.pix - self.realX) < 1):
             return 1
-        if (itemMap[self.blockY][self.blockX + 1] == 5 and (self.blockX * self.pix - self.realX) < 1):
+        if (itemMap[self.blockY][self.blockX + 1] == 6 and (self.blockX * self.pix - self.realX) < 1):
             return 1
         return 0
 
     def f_isLblocked(self, under_map, itemMap):
         if (under_map[self.blockY][self.blockX - 1] == 0 and (self.realX - self.blockX * self.pix) < 1):
             return 1
-        if (itemMap[self.blockY][self.blockX - 1] == 5 and (self.realX - self.blockX * self.pix) < 1):
+        if (itemMap[self.blockY][self.blockX - 1] == 6 and (self.realX - self.blockX * self.pix) < 1):
             return 1
         return 0
 
@@ -71,7 +71,7 @@ class Cplayer:
         if (self.f_isLblocked(under_map,itemMap)): # 갈 수 없으면
             self.motion = 3
             self.motionTime = 0
-            if (self.isOnGround): self.f_breaking(under_map)
+            self.f_breaking(under_map)
             self.toX = 0
         else:   # 갈 수 있으면
             self.blockTime = 0
@@ -80,8 +80,6 @@ class Cplayer:
         self.realX -= self.toX
 
     def f_right(self, under_map, itemMap):
-        if (not self.isOnGround): return
-
         self.direction = 1
         self.motionTime += 1
         self.f_motion()
@@ -90,7 +88,7 @@ class Cplayer:
         if (self.f_isRblocked(under_map, itemMap)): # 갈 수 없으면
             self.motion = 3
             self.motionTime = 0
-            if (self.isOnGround): self.f_breaking(under_map)
+            self.f_breaking(under_map)
             self.toX = 0
         else:   # 갈 수 있으면
             self.blockTime = 0
@@ -113,7 +111,7 @@ class Cplayer:
 
     def f_gravity(self, under_map, itemMap):
         # 1. 사다리 체크
-        if (itemMap[self.blockY][self.blockX] == 4) and self.direction == 4:
+        if (itemMap[self.blockY][self.blockX] == 5) and self.direction == 4:
             self.isOnGround = True
             self.velocityY = 0
             return 
@@ -137,8 +135,8 @@ class Cplayer:
         # 5. ★★★★★ 천장 충돌 검사 (2점 확인) ★★★★★
         if self.velocityY < 0: # 상승 중일 때
             # "머리 위 왼쪽" 또는 "머리 위 오른쪽"이 땅(0)인지 확인
-            is_ceil_left = (under_map[self.blockY][left_x_block] == 0 or itemMap[self.blockY][left_x_block] == 5)
-            is_ceil_right = (under_map[self.blockY][right_x_block] == 0 or itemMap[self.blockY][right_x_block] == 5)
+            is_ceil_left = (under_map[self.blockY][left_x_block] == 0 or itemMap[self.blockY][left_x_block] == 6)
+            is_ceil_right = (under_map[self.blockY][right_x_block] == 0 or itemMap[self.blockY][right_x_block] == 6)
             
             if is_ceil_left or is_ceil_right:
                 self.velocityY = 0 # 상승 중단
@@ -155,8 +153,8 @@ class Cplayer:
         
         else:
             # "발 아래 왼쪽" 또는 "발 아래 오른쪽"이 땅(0)인지 확인
-            is_ground_left = (under_map[check_y][left_x_block] == 0 or itemMap[check_y][left_x_block] == 5)
-            is_ground_right = (under_map[check_y][right_x_block] == 0 or itemMap[check_y][right_x_block] == 5)
+            is_ground_left = (under_map[check_y][left_x_block] == 0 or itemMap[check_y][left_x_block] == 6)
+            is_ground_right = (under_map[check_y][right_x_block] == 0 or itemMap[check_y][right_x_block] == 6)
             
             # "왼발"이나 "오른발" 중 하나라도 땅(0)에 닿아있다면
             if is_ground_left or is_ground_right:
@@ -167,7 +165,7 @@ class Cplayer:
                 self.isOnGround = False # (두 발 모두 공중에 있음)
 
     def f_up(self, itemMap):
-        if (itemMap[self.blockY + 1][self.blockX] == 4) or (itemMap[self.blockY][self.blockX] == 4):
+        if (itemMap[self.blockY + 1][self.blockX] == 5) or (itemMap[self.blockY][self.blockX] == 5):
             self.direction = 4
             self.motionTime += 1
             self.f_motion()
