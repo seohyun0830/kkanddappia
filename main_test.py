@@ -15,8 +15,8 @@ STATE_EASY   = 5
 STATE_HARD   = 6
 STATE_STORY1  = 8
 STATE_STORY2  = 9
-STATE_STAGE1 = 11  # 1스테이지 게임 플레이
-STATE_STAGE2 = 20  # 2스테이지 (예정)
+STATE_STAGE1 = 20  # 1스테이지 게임 플레이
+STATE_STAGE2 = 11  # 2스테이지 (예정)
 
 # --- [초기화] ---
 pygame.init()

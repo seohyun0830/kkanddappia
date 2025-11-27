@@ -270,8 +270,6 @@ def f_story2(window):
     while play:
         clock.tick(60)
         
-        if idx >= len(texts):
-            return 11
         if idx == 3:
             sfx_siren.stop()
 
@@ -293,6 +291,8 @@ def f_story2(window):
                         sfx_arrive.play()
                     elif (idx == 4):
                         sfx_arrive.stop()
+                    elif idx >= len(texts):
+                        return 11
                 else:
                     # 2. (선택사항) 타이핑 중인데 클릭하면? -> 즉시 완성 (스킵 기능)
                     char_index = len(current_full_text)
