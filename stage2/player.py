@@ -186,6 +186,8 @@ class Player:
             if self.alpha <= 0:
                 self.alpha = 0
                 self.is_fading_out = False
+                
+                self.stage.go_to_stage1=True
 
     def draw(self):
         if self.is_flying_animation_active:
