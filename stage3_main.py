@@ -1,6 +1,7 @@
 import pygame
 from engine import constants, assets
-from stage3 import Stage3   # __init__.py 덕분에 이렇게 import 가능
+from stage3 import Stage3 
+
 
 def main():
     pygame.init()
@@ -10,10 +11,10 @@ def main():
     )
     pygame.display.set_caption("main_Stage3")
 
-    assets.load_all()
+    assets.load_all() #모든 에셋들 로드
     
-    stage = Stage3(screen)
-    next_stage = stage.run()
+    stage3 = Stage3(screen)
+    next_stage = stage3.run()
 
     pygame.quit()
 

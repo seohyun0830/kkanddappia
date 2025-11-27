@@ -190,7 +190,8 @@ class Stage4To3:
         # Fuel % 텍스트
         text = f"{int(fuel_manager.fuel)}%"
         txt_surface = self.font.render(text, True, (255, 255, 255))
-        screen.blit(txt_surface, (65, 650))
+        txt_rect=txt_surface.get_rect(center=(80,650))
+        screen.blit(txt_surface, txt_rect)
 
         # Fuel 아이템
         self.draw_fuel_items()
