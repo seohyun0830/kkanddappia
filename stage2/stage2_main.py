@@ -25,6 +25,7 @@ class Stage2:
         
         self.done = False
         self.game_over = False
+        self.go_to_stage1=False
 
         self.replay_btn_rect = pygame.Rect(SCREEN_WIDTH-250, SCREEN_HEIGHT - 120, 200, 60)
         self.btn_font = pygame.font.Font(None, 50) 
@@ -61,6 +62,7 @@ class Stage2:
 
     def reset_game_data(self):
         self.game_over = False
+        self.go_to_stage1
         
         self.inventory = (['fire']*1 + ['water']*1 + ['stone']*15 + 
                          ['spaceship'] * 1 + 
@@ -92,6 +94,11 @@ class Stage2:
         
     def run(self):
         while not self.done:
+
+            if self.go_to_stage1:
+                self.sounds.stop_background_music()
+                return "stage1"
+
             self.handle_events()
             
             self.update()

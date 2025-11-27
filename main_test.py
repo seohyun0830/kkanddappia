@@ -75,7 +75,13 @@ while current_state != STATE_EXIT:
     
     # 4. 2스테이지 (예정)
     elif current_state == STATE_STAGE2:
-        stage2.run()
+        result=stage2.run()
+        
+        if result=="stage1":
+            current_state=STATE_STAGE1
+
+        elif result=="quit" or result=="game_over":
+            current_state=STATE_EXIT
 
 # 종료 처리
 pygame.quit()
