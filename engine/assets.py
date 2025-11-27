@@ -33,39 +33,39 @@ def load_pipe_images():
 
     # 1~11번 파이프
     for i in range(1, 12):
-        pipe_images[i] = pygame.image.load(f'images/pipe{i}.jpg')
+        pipe_images[i] = pygame.image.load(f'images/stage3/pipe{i}.jpg')
 
     # 철문 / 단선
-    pipe_images[constants.IRON_GATE] = pygame.image.load('images/irongate.jpg').convert_alpha()
-    pipe_images[constants.BROKEN] = pygame.image.load('images/broken.png').convert_alpha()
+    pipe_images[constants.IRON_GATE] = pygame.image.load('images/stage3/irongate.jpg').convert_alpha()
+    pipe_images[constants.BROKEN] = pygame.image.load('images/stage3/broken.png').convert_alpha()
 
     # 미로 배경(벽)
-    bg_img_raw = pygame.image.load("images/bg_img.jpg")
+    bg_img_raw = pygame.image.load("images/stage3/bg_img.jpg")
     bg_img = pygame.transform.scale(bg_img_raw, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
     
 #배경 로드
 def load_background():
     global bk_img
-    raw = pygame.image.load("images/bk.jpg")
+    raw = pygame.image.load("images/stage3/bk.jpg")
     bk_img = pygame.transform.scale(raw, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
 
 #플레이어 이미지
 def load_player():
     global player_img
-    raw = pygame.image.load("images/c1.png")
+    raw = pygame.image.load("images/stage3/c1.png")
     player_img = pygame.transform.scale(raw, (constants.TILE_SIZE, constants.TILE_SIZE))
   
 #압력계 이미지
 def load_pressure_images():
     global pressure_regulator_img, needle_img
-    pressure_regulator_img = pygame.image.load('images/pressure.png')
-    needle_img = pygame.image.load('images/needle.png')
+    pressure_regulator_img = pygame.image.load('images/stage3/pressure.png')
+    needle_img = pygame.image.load('images/stage3/needle.png')
 
 #연료게이지 이미지
 def load_fuel_gage_images():
     global fuel_gage_img, fuel_needle_img
-    fuel_gage_img = pygame.image.load('images/fuel_gage.png')
-    fuel_needle_img = pygame.image.load('images/fuel_needle.png')
+    fuel_gage_img = pygame.image.load('images/stage3/fuel_gage.png')
+    fuel_needle_img = pygame.image.load('images/stage3/fuel_needle.png')
 
 # HP 바 그리기 함수 (Stage3 UI에서 사용)
 def draw_hp_bar(screen, hp):
@@ -119,24 +119,24 @@ def load_guide_images():
     global guide_book_button, guide_images
 
     # 가이드북 버튼
-    guide_raw = pygame.image.load('images/guidebook.png')
+    guide_raw = pygame.image.load('images/stage3/guidebook.png')
     guide_book_button = pygame.transform.scale(guide_raw, (100, 100))
 
     # 페이지 1~5
     guide_images = []
     for i in range(1, 6):
-        img = pygame.image.load(f'images/guide{i}.jpg')
+        img = pygame.image.load(f'images/stage3/guide{i}.jpg')
         guide_images.append(img)
 
 def load_fuel_image():
     global fuel_img
-    fuel_img = pygame.image.load("images/fuel.png").convert_alpha()
+    fuel_img = pygame.image.load("images/stage3/fuel.png").convert_alpha()
 
    
 #3->4stage버튼
 def load_back_button():
     global back_button_img
-    raw = pygame.image.load('images/backto4.png')
+    raw = pygame.image.load('images/stage3/backto4.png')
     back_button_img = pygame.transform.scale(raw, (150, 150))
 
 

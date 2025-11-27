@@ -1,8 +1,9 @@
 import pygame
-import random,sys
+import random, sys
 from engine import constants, maze, renderer, assets, sound
-from stage4to3.ui import FuelGauge, FuelIndicator   # 너 UI 파일명 맞춰 수정!
+from stage4to3.ui import FuelGauge, FuelIndicator
 from stage4to3.movement import try_move_player
+from engine.fuel_manager import fuel_manager   # ★ fuel_manager 사용!
 
 
 class Stage4To3:
@@ -25,12 +26,10 @@ class Stage4To3:
         ]}
         self.move_timer = 0
 
-        # 연료
-        self.fuel_level = 0
+        # 연료 스폰 설정
         self.NUM_FUELS = 10
         self.FUEL_PER_ITEM = 10
 
-        # 연료 후보 위치
         candidates = [
             (r, c)
             for r in range(constants.GRID_SIZE)
@@ -38,8 +37,8 @@ class Stage4To3:
             if self.maze[r][c] == constants.PATH and not (r == 0 and c == 0)
         ]
         random.shuffle(candidates)
-
         self.candidates = candidates
+
         self.fuel_positions = []
         self.collected_fuels = []
 
@@ -47,17 +46,19 @@ class Stage4To3:
         self.FUEL_DELAY = 2000
         self.last_spawn = pygame.time.get_ticks()
 
-        # 연료 UI
+        # 연료 UI (★ fuel_manager 사용)
         self.fuel_gauge = FuelGauge(0, 660, assets.fuel_gage_img)
-        self.fuel_indicator = FuelIndicator(78, 760, assets.fuel_needle_img,
-                                            self.fuel_level, 100)
+        self.fuel_indicator = FuelIndicator(
+            78, 760, assets.fuel_needle_img, fuel_manager.fuel, 100
+        )
+
         self.font = assets.pressure_font_base
 
         # Back 버튼
         self.button_w = 160
         self.button_h = 160
-        self.button_img = pygame.transform.scale(
-            assets.back_button_img, (self.button_w, self.button_h))
+        self.button_img = pygame.transform.scale(assets.back_button_img,
+                                                 (self.button_w, self.button_h))
 
         self.button_x = constants.SCREEN_WIDTH - self.button_w - 20
         self.button_y = 20
@@ -66,7 +67,6 @@ class Stage4To3:
 
         self.fps = pygame.time.Clock()
 
-        # 배경음
         sound.play_bgm(sound.normal_bgm)
 
     # ---------------------------------------------------
@@ -85,17 +85,14 @@ class Stage4To3:
             remaining = max(0, self.TIME_LIMIT - elapsed)
 
             if remaining <= 0:
-                return "stage4"  # 시간끝 → 다시 stage4
+                return "stage4"  # ★ 시간 끝 → Stage4 복귀
 
             self.handle_events()
-
             self.spawn_fuel()
             self.move_player()
 
-            # 그리기
             self.draw(remaining)
 
-            # Back 버튼 클릭 시 4스테이지 복귀
             if self.check_back_button():
                 return "stage4"
 
@@ -185,13 +182,13 @@ class Stage4To3:
             [], []
         )
 
-        # UI
+        # 연료 UI
         self.fuel_gauge.draw(screen)
-        self.fuel_indicator.update(self.fuel_level)
+        self.fuel_indicator.update(fuel_manager.fuel)  # ★ 싱글톤
         self.fuel_indicator.draw(screen)
 
-        # Fuel %
-        text = f"{int(self.fuel_level)}%"
+        # Fuel % 텍스트
+        text = f"{int(fuel_manager.fuel)}%"
         txt_surface = self.font.render(text, True, (255, 255, 255))
         screen.blit(txt_surface, (65, 650))
 
@@ -210,14 +207,11 @@ class Stage4To3:
         mouse_down = pygame.mouse.get_pressed()[0]
         is_hover = self.button_rect.collidepoint(mouse_pos)
 
-        # ----- 버튼 효과 -----
         if is_hover:
-            # hover 시 약하게 어두워짐
             overlay = pygame.Surface((self.button_w, self.button_h), pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 60))
             screen.blit(overlay, (self.button_x, self.button_y))
 
-            # 클릭 눌렀을 때 강하게 어두워짐 (클릭 느낌)
             if mouse_down:
                 overlay2 = pygame.Surface((self.button_w, self.button_h), pygame.SRCALPHA)
                 overlay2.fill((0, 0, 0, 120))
@@ -244,8 +238,8 @@ class Stage4To3:
             rect = fuel_img.get_rect(center=(fx, fy))
             screen.blit(fuel_img, rect)
 
-            # player가 먹었나?
             if self.player_row == fr and self.player_col == fc:
                 sound.fuel_bgm.play()
                 self.collected_fuels.append((fr, fc))
-                self.fuel_level = min(100, self.fuel_level + self.FUEL_PER_ITEM)
+
+                fuel_manager.add_fuel(self.FUEL_PER_ITEM)

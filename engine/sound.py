@@ -19,14 +19,14 @@ def load_sound(path, volume=1.0):
     sound.set_volume(volume)
     return sound
 
-broken_sound = load_sound("sounds/단선 생길때.mp3", 0.5)
-success_bgm = load_sound("sounds/성공.mp3", 0.7)
-fail_bgm = load_sound("sounds/실패.mp3", 0.7)
+broken_sound = load_sound("sounds/stage3/단선 생길때.mp3", 0.5)
+success_bgm = load_sound("sounds/stage3/성공.mp3", 0.7)
+fail_bgm = load_sound("sounds/stage3/실패.mp3", 0.7)
 
-normal_bgm = "sounds/배경음악2.mp3"
-low_bgm = "sounds/저압.mp3"
+normal_bgm = "sounds/stage3/배경음악2.mp3"
+low_bgm = "sounds/stage3/저압.mp3"
 
-high_bgm = load_sound("sounds/고압.mp3", 0.3)
-repair_bgm = load_sound("sounds/단선수리.mp3", 0.3)
-fuel_bgm = load_sound("sounds/연료먹었을때.mp3", 0.3)
-fuel_appear = load_sound("sounds/연료생길때마다.mp3", 0.3)
+high_bgm = load_sound("sounds/stage3/고압.mp3", 0.3)
+repair_bgm = load_sound("sounds/stage3/단선수리.mp3", 0.3)
+fuel_bgm = load_sound("sounds/stage3/연료먹었을때.mp3", 0.3)
+fuel_appear = load_sound("sounds/stage3/연료생길때마다.mp3", 0.3)

@@ -75,10 +75,11 @@ class Stage3:
     #엔딩화면들
     def show_gameover(self):
         #압력 0,100,HP=0
+        sound.high_bgm.stop()
         sound.stop_bgm()
         sound.fail_bgm.play()
 
-        img = pygame.image.load("images/gameover.png")
+        img = pygame.image.load("images/stage3/gameover.png")
         scale = min(constants.SCREEN_WIDTH / img.get_width(), constants.SCREEN_HEIGHT / img.get_height())
         img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
         rect = img.get_rect(center=(constants.SCREEN_WIDTH // 2, constants.SCREEN_HEIGHT // 2))
@@ -96,10 +97,11 @@ class Stage3:
             pygame.display.update()
 
     def show_timeover(self):
+        sound.high_bgm.stop()
         sound.stop_bgm()
         sound.fail_bgm.play()
 
-        img = pygame.image.load("images/timeover.png")
+        img = pygame.image.load("images/stage3/timeover.png")
         scale = min(constants.SCREEN_WIDTH / img.get_width(), constants.SCREEN_HEIGHT / img.get_height())
         img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
         rect = img.get_rect(center=(constants.SCREEN_WIDTH // 2, constants.SCREEN_HEIGHT // 2))
@@ -118,11 +120,12 @@ class Stage3:
 
     #성공시퀀스
     def show_success(self):
+        sound.high_bgm.stop()
         sound.stop_bgm()
         sound.success_bgm.play()
 
-        bg = pygame.image.load("images/ending_img3.png")
-        spaceship_img = pygame.image.load("images/spaceship.png")
+        bg = pygame.image.load("images/stage3/ending_img3.png")
+        spaceship_img = pygame.image.load("images/stage3/spaceship.png")
 
         scale = min(constants.SCREEN_WIDTH / bg.get_width(), constants.SCREEN_HEIGHT / bg.get_height())
         bg = pygame.transform.scale(bg, (int(bg.get_width() * scale), int(bg.get_height() * scale)))
@@ -163,7 +166,7 @@ class Stage3:
     # ---------------------------------------------------
     #                  메인 루프
     # ---------------------------------------------------
-    #menu는 게임오버하면 돌아갈 문자열
+    #menu는 게임오버하면 돌아갈 stage (아마 stage2)
     def run(self):
         running = True
 
@@ -187,12 +190,12 @@ class Stage3:
             draw_screen(self)
             pygame.display.update()
 
-            # HP 0 , 압력0/100 -> 실패
+            # HP 0 , 압력0/100 -> 실패 (2스테이지로 돌아가도록)
             if self.hp <= 0 or self.pressure <= 0 or self.pressure>=100:
                 self.show_gameover()
-                return "menu"
+                return "menu" 
 
-            # 시간 초과 체크
+            # 시간 초과 체크 -> 이것도 2stage..? 플레이시간....
             now = pygame.time.get_ticks()
             elapsed = now - self.start_time - self.guide.game_paused_time
             if elapsed >= constants.TOTAL_GAME_TIME_SECONDS * 1000:
@@ -389,5 +392,9 @@ class Stage3:
         # 도착 지점
         reached = (self.player_row == constants.GRID_SIZE - 1 and
                    self.player_col == constants.GRID_SIZE - 1)
+                   
+        
+        """reached = (self.player_row == 0 and
+                   self.player_col == 0)#테스트용"""
 
         return all_fixed and reached
