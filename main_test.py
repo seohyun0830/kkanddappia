@@ -32,7 +32,7 @@ mode = -1                   # 난이도 (1: Easy, 2: Hard)
 stage2 = Stage2(window)
 
 while current_state != STATE_EXIT:
-    
+    '''
     # 1. 시작 화면
     if current_state == STATE_START:
         result = f_start(window)
@@ -55,8 +55,10 @@ while current_state != STATE_EXIT:
         current_state = f_story1(window)
     elif current_state == STATE_STORY2:
         current_state = f_story2(window)
-    # 3. 1스테이지 플레이         
-    elif current_state == STATE_STAGE1:
+    '''
+    # 3. 1스테이지 플레이    
+    # STATE_STAGE1     
+    if current_state == STATE_START:
         # (나중에 f_stage1에 mode를 넘겨줘야 할 수도 있습니다)
         result = f_stage1(window) 
         

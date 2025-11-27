@@ -5,7 +5,8 @@ from . import map
 from . import images
 from . import sounds
 
-
+# flag 인자
+# 0: 처음 시작 (+가이드) 1: 재시작(리셋) 2: 다시 돌아왔을 때(저장된 상태)
 def f_stage1(window):
     # --- [초기화] ---
     fps = pygame.time.Clock()
