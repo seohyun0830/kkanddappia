@@ -83,8 +83,11 @@ class Player:
 
     def update_animation(self):
 
+        ani_speed=ANIMATION_SPEED
+
         if self.stage.map_manager.is_tree_pressing:
             active_set = self.images.all_animations['tree']
+            ani_speed=TREE_ANIMATION_SPEED
             self.is_moving = True
         elif self.stage.map_manager.current_map == "inside":
             active_set = self.images.all_animations['in']
@@ -93,7 +96,8 @@ class Player:
 
         if self.is_moving:
             self.animation_counter += 1
-            if self.animation_counter >= ANIMATION_SPEED:
+
+            if self.animation_counter >= ani_speed:
                 self.animation_counter = 0
                 if active_set['right']:
                     self.current_frame_index = (self.current_frame_index + 1) % len(active_set['right'])
