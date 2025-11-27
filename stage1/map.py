@@ -16,7 +16,7 @@ class Cmap:
         # 0: 없음, 1:광석, 2:흙, 3:석탄, 4:종이, 5:사다리, 6:돌, -1:지하수
         self.itemMap = [[0] * self.col for _ in range(self.row)]
 
-    def f_defaultItemMap(self):
+    def f_defaultItemMap(self, MODE):
         # 데이터 관리를 쉽게 하기 위해 좌표 리스트로 정리
         
         # 1. 광석 (ID: 1)
@@ -48,8 +48,9 @@ class Cmap:
         # 3. 석탄/화석 (ID: 3)
         coals = [(0,19), (4,2), (5,4)]
         
+        if MODE == 2:
         # 4. 종이 (ID: 4)
-        papers = [(4,5), (1,15), (11,3)]
+            papers = [(4,5), (1,15), (11,3)]
 
         # 6. 돌 (ID: 6)
         stones = [(1,9), (1,3), (1,18), (2,2), (6,13), (5,18), (8,2), (9,8), (9,10), (10,15), (12,7)]
@@ -61,7 +62,8 @@ class Cmap:
         self._apply_items(ores, 1)
         self._apply_items(soils, 2)
         self._apply_items(coals, 3)
-        self._apply_items(papers, 4)
+        if MODE == 2:
+            self._apply_items(papers, 4)
         self._apply_items(stones, 6)
         self._apply_items(waters, -1)
 

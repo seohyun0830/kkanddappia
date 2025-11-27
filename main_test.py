@@ -30,7 +30,9 @@ current_state = STATE_START # 현재 상태 (기존 stageFlag)
 mode = -1                   # 난이도 (1: Easy, 2: Hard)
 
 stage2 = Stage2(window)
-
+MODE = 0
+Try = 0
+MapInfo, ItemMapInfo, InvenInfo, LadderInfo = 0, 0, 0, 0
 while current_state != STATE_EXIT:
     # 1. 시작 화면
     if current_state == STATE_START:
@@ -44,6 +46,7 @@ while current_state != STATE_EXIT:
         if mode == 0:     current_state = STATE_EXIT
         elif mode == 1:  current_state = STATE_EASY # 모드 선택 완료 -> 1스테이지로
         elif mode == 2:  current_state = STATE_HARD
+        MODE = mode                                 # 1: easy 2: hard
     
     # 스토리 연결
     elif current_state == STATE_EASY:
@@ -57,7 +60,7 @@ while current_state != STATE_EXIT:
     # 3. 1스테이지 플레이
     if current_state == STATE_STAGE1:
         # (나중에 f_stage1에 mode를 넘겨줘야 할 수도 있습니다)
-        result = f_stage1(window) 
+        result, MapInfo, ItemMapInfo, InvenInfo, LadderInfo = f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo) 
         
         if result == 0:    # 게임 종료 (X버튼)
             current_state = STATE_EXIT
@@ -70,7 +73,8 @@ while current_state != STATE_EXIT:
             current_state = f_isFail(window, water_back)
 
         elif result == -1: # 스테이지 클리어 (성공)
-            current_state = STATE_STAGE2   
+            current_state = STATE_STAGE2
+            Try += 1   
     
     # 4. 2스테이지 (예정)
     elif current_state == STATE_STAGE2:
