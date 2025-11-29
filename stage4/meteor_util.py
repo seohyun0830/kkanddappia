@@ -1,7 +1,12 @@
 import pygame
 import random
 import math
-
+'''
+1 반시계 130
+2 시계 135
+3 반시계 40
+4 시계40
+'''
 class Meteor:
     images=[]
     def __init__(self, current_time, screen_width, screen_height,is_blackhole_active=False):

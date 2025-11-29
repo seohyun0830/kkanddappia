@@ -10,6 +10,7 @@ import Blackhole
 import Success_animation
 import collision_ending
 import Spaceship
+import crash_ani
 from puzzle import puzzle_main
 pygame.init()
 pygame.mixer.init()
@@ -39,6 +40,10 @@ to_blackhole_sound=pygame.mixer.Sound(os.path.join(audio_path,"to_blackhole.mp3"
 landed_sound=pygame.mixer.Sound(os.path.join(audio_path,"landed.mp3"))
 alien_sound=pygame.mixer.Sound(os.path.join(audio_path,"contact_alien.mp3"))
 explosion_sound=pygame.mixer.Sound(os.path.join(audio_path,"explosion.mp3"))
+siren_sound=pygame.mixer.Sound(os.path.join(audio_path,"siren.mp3"))
+external_failure_sound=pygame.mixer.Sound(os.path.join(audio_path,"external_failure.mp3"))
+crash_ground_sound=pygame.mixer.Sound(os.path.join(audio_path,"crash_ground.mp3"))
+burning_sound=pygame.mixer.Sound(os.path.join(audio_path,"burning.mp3"))
 
 background = pygame.image.load(os.path.join(image_path,"background_color.png"))
 gameover = pygame.image.load(os.path.join(image_path, "gameover.png")) 
@@ -126,7 +131,32 @@ move_success_images=[
     pygame.image.load(os.path.join(image_path,"move_success3.png")),
     pygame.image.load(os.path.join(image_path,"move_success4.png"))] 
 
+
+crash_fail_images=[
+    pygame.image.load(os.path.join(image_path,"crash1.png")), 
+    pygame.image.load(os.path.join(image_path,"crash2.png")), 
+    pygame.image.load(os.path.join(image_path,"crash3.png")), 
+    pygame.image.load(os.path.join(image_path,"crash4.png")), 
+    pygame.image.load(os.path.join(image_path,"crash5.png")), 
+    pygame.image.load(os.path.join(image_path,"crash6.png")), 
+    pygame.image.load(os.path.join(image_path,"crash7.png")), 
+    pygame.image.load(os.path.join(image_path,"crash8.png")), 
+    pygame.image.load(os.path.join(image_path,"crash9.png")),
+     pygame.image.load(os.path.join(image_path,"crash10.png")) ]
+
+sp_meteor_crash_img=pygame.image.load(os.path.join(image_path,"spaceship_meteor_crash.png"))
+crash_after_person_images=[
+    
+    pygame.image.load(os.path.join(image_path,"crash_person2.png")),
+    pygame.image.load(os.path.join(image_path,"crash_person1.png")),
+    pygame.image.load(os.path.join(image_path,"crash_person3.png")),
+    pygame.image.load(os.path.join(image_path,"crash_person1.png"))
+
+]
+crash_stand_p_img= pygame.image.load(os.path.join(image_path,"crash_stand_person.png"))
 #1200x800
+
+talking_box=pygame.image.load(os.path.join(image_path,"talking.png"))
 
 start_ticks = pygame.time.get_ticks()
 #이것들도 다 전역으로 써야될 듯
@@ -332,8 +362,20 @@ while running:
                 if meteor.check_collision(spaceship.center_x, spaceship.center_y, spaceship.radius):
                     left_life = left_life - 1 
                     meteors.remove(meteor)    # 부딪힌 운석은 일단 제거
-                    if left_life==0:
-                        collision_ending.collision_ending(screen,meteor_collision,gameover,explosion_sound)
+                    if left_life==3:
+                        sounds_to_play = {
+                            'external_failure': external_failure_sound,  
+                            'siren': siren_sound   
+                            }
+                      
+                        crash_ani.zoom_effect(screen,sp_meteor_crash_img,sounds_to_play)
+                        crash_sounds={
+                            'ground_crash':crash_ground_sound,
+                            'burning':burning_sound
+                        }
+                        crash_ani.crash_animation(screen,crash_fail_images,crash_sounds)
+                        crash_ani.restart_ani(screen,crash_fail_images[9],crash_after_person_images,crash_stand_p_img)
+                        crash_ani.restart_talk(screen,talking_box)
                         running = False
                         break
                     else:
