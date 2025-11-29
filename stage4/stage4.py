@@ -1,6 +1,9 @@
 import pygame
 import os
 import math
+from . import restart_ani
+from . import guide
+from . import crash_ani
 from . import ui
 from . import meteor_util
 from . import Alien
@@ -108,8 +111,9 @@ class Stage4:
     # ------------------------------------------------------------------
 
     def _loop(self):
+        guide.show_guide(self.screen,self.guide_bk_img,self.game_font)
+        self.start_ticks = pygame.time.get_ticks()
         running = True
-
         while running:
             dt = self.clock.tick(60)
             current_ticks = pygame.time.get_ticks()
@@ -120,7 +124,7 @@ class Stage4:
             self.game_elapsed_time = game_elapsed_time
 
             # 연료 부족 → stage4to3 이동
-            if fuel_manager.fuel < 20:  # 테스트용 기준
+            if fuel_manager.fuel < 50:  # 테스트용 기준
                 pygame.mixer.music.pause()
                 self.screen.blit(self.fuel_failure_img, (0, 0))
                 pygame.display.update()
@@ -206,6 +210,30 @@ class Stage4:
         self.fuelgauge_img = pygame.image.load(os.path.join(self.image_path, "fuelgauge.png"))
         self.fuelindicator_img = pygame.image.load(os.path.join(self.image_path, "fuel_indicator.png"))
 
+        self.sp_meteor_crash_img=pygame.image.load(os.path.join(self.image_path, "spaceship_meteor_crash.png"))
+        self.crash_fail_images=[
+            pygame.image.load(os.path.join(self.image_path,"crash1.png")), 
+            pygame.image.load(os.path.join(self.image_path,"crash2.png")), 
+            pygame.image.load(os.path.join(self.image_path,"crash3.png")), 
+            pygame.image.load(os.path.join(self.image_path,"crash4.png")), 
+            pygame.image.load(os.path.join(self.image_path,"crash5.png")), 
+            pygame.image.load(os.path.join(self.image_path,"crash6.png")), 
+            pygame.image.load(os.path.join(self.image_path,"crash7.png")), 
+            pygame.image.load(os.path.join(self.image_path,"crash8.png")), 
+            pygame.image.load(os.path.join(self.image_path,"crash9.png")),
+            pygame.image.load(os.path.join(self.image_path,"crash10.png")) ]
+        self.crash_after_person_images=[
+            
+            pygame.image.load(os.path.join(self.image_path,"crash_person2.png")),
+            pygame.image.load(os.path.join(self.image_path,"crash_person1.png")),
+            pygame.image.load(os.path.join(self.image_path,"crash_person3.png")),
+            pygame.image.load(os.path.join(self.image_path,"crash_person1.png"))
+
+        ]
+        self.crash_stand_p_img= pygame.image.load(os.path.join(self.image_path,"crash_stand_person.png"))
+
+        self.talking_box=pygame.image.load(os.path.join(self.image_path,"talking.png"))
+        self.guide_bk_img=pygame.image.load(os.path.join(self.image_path,"guide_background.png"))
         # life 이미지 (life1 ~ life4)
         self.life_images = [
             pygame.transform.scale(
@@ -249,7 +277,10 @@ class Stage4:
         self.landed_sound = pygame.mixer.Sound(os.path.join(self.audio_path, "landed.mp3"))
         self.alien_sound = pygame.mixer.Sound(os.path.join(self.audio_path, "contact_alien.mp3"))
         self.explosion_sound = pygame.mixer.Sound(os.path.join(self.audio_path, "explosion.mp3"))
-
+        self.siren_sound=pygame.mixer.Sound(os.path.join(self.audio_path, "siren.mp3"))
+        self.burnning_sound=pygame.mixer.Sound(os.path.join(self.audio_path, "burning.mp3"))
+        self.crash_ground_sound=pygame.mixer.Sound(os.path.join(self.audio_path, "crash_ground.mp3"))
+        self.external_failure_sound=pygame.mixer.Sound(os.path.join(self.audio_path, "external_failure.mp3"))
     # ------------------------------------------------------------------
 
     def start_defect_event(self, current_ticks):
@@ -430,10 +461,16 @@ class Stage4:
                 self.meteors.remove(meteor)
 
                 if self.left_life <= 0:
-                    collision_ending.collision_ending(
-                        self.screen, self.meteor_collision,
-                        self.gameover_img, self.explosion_sound
-                    )
+                    sounds_to_play={'external_failure':self.external_failure_sound,
+                                    'siren':self.siren_sound}
+                    crash_ani.zoom_effect(self.screen,self.sp_meteor_crash_img,sounds_to_play)
+                    crash_sounds={
+                            'ground_crash':self.crash_ground_sound,
+                            'burning':self.burnning_sound
+                        }
+                    crash_ani.crash_animation(self.screen,self.crash_fail_images,crash_sounds)
+                    restart_ani.restart_ani(self.screen,self.crash_fail_images[9],self.crash_after_person_images,self.crash_stand_p_img)
+                    restart_ani.restart_talk(self.screen,self.talking_box)
                     pygame.display.update()
                     pygame.time.delay(1500)
                     return "dead"
