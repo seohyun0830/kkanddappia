@@ -35,11 +35,11 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo):
     isLadder = False
     isDragging = False
     upX, upY = -1, -1
+    flag = False
+    isTab = False
     
     # 최적화를 위한 이전 좌표 기록 변수
     prev_bx, prev_by = -1, -1
-    flag = False
-    isTab = False
     play = True
     while play:
         deltaTime = fps.tick(50)
@@ -50,16 +50,21 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo):
                 play = False
                 return 0, None, None, None, None
             
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    flag = True
+
             if event.type == pygame.KEYUP:
                 Player.f_setDefault()
+                flag = False
 
             # 마우스 클릭 (드래그 시작)
             if event.type == pygame.MOUSEBUTTONDOWN:
-                flag = True
                 clickX, clickY = event.pos
                 isDragging = True
                 if (isTab):
                     isLadder = Inven.f_isLadder(clickX, clickY) # 사다리인지 확인
+                    print(isLadder  )
                 if (isLadder): 
                     Inven.ladderCnt -= 1
                     if (Inven.ladderCnt <= 0):
@@ -68,10 +73,8 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo):
 
             # 마우스 떼기 (드래그 끝)
             if event.type == pygame.MOUSEBUTTONUP:
-                flag = False
                 upX, upY = event.pos
                 isDragging = False
-                isLadder = False
 
         # --- [2. 게임 로직 업데이트] ---
         keys = pygame.key.get_pressed()
@@ -114,6 +117,7 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo):
         if upX != -1 and upY != -1 and isLadder:
             Inven.f_putLadder(Map.underMap, Map.itemMap, upX, upY)
             upX, upY = -1, -1 # 처리 후 초기화
+            isLadder = False
 
         # --- [3. 렌더링 (그리기)] ---
         window.blit(images.background, (0,0)) # 배경
@@ -141,7 +145,7 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo):
         
         
         if (Try == 0):
-            guide.f_guide(window, flag, isTab)
+            guide.f_guide(window, flag, isTab, Inven.invenList, isDragging)
 
             
         pygame.display.update()
