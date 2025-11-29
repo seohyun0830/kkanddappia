@@ -4,6 +4,7 @@ from . import player
 from . import map
 from . import images
 from . import sounds
+from . import guide
 
 # flag 인자
 # 0: 처음 시작 (+가이드) 1: 재시작(리셋) 2: 다시 돌아왔을 때(저장된 상태)
@@ -37,25 +38,28 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo):
     
     # 최적화를 위한 이전 좌표 기록 변수
     prev_bx, prev_by = -1, -1
-
+    flag = False
+    isTab = False
     play = True
     while play:
         deltaTime = fps.tick(50)
-        
+
         # --- [1. 이벤트 처리] ---
         for event in pygame.event.get():        
             if event.type == pygame.QUIT:
                 play = False
-                return 0
+                return 0, None, None, None, None
             
             if event.type == pygame.KEYUP:
                 Player.f_setDefault()
 
             # 마우스 클릭 (드래그 시작)
             if event.type == pygame.MOUSEBUTTONDOWN:
+                flag = True
                 clickX, clickY = event.pos
                 isDragging = True
-                isLadder = Inven.f_isLadder(clickX, clickY) # 사다리인지 확인
+                if (isTab):
+                    isLadder = Inven.f_isLadder(clickX, clickY) # 사다리인지 확인
                 if (isLadder): 
                     Inven.ladderCnt -= 1
                     if (Inven.ladderCnt <= 0):
@@ -64,8 +68,10 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo):
 
             # 마우스 떼기 (드래그 끝)
             if event.type == pygame.MOUSEBUTTONUP:
+                flag = False
                 upX, upY = event.pos
                 isDragging = False
+                isLadder = False
 
         # --- [2. 게임 로직 업데이트] ---
         keys = pygame.key.get_pressed()
@@ -78,8 +84,8 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo):
         Player.f_gravity(Map.underMap, Map.itemMap)
         
         # 실패 조건 체크
-        if Player.blockY >= Player.row - 1: return 1 # 마그마
-        if Map.itemMap[Player.blockY][Player.blockX] == -1: return 2 # 지하수
+        if Player.blockY >= Player.row - 1: return 1, None, None, None, None # 마그마
+        if Map.itemMap[Player.blockY][Player.blockX] == -1: return 2, None, None, None, None # 지하수
 
         # 플레이어 블록 좌표 갱신 (자주 쓰이니 변수에 저장)
         # Player 클래스 내부에서 realX 업데이트 시 blockX도 같이 업데이트하면 더 좋습니다.
@@ -121,13 +127,21 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo):
 
         # 인벤토리 및 드래그 UI (가장 위에 그려야 하므로 마지막에 배치)
         if keys[pygame.K_TAB]:
+            isTab = True
             Inven.f_inven(window)
             Inven.f_invenInfo(window)
+        else:
+            isTab = False
             
             # 드래그 중인 사다리 그리기 (인벤토리가 켜져 있을 때만 보이게 할지 결정 필요)
             # 만약 인벤토리 밖에서도 드래그가 보여야 한다면 탭 키 밖으로 빼세요.
         if isDragging and isLadder:
             mouseX, mouseY = pygame.mouse.get_pos() # 필요할 때만 get_pos 호출
             Inven.f_ladder(mouseX, mouseY, window)
+        
+        
+        if (Try == 0):
+            guide.f_guide(window, flag, isTab)
+
             
         pygame.display.update()
