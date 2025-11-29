@@ -95,6 +95,7 @@ class ImageManager:
         self.make_image = self.safe_load_image('make.png', IMG_SIZE_MAKE)
         self.make2_image = self.safe_load_image('make2.PNG', IMG_SIZE_MAKE2)
         self.inven_image = self.safe_load_image('inventory.PNG', IMG_SIZE_INVEN)
+        self.inven2_image = self.safe_load_image('inventory2.PNG', IMG_SIZE_INVEN)
         self.make_outside_image = self.safe_load_image('make_outside.png', IMG_SIZE_MAKE)
         self.spaceship_make_image = self.safe_load_image('spaceship_make.png', IMG_SIZE_SPACESHIP_MAKE)
         self.dic_image = self.safe_load_image('dic.png', IMG_SIZE_DIC)

@@ -32,6 +32,9 @@ mode = -1                   # 난이도 (1: Easy, 2: Hard)
 MODE = 0
 Try = 0
 MapInfo, ItemMapInfo, InvenInfo, LadderInfo = 0, 0, 0, 0
+
+stage2 = Stage2(window)
+
 while current_state != STATE_EXIT:
     # 1. 시작 화면
     if current_state == STATE_START:
@@ -77,7 +80,6 @@ while current_state != STATE_EXIT:
     
     # 4. 2스테이지 (예정)
     elif current_state == STATE_STAGE2:
-        stage2 = Stage2(window)
         result=stage2.run()
         
         if result=="stage1":

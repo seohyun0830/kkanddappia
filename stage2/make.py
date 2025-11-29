@@ -90,7 +90,7 @@ class Crafting:
 
     def process_crafting(self):
         found_recipe = False
-        
+
         for recipe_data in RECIPES:
             if self.stage.crafting_table == recipe_data['recipe']:
                 result_item = recipe_data['result']
@@ -101,7 +101,7 @@ class Crafting:
                 self.stage.crafting_table = [None] * 9
                 found_recipe = True
                 break
-        
+
         if not found_recipe:
             self.stage.game_over = True
             self.stage.close_all_popups()

@@ -24,6 +24,7 @@ if not os.path.isdir(ASSETS_PATH):
 PLAYER_SIZE = (100, 100)
 PLAYER_SPEED = 5
 ANIMATION_SPEED = 6
+TREE_ANIMATION_SPEED=12
 PLAYER_START_X = 100
 PLAYER_START_Y = 630
 SPACESHIP_WALK_Y = 590
@@ -93,6 +94,8 @@ SPACESHIP_DROP_AREA = pygame.Rect(
     500
 )
 
+########인벤1#########
+
 INVENTORY_SLOT_POSITIONS = []
 INVENTORY_SLOT_RECTS = []
 INV_X_REL_COORDS = [50, 142, 234, 326, 418, 512]
@@ -116,6 +119,29 @@ for rel_y in CRAFT_Y_POSITIONS:
         absolute_y = MAKE2_IMAGE_Y + rel_y
         CRAFT_SLOT_POSITIONS.append((absolute_x, absolute_y))
         CRAFT_SLOT_RECTS.append(pygame.Rect(absolute_x, absolute_y, ITEM_SIZE, ITEM_SIZE))
+
+
+#########인벤2#########
+
+INVENTORY_PAGE2_SLOT_POSITIONS = []
+INVENTORY_PAGE2_SLOT_RECTS = []
+
+INV_P2_X_REL = [120, 385] 
+INV_P2_Y_REL = [120, 385]
+
+for rel_y in INV_P2_Y_REL:
+    for rel_x in INV_P2_X_REL:
+        absolute_x = INVEN_IMAGE_X + rel_x - (SPACESHIP_ITEM_SIZE // 2)
+        absolute_y = INVEN_IMAGE_Y + rel_y - (SPACESHIP_ITEM_SIZE // 2)
+        INVENTORY_PAGE2_SLOT_POSITIONS.append((absolute_x, absolute_y))
+        INVENTORY_PAGE2_SLOT_RECTS.append(pygame.Rect(absolute_x, absolute_y, SPACESHIP_ITEM_SIZE, SPACESHIP_ITEM_SIZE))
+
+SPACESHIP_PART_NAMES = [
+    'spaceship-side',
+    'spaceship-side-piece',
+    'spaceship-roof',
+    'spaceship-roof-piece'
+]
 
 SPACESHIP_SLOT_POSITIONS = []
 SPACESHIP_SLOT_RECTS = []
@@ -212,6 +238,30 @@ RECIPES = [
                   'stick', 'stick', 'stick',
                   'stick', None, 'stick'],
         'result':'ladder'
+    },
+    {
+        'recipe':['steel', None, 'steel',
+                  'screw', 'window-piece', 'screw',
+                  'steel', 'hammer', 'steel'],
+        'result':'spaceship_side_1_9'
+    },
+    {
+        'recipe':['spaceship_side_1_9','spaceship_side_1_9','spaceship_side_1_9',
+                  'spaceship_side_1_9','spaceship_side_1_9','spaceship_side_1_9',
+                  'spaceship_side_1_9','spaceship_side_1_9','spaceship_side_1_9'],
+        'result':'spaceship_side_piece'
+    },
+    {
+        'recipe':['steel', 'steel', None,
+                  'screw', 'screw', None,
+                  'steel', 'steel', 'hammer'],
+        'result':'spaceship_roof_1_4'
+    },
+    {
+        'recipe':['spaceship_roof_1_4','spaceship_roof_1_4', None,
+                  'spaceship_roof_1_4','spaceship_roof_1_4', None,
+                  None, None, None],
+        'result':'spaceship_roof_piece'
     },
     {
         'recipe':[None, None, None,
