@@ -1,6 +1,6 @@
 import pygame
 from button.images import btn_background
-from .images import background, background2, sfx_click
+from .images import background, background2, sfx_click, planet
 from button.isClicked import f_isClicked
 
 def f_start(window):
@@ -46,6 +46,7 @@ def f_start(window):
 
         # 5. 그리기
         window.blit(background, (0,0))
+        window.blit(planet, (-70,-180))
         window.blit(btn_background, (btn_x, btn_y))
         
         # 호버 상태에 따라 미리 만들어둔 텍스트 이미지 선택
@@ -102,7 +103,7 @@ def f_modeSelect(window):
 
         # 그리기
         window.blit(background2, (0,0))
-        
+        window.blit(planet, (600,350))
         # Easy 버튼
         window.blit(btn_background, (easy_x, easy_y))
         if is_hover_easy:

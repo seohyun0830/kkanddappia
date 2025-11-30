@@ -11,6 +11,9 @@ bedroom = pygame.image.load("start/assets/bedroom.png")
 outside = pygame.image.load("start/assets/outside.jpg")
 outside = pygame.transform.smoothscale(outside, (1200, 800))
 
+planet = pygame.image.load("start/assets/planet.png")
+planet = pygame.transform.smoothscale(planet, (800,800))
+
 sfx_click = pygame.mixer.Sound("button/assets/click.wav")
 sfx_type = pygame.mixer.Sound("start/assets/type.mp3")
 sfx_siren = pygame.mixer.Sound("start/assets/siren.mp3")
