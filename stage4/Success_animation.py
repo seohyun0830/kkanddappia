@@ -1,22 +1,203 @@
 import pygame
 import os
-def draw_success_ui(screen, move_success_images, font_path):
-   
-    success_font = pygame.font.Font(os.path.join(font_path, "DungGeunMo.ttf"), 70)
-    success_text_surface = success_font.render("깐따삐아에 이주 성공하다!", True, (255, 255, 255))
-    text_rect = success_text_surface.get_rect(center=(1200 / 2, 800/3 - 100))
+
+#(670,580)
+
+def kkanddappia_land(screen, bk2_img, person_img, person2_img, talk_img, font):
+    clock = pygame.time.Clock()
     
-    move_success_cnt = 0
-    while move_success_cnt < 3:
-        for img in move_success_images: 
-            screen.blit(img, (0,0)) 
-            screen.blit(success_text_surface, text_rect)
-            pygame.display.update() 
-            pygame.time.delay(500)
-        move_success_cnt += 1
+    for i in range(4):
+        pygame.event.pump() 
+        screen.blit(bk2_img, (0, 0))
+        screen.blit(person_img, (670 + i * 5, 580 + i * 5))
+        pygame.display.update()
+        pygame.time.delay(500)
+   
+    screen.blit(bk2_img, (0, 0))
+
+    screen.blit(person2_img, (690, 620))
+    pygame.display.update()
+    
+    pygame.time.delay(1000)
+
+    captured_screen = screen.copy()
+    
+    texts = [
+        "여기가... 깐따삐아인가?",
+        "휴... 나 살았다!"
+    ]
+    dialog_rect = talk_img.get_rect(midbottom=(850, 650))
+   
+    text_idx = 0
+    char_idx = 0
+    last_time = 0
+    typing_speed = 50
+    typing_finished = False
+
+    while True:
+        dt = clock.tick(60)
+        current_time = pygame.time.get_ticks()
+        if text_idx >= len(texts):
+            break
+        
+        current_full_text = texts[text_idx]
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return 
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if typing_finished:
+                    text_idx += 1
+                    char_idx = 0
+                    typing_finished = False
+                else:
+                    char_idx = len(current_full_text)
+                    typing_finished = True
+
+        if not typing_finished:
+            if current_time - last_time > typing_speed:
+                char_idx += 1
+                last_time = current_time
+            
+            if char_idx >= len(current_full_text):
+                char_idx = len(current_full_text)
+                typing_finished = True
+        screen.blit(captured_screen, (0, 0))
+   
+        screen.blit(talk_img, dialog_rect)
+    
+        display_text = current_full_text[:char_idx]
+        text_surface = font.render(display_text, True, (0, 0, 0)) 
+      
+        screen.blit(text_surface, (dialog_rect.x + 45, dialog_rect.y + 45))
+    
+        pygame.display.update()
+
+    screen.blit(captured_screen, (0, 0))
+    pygame.display.update()
+    pygame.time.delay(1000)
+
+def final_ending(screen, bk3, bk4, talk_img, font,mode):
+    clock = pygame.time.Clock()
+    
+    fade_surface = pygame.Surface((1200, 800))
+    fade_surface.fill((0, 0, 0))
+    
+    fade_duration = 1000 
+
+    start_ticks = pygame.time.get_ticks()
+    while True:
+        pygame.event.pump()
+        clock.tick(60)
+        elapsed = pygame.time.get_ticks() - start_ticks
+        if elapsed >= fade_duration: break
+        progress = elapsed / fade_duration
+        alpha = int(255 * (1.0 - progress))
+        
+        screen.blit(bk3, (0, 0))
+        fade_surface.set_alpha(alpha)
+        screen.blit(fade_surface, (0, 0))
+        pygame.display.update()
+
+    screen.blit(bk3, (0, 0))
+    pygame.display.update()
     pygame.time.delay(1500) 
 
+    start_ticks = pygame.time.get_ticks()
+    while True:
+        pygame.event.pump()
+        clock.tick(60)
+        elapsed = pygame.time.get_ticks() - start_ticks
+        if elapsed >= fade_duration: break
+        progress = elapsed / fade_duration
+        alpha = int(255 * progress)
+        
+        screen.blit(bk3, (0, 0))
+        fade_surface.set_alpha(alpha)
+        screen.blit(fade_surface, (0, 0))
+        pygame.display.update()
+
+    start_ticks = pygame.time.get_ticks()
+    while True:
+        pygame.event.pump()
+        clock.tick(60)
+        elapsed = pygame.time.get_ticks() - start_ticks
+        if elapsed >= fade_duration: break
+        progress = elapsed / fade_duration
+        alpha = int(255 * (1.0 - progress))
+        
+        screen.blit(bk4, (0, 0))
+        fade_surface.set_alpha(alpha)
+        screen.blit(fade_surface, (0, 0))
+        pygame.display.update()
+
+    screen.blit(bk4, (0, 0))
+    talk_img=pygame.transform.scale(talk_img,(650,250))
+    talk_rect = talk_img.get_rect(topleft=(500, 350)) 
+    screen.blit(talk_img, talk_rect)
+    pygame.display.update()
+
+    captured_screen = screen.copy()
+
+    if mode=="easy":
+        texts = [
+            "할머니 덕분에 깐따삐아에 도착할 수 있었어..",
+            "할머니 감사합니다!"]
+    else:
+        texts = [
+            "할머니가 하시려뎐 말씀이 뭐였을까?",
+            "할머니 보고 싶다.."]
+    text_idx = 0
+    char_idx = 0
+    last_time = 0
+    typing_speed = 50
+    typing_finished = False
+
+    while True:
+        dt = clock.tick(60)
+        current_time = pygame.time.get_ticks()
+
+        if text_idx >= len(texts):
+            break
+        
+        current_full_text = texts[text_idx]
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if typing_finished:
+                    text_idx += 1
+                    char_idx = 0
+                    typing_finished = False
+                else:
+                    char_idx = len(current_full_text)
+                    typing_finished = True
+
+        if not typing_finished:
+            if current_time - last_time > typing_speed:
+                char_idx += 1
+                last_time = current_time
+            
+            if char_idx >= len(current_full_text):
+                char_idx = len(current_full_text)
+                typing_finished = True
+
+        screen.blit(captured_screen, (0, 0)) 
+        display_text = current_full_text[:char_idx]
+        text_surface = font.render(display_text, True, (0, 0, 0)) 
+        
+        screen.blit(text_surface, (talk_rect.x + 40, talk_rect.y + 50))
+        
+
+        pygame.display.update()
+
+    screen.blit(bk4, (0, 0))
+    pygame.display.update()
+    pygame.time.delay(2000)
+
 #############################################
+#깐따삐아 도착
 def default_ending(screen, kkanttapia_img, sounds, move_success_images, font_path):
     clock = pygame.time.Clock()
     fade_surface = pygame.Surface((1200, 800))
@@ -58,6 +239,7 @@ def default_ending(screen, kkanttapia_img, sounds, move_success_images, font_pat
         screen.blit(fade_surface, (0, 0))
                 
         pygame.display.update()
+    pygame.time.delay(1500)
     
 
 

@@ -81,7 +81,7 @@ class Stage4:
         # 폰트
         self.game_font = pygame.font.Font(os.path.join(self.font_path, "DungGeunMo.ttf"), 40)
         self.fuel_font = pygame.font.Font(os.path.join(self.font_path, "DungGeunMo.ttf"), 30)
-
+        self.talk_font = pygame.font.Font(os.path.join(self.font_path, "DungGeunMo.ttf"), 25)
         pygame.mixer.music.play(-1)
 
     # ------------------------------------------------------------------
@@ -172,7 +172,7 @@ class Stage4:
                     return "dead"
 
                 # 남은 시간 0초 → 기본 성공
-                if remaining_seconds <= 0:
+                if remaining_seconds <= 99:
                     self.default_success()
                     return "success"
 
@@ -193,7 +193,7 @@ class Stage4:
         self.bubble_img = pygame.image.load(os.path.join(self.image_path, "bubble.png"))
         self.blackhole_img = pygame.image.load(os.path.join(self.image_path, "blackhole.png"))
         self.success_img = pygame.image.load(os.path.join(self.image_path, "success.png"))
-        self.kkanttapia_img = pygame.image.load(os.path.join(self.image_path, "kkanttapia.png"))
+        #self.kkanttapia_img = pygame.image.load(os.path.join(self.image_path, "kkanttapia.png"))
 
         self.meteor_collision = pygame.transform.scale(
             pygame.image.load(os.path.join(self.image_path, "meteor_collision.png")),
@@ -231,8 +231,9 @@ class Stage4:
 
         ]
         self.crash_stand_p_img= pygame.image.load(os.path.join(self.image_path,"crash_stand_person.png"))
-
+        self.move_success_p=pygame.image.load(os.path.join(self.image_path,"move_success_p.png"))
         self.talking_box=pygame.image.load(os.path.join(self.image_path,"talking.png"))
+        self.talking_box2=pygame.image.load(os.path.join(self.image_path,"talking2.png"))
         self.guide_bk_img=pygame.image.load(os.path.join(self.image_path,"guide_background.png"))
         # life 이미지 (life1 ~ life4)
         self.life_images = [
@@ -241,6 +242,15 @@ class Stage4:
             )
             for i in range(1, 5)
         ]
+        #최종 성공 이미지
+        self.ending_bk_images=[
+            pygame.image.load(os.path.join(self.image_path,"ending_bk1.png")),
+            pygame.image.load(os.path.join(self.image_path,"ending_bk2.png")),
+            pygame.image.load(os.path.join(self.image_path,"ending_bk3.png")),
+            pygame.image.load(os.path.join(self.image_path,"ending_bk4.png"))
+        ]
+
+        self.walking_p=pygame.image.load(os.path.join(self.image_path,"walking_p1.png"))
 
         # 성공 UI 이미지
         self.move_success_images = [
@@ -426,10 +436,11 @@ class Stage4:
 
             sounds = {"landed": self.landed_sound}
             Success_animation.default_ending(
-                self.screen, self.kkanttapia_img, sounds,
+                self.screen, self.ending_bk_images[0], sounds,
                 self.move_success_images, self.font_path
             )
-            Success_animation.draw_success_ui(self.screen, self.move_success_images, self.font_path)
+            Success_animation.kkanddappia_land(self.screen,self.ending_bk_images[1],self.walking_ps,self.move_success_p,self.talking_box2,self.talk_font)
+            Success_animation.final_ending(self.screen,self.ending_bk_images[2],self.ending_bk_images[3],self.talking_box2,self.talk_font,"easy")
             return True
 
         return False
@@ -491,10 +502,11 @@ class Stage4:
     def default_success(self):
         sounds = {"landed": self.landed_sound}
         Success_animation.default_ending(
-            self.screen, self.kkanttapia_img, sounds,
+            self.screen, self.ending_bk_images[0], sounds,
             self.move_success_images, self.font_path
         )
-        Success_animation.draw_success_ui(self.screen, self.move_success_images, self.font_path)
+        Success_animation.kkanddappia_land(self.screen,self.ending_bk_images[1],self.walking_p,self.move_success_p,self.talking_box2,self.talk_font)
+        Success_animation.final_ending(self.screen,self.ending_bk_images[2],self.ending_bk_images[3],self.talking_box2,self.talk_font,"easy")
 
     # ------------------------------------------------------------------
 
