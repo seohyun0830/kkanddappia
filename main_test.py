@@ -7,6 +7,8 @@ from stage1.images import water_back, magma_back
 
 from stage2.stage2_main import *
 
+##왜 또 그러니##
+
 STATE_EXIT   = -1  
 STATE_START  = 0   
 STATE_MODE   = 1   
@@ -39,7 +41,7 @@ ITEM_ID_TO_NAME = {
     1: 'stone',
     2: 'soil',
     3: 'fossil',
-    4: 'wood',   
+    4: 'wood',   #쪽지로 대체해야함!!
     5: 'ladder'
 }
 
