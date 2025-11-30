@@ -172,7 +172,7 @@ class Stage4:
                     return "dead"
 
                 # 남은 시간 0초 → 기본 성공
-                if remaining_seconds <= 99:
+                if remaining_seconds <= 0:
                     self.default_success()
                     return "success"
 
