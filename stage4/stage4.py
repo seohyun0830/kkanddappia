@@ -307,9 +307,15 @@ class Stage4:
 
             if result == -1:
                 self.screen.blit(self.puzzle_fail, (0, 0))
-                self.screen.blit(self.restart_img, (800, 600))
                 pygame.display.update()
                 pygame.time.delay(1500)
+                crash_sounds={
+                            'ground_crash':self.crash_ground_sound,
+                            'burning':self.burnning_sound
+                        }
+                crash_ani.crash_animation(self.screen,self.crash_fail_images,crash_sounds)
+                restart_ani.restart_ani(self.screen,self.crash_fail_images[9],self.crash_after_person_images,self.crash_stand_p_img)
+                restart_ani.restart_talk(self.screen,self.talking_box)
                 return "menu"
 
             puzzle_end = pygame.time.get_ticks()
