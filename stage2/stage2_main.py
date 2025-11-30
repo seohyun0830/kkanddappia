@@ -38,18 +38,31 @@ class Stage2:
 
         self.reset_game_data()
 
-    def reset_game_data(self):
-        """게임을 완전히 처음 상태로 되돌리는 함수 (REPLAY용)"""
+    def reset_game_data(self, imported_items=None):
+
         self.game_over = False
         
         if self.sounds.bomb_sound: self.sounds.bomb_sound.stop()
         if self.sounds.tree_sound: self.sounds.tree_sound.stop()
         if self.sounds.walk_sound: self.sounds.walk_sound.stop()
+
+        base_items = (['fire']*1 + ['water']*1 + ['stone']*15 + 
+                         ['ladder']*5+
+                         ['spaceship-side'] * 4 + 
+                         ['spaceship-roof'] * 4 + 
+                         ['fuel tank'] * 7)
         
+        if imported_items is not None:
+            self.inventory=base_items+imported_items
+        else:
+            self.inventory=base_items
+        
+        '''
         self.inventory = (['fire']*1 + ['water']*1 + ['stone']*15 + 
                          ['spaceship-side'] * 4 + 
                          ['spaceship-roof'] * 4 + 
                          ['fuel tank'] * 7)
+        '''
         
         self.crafting_table = [None] * 9
         self.spaceship_assembly_storage = []
