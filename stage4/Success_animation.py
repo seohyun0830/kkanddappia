@@ -198,7 +198,7 @@ def final_ending(screen, bk3, bk4, talk_img, font,mode):
 
 #############################################
 #깐따삐아 도착
-def default_ending(screen, kkanttapia_img, sounds, move_success_images, font_path):
+def default_ending(screen, kkanttapia_img, sounds):
     clock = pygame.time.Clock()
     fade_surface = pygame.Surface((1200, 800))
     fade_surface.fill((0, 0, 0))
@@ -243,7 +243,7 @@ def default_ending(screen, kkanttapia_img, sounds, move_success_images, font_pat
     
 
 
-def blackhole_ending(screen, background, blackhole_img, spaceship_img, spaceship_pos, bh_pos, size_info, sounds, move_success_images, font_path):
+def blackhole_ending(screen, background, blackhole_img, spaceship_img, spaceship_pos, bh_pos, size_info, sounds):
     clock = pygame.time.Clock()
     
     pygame.mixer.music.pause()

@@ -39,7 +39,22 @@ def main():
                 break
                     
 
-    
+    '''
+    stage4 = Stage4(screen)
+    result = stage4.run()
+
+    while True:
+        if result == "stage4to3":
+            stage4to3 = Stage4To3(screen)
+            back = stage4to3.run()
+
+            if back == "stage4":
+                result = stage4.resume()
+            else:
+                break
+        else:
+            break
+    '''
     pygame.quit()
 
 if __name__ == "__main__":

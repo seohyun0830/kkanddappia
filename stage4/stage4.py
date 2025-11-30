@@ -201,7 +201,7 @@ class Stage4:
         )
 
         self.puzzle_fail = pygame.image.load(os.path.join(self.image_path, "puzzle_failure.png"))
-        self.restart_img = pygame.image.load(os.path.join(self.image_path, "restart_button.png"))
+        
         self.fuel_failure_img = pygame.image.load(os.path.join(self.image_path, "fuel_failure.png"))
 
         self.navigation_screen = pygame.image.load(os.path.join(self.image_path, "navigation_screen.png"))
@@ -253,11 +253,12 @@ class Stage4:
         self.walking_p=pygame.image.load(os.path.join(self.image_path,"walking_p1.png"))
 
         # 성공 UI 이미지
+        '''
         self.move_success_images = [
             pygame.image.load(os.path.join(self.image_path, f"move_success{i}.png"))
             for i in range(1, 5)
         ]
-
+'''
         # 운석 이미지 로드
         meteor_size = 70
         meteor_list = ["meteor.png", "meteor2.png", "meteor3.png", "meteor4.png"]
@@ -431,15 +432,14 @@ class Stage4:
                 (self.spaceship.x_pos, self.spaceship.y_pos),
                 (self.blackhole.x_pos, self.blackhole.y_pos),
                 (self.spaceship.width, self.spaceship.height),
-                sounds, self.move_success_images, self.font_path
+                sounds
             )
 
             sounds = {"landed": self.landed_sound}
             Success_animation.default_ending(
-                self.screen, self.ending_bk_images[0], sounds,
-                self.move_success_images, self.font_path
+                self.screen, self.ending_bk_images[0], sounds
             )
-            Success_animation.kkanddappia_land(self.screen,self.ending_bk_images[1],self.walking_ps,self.move_success_p,self.talking_box2,self.talk_font)
+            Success_animation.kkanddappia_land(self.screen,self.ending_bk_images[1],self.walking_p,self.move_success_p,self.talking_box2,self.talk_font)
             Success_animation.final_ending(self.screen,self.ending_bk_images[2],self.ending_bk_images[3],self.talking_box2,self.talk_font,"easy")
             return True
 
@@ -503,7 +503,6 @@ class Stage4:
         sounds = {"landed": self.landed_sound}
         Success_animation.default_ending(
             self.screen, self.ending_bk_images[0], sounds,
-            self.move_success_images, self.font_path
         )
         Success_animation.kkanddappia_land(self.screen,self.ending_bk_images[1],self.walking_p,self.move_success_p,self.talking_box2,self.talk_font)
         Success_animation.final_ending(self.screen,self.ending_bk_images[2],self.ending_bk_images[3],self.talking_box2,self.talk_font,"easy")
