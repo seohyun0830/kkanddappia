@@ -16,7 +16,8 @@ def f_guide(window, flag, isTab, invenList, isDragging):
         "너무 깊이 들어가면 위험하니 조심하시길 바랍니다.",
         ""
     ]
-    
+    skip_text = skipFont.render(skip, True, (255, 255, 255))
+    skip_rect = skip_text.get_rect(center = (600, 500))
     if flag:
         if not f_guide.is_processed:
             f_guide.idx += 1
@@ -29,8 +30,6 @@ def f_guide(window, flag, isTab, invenList, isDragging):
         f_guide.idx = len(texts) - 1
     
     if (texts[f_guide.idx] != ""):
-        skip_text = skipFont.render(skip, True, (255, 255, 255))
-        skip_rect = skip_text.get_rect(center = (600, 500))
         box.fill((0, 0, 0)) 
         hole_color = (255, 0, 255)
         if (f_guide.idx == 0 or f_guide.idx == 1):
