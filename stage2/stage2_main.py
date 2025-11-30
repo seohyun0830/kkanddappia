@@ -45,9 +45,14 @@ class Stage2:
         if self.sounds.bomb_sound: self.sounds.bomb_sound.stop()
         if self.sounds.tree_sound: self.sounds.tree_sound.stop()
         if self.sounds.walk_sound: self.sounds.walk_sound.stop()
-
+        '''
         base_items = (['fire']*1 + ['water']*1 + ['stone']*15 + 
                          ['ladder']*5+
+                         ['spaceship-side'] * 4 + 
+                         ['spaceship-roof'] * 4 + 
+                         ['fuel tank'] * 7)
+        '''
+        base_items = (['fire']*1 + ['water']*1 +
                          ['spaceship-side'] * 4 + 
                          ['spaceship-roof'] * 4 + 
                          ['fuel tank'] * 7)

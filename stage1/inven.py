@@ -6,13 +6,16 @@ class Cinven:
         # 초기 아이템 (사다리)
         self.invenList = [5]
         
+        # 각 아이템 총 갯수
+        self.invenCnt = [0,0,0,0,1]
+
+        # 한칸 갯수
+        self.blockCount = [1]
+
         # 인벤토리 크기 설정
         self.invenRow = row // 2 - 1
         self.invenCol = col // 2 - 1
         self.invenPix = pix * 2
-        
-        # 사다리 수
-        self.ladderCnt = 10
 
         # 폰트 미리 생성
         self.font = pygame.font.Font("DungGeunMO.ttf", 30)
@@ -22,12 +25,23 @@ class Cinven:
             1: "gem", 2: "sand", 3: "fossil", 4: "paper", 5: "ladder"
         }
 
+    def f_blockCount(self):
+        self.blockCount = []
+        temp_cnt = list(self.invenCnt) 
+        
+        # invenList에 있는 아이템 순서대로 개수를 배정합니다.
+        for item_id in self.invenList:
+            idx = item_id - 1 # 아이템 인덱스 (0~4)
+            
+            if temp_cnt[idx] >= 10:
+                self.blockCount.append(10) # 10개 꽉 채움
+                temp_cnt[idx] -= 10
+            else:
+                self.blockCount.append(temp_cnt[idx]) # 남은 거 다 넣음
+                temp_cnt[idx] = 0
+
     def f_inven(self, window):
-        # 텍스트 미리 생성 (최적화)
-        count_text = self.font.render("10", True, (255, 255, 255))
-        ladder_text = self.font.render(f"{self.ladderCnt}", True, (255,255,255))
-        # ★ 전체 슬롯을 순회 (배경을 다 그리기 위해)
-        # (대장님의 기존 range 범위 1 ~ invenCol 유지)
+        self.f_blockCount()
         for i in range(1, self.invenCol):
             for j in range(1, self.invenRow):
                 
@@ -41,22 +55,19 @@ class Cinven:
                 # 3. 리스트 인덱스 계산
                 # (가로 칸 수: self.invenCol - 1)
                 list_index = (j - 1) * (self.invenCol - 1) + (i - 1)
-                
                 # 4. 아이템이 있으면 그리기
                 if list_index < len(self.invenList):
                     item_id = self.invenList[list_index]
-                    
-                    # 아이템 이미지
                     window.blit(items[item_id - 1], (x + 30, y + 30))
                     
-                    # 수량 표시
-                    if item_id == 5:
-                        window.blit(ladder_text, (x + 70, y + 75))
-                    elif item_id == 4:
-                        pass
-                    else:
-                        window.blit(count_text, (x + 70, y + 75))
-                       
+                    # ★★★ 1:1 매칭된 개수 표시 ★★★
+                    # 이제 list_index를 그대로 쓰면 됩니다.
+                    count = self.blockCount[list_index]
+                    
+                    # (0개인 경우는 안 그리도록 예외 처리 가능)
+                    if count > 0:
+                        text = self.font.render(f"{count}", True, (255, 255, 255))
+                        window.blit(text, (x + 70, y + 75))      
 
     def f_invenInfo(self, window):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -115,12 +126,11 @@ class Cinven:
             
         # 설치 실패: 땅(0)이거나 뭔가 있음 -> 사다리 돌려받기
         elif underMap[by][bx] == 0 or itemMap[by][bx] != 0:
-            if (self.ladderCnt <= 0):
+            if (self.invenCnt[4] <= 0):
                 self.invenList.append(5)
                 self.invenList.sort()
 
-            self.ladderCnt += 1
-            print(self.ladderCnt)
+            self.invenCnt[4] += 1
         
 
     def f_getItem(self, itemMap, blockX, blockY):
@@ -131,4 +141,8 @@ class Cinven:
         if 0 < itemMap[blockY][blockX] < 5:
             self.invenList.append(itemMap[blockY][blockX])
             self.invenList.sort()
+            if (itemMap[blockY][blockX] == 4):
+                self.invenCnt[itemMap[blockY][blockX] - 1] += 1
+            else:
+                self.invenCnt[itemMap[blockY][blockX] - 1] += 10
             itemMap[blockY][blockX] = 0 # 맵에서 아이템 제거

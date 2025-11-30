@@ -8,7 +8,7 @@ from . import guide
 
 # flag 인자
 # 0: 처음 시작 (+가이드) 1: 재시작(리셋) 2: 다시 돌아왔을 때(저장된 상태)
-def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo):
+def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, InvenCnt):
     # --- [초기화] ---
     fps = pygame.time.Clock()
     pix = 60
@@ -29,7 +29,8 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo):
         Map.underMap = MapInfo
         Map.itemMap = ItemMapInfo
         Inven.invenList = InvenInfo
-        Inven.ladderCnt = LadderInfo
+        Inven.invenCnt = InvenCnt
+    Inven.f_blockCount()
 
     # 변수 초기화
     isLadder = False
@@ -66,8 +67,8 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo):
                     isLadder = Inven.f_isLadder(clickX, clickY) # 사다리인지 확인
                     print(isLadder  )
                 if (isLadder): 
-                    Inven.ladderCnt -= 1
-                    if (Inven.ladderCnt <= 0):
+                    Inven.invenCnt[4] -= 1
+                    if (Inven.invenCnt[4] <= 0):
                         Inven.invenList.remove(5)
                 upX, upY = -1, -1 # 초기화
 
@@ -102,7 +103,7 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, LadderInfo):
         if keys[pygame.K_RIGHT]: Player.f_right(Map.underMap, Map.itemMap)
         if keys[pygame.K_DOWN]:  Player.f_down(Map.underMap)
         if keys[pygame.K_UP]:
-            if bx == col - 3 and by == 0: return -1, Map.underMap, Map.itemMap, Inven.invenList, Inven.ladderCnt  # 탈출 성공
+            if bx == col - 3 and by == 0: return -1, Map.underMap, Map.itemMap, Inven.invenList, Inven.invenCnt  # 탈출 성공
             if Map.itemMap[by][bx] == 5: Player.f_up(Map.itemMap) # 사다리 타기
             else: 
                 Player.f_jump() # 점프
