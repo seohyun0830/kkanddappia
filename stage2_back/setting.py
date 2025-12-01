@@ -21,23 +21,22 @@ ASSETS_PATH = os.path.join(CURRENT_PATH, 'assets')
 # --- 플레이어 설정 ---
 PLAYER_SPEED = 5
 ANIMATION_SPEED = 8 
-JUMP_STRENGTH = 15  
-GRAVITY = 0.8       
-GROUND_Y = 600      
+JUMP_STRENGTH = 15  # 점프 힘
+GRAVITY = 1.0       # 중력
+GROUND_Y = 630    # 바닥 Y좌표 기준
 
 # --- 우주선 조각 설정 ---
 TOTAL_PIECES = 9
 PIECE_SIZE = 50
 
-# --- 발사대 위치 ---
+# --- 발사대(Launchpad) 위치 ---
 LAUNCHPAD_RECT = pygame.Rect(900, 400, 250, 300)
 
-# --- [수정됨] 상단 UI (주운 조각이 보이는 곳) ---
+# --- 하단 UI (주운 조각이 보이는 곳) ---
 UI_HEIGHT = 100
-# y 좌표를 0으로 설정하여 화면 맨 위에 배치
-UI_RECT = pygame.Rect(0, 0, SCREEN_WIDTH, UI_HEIGHT)
+UI_RECT = pygame.Rect(0, SCREEN_HEIGHT - UI_HEIGHT, SCREEN_WIDTH, UI_HEIGHT)
 
-# --- 우주선 효과 ---
+# --- 우주선 효과 (Pulsate) ---
 PULSATE_SPEED = 0.005
 PULSATE_MIN_SCALE = 0.95
 PULSATE_MAX_SCALE = 1.05
