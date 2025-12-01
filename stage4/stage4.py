@@ -120,11 +120,14 @@ class Stage4:
             self.game_elapsed_time = game_elapsed_time
 
             # 연료 부족 → stage4to3 이동
-            if fuel_manager.fuel < 70:  # 테스트용 기준
+            if fuel_manager.fuel < 65:  # 테스트용 기준
                 pygame.mixer.music.pause()
                 self.screen.blit(self.fuel_failure_img, (0, 0))
+                #410,300
+                fuel_text = self.game_font.render("연료를 충전하십시오!", True, (255, 0, 0))
+                self.screen.blit(fuel_text,(410,300))
                 pygame.display.update()
-                pygame.time.delay(1500)
+                pygame.time.delay(2500)
 
                 # 4→3에 들어가는 시점 기록 (돌아와서 resume()에서 사용)
                 self.stage4to3_pause_start = pygame.time.get_ticks()

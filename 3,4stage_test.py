@@ -15,7 +15,7 @@ def main():
     pygame.display.set_caption("stage3,4 merge")
 
     assets.load_all()
-    '''
+    
     # -------- Stage 3 --------
     stage3 = Stage3(screen)
     next_stage = stage3.run()
@@ -54,7 +54,7 @@ def main():
                 break
         else:
             break
-    
+    '''
     pygame.quit()
 
 if __name__ == "__main__":
