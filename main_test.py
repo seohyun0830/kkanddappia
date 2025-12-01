@@ -7,8 +7,6 @@ from stage1.images import water_back, magma_back
 
 from stage2.stage2_main import *
 
-##왜 또 그러니##
-
 STATE_EXIT   = -1  
 STATE_START  = 0   
 STATE_MODE   = 1   

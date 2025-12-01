@@ -6,6 +6,7 @@ class ImageManager:
     def __init__(self):
         self.item_images = {}
         self.all_animations = {}
+        self.spaceship_parts = []
         
         self.BAG_FRAMES = ['person_bag1.png', 'person_bag2.png', 'person_bag3.png']
         self.IN_FRAMES = ['person_in1.png', 'person_in2.png', 'person_in3.png']
@@ -103,6 +104,11 @@ class ImageManager:
         self.fly_spaceship_image = self.safe_load_image('fly_spaceship.png', (250, 200), True)
         self.spaceship_display_image = self.safe_load_image('spaceship.png', (190, 100))
         self.spaceship_completed_image = self.safe_load_image('spaceship.png', (250, 200))
+
+        for i in range(1, 10):
+            part_name = f'piece_{i}.png'
+            img = self.safe_load_image(part_name, convert_alpha=True)
+            self.spaceship_parts.append(img)
 
         # 아이템
         items = {
