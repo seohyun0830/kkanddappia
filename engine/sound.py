@@ -22,11 +22,6 @@ def load_sound(path, volume=1.0):
 broken_sound = load_sound("sounds/stage3/단선 생길때.mp3", 0.5)
 success_bgm = load_sound("sounds/stage3/성공.mp3", 0.7)
 fail_bgm = load_sound("sounds/stage3/실패.mp3", 0.7)
-<<<<<<< HEAD
-
-normal_bgm = "sounds/stage3/배경음악2.mp3"
-low_bgm = "sounds/stage3/저압.mp3"
-=======
 oxfail_bgm=load_sound("sounds/stage3/산소부족실패.mp3",0.5)
 item_pickup = load_sound("sounds/stage3/텔레포트겟.mp3", 0.5)
 teleport=load_sound("sounds/stage3/순간이동 성공시.mp3",0.4)
@@ -40,7 +35,6 @@ fire_loop=load_sound("sounds/stage3/불타는소리.mp3",0.5)
 
 
 
->>>>>>> 68ea39ea6b4d0b4b59455b03d254dde54355bff1
 
 high_bgm = load_sound("sounds/stage3/고압.mp3", 0.3)
 repair_bgm = load_sound("sounds/stage3/단선수리.mp3", 0.3)
