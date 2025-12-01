@@ -88,31 +88,27 @@ class Stage4:
     #  처음 Stage4 들어올 때 한 번만 호출
     # ------------------------------------------------------------------
     def run(self):
+        
+        guide.show_guide(self.screen, self.guide_bk_img, self.game_font)
         self.start_ticks = pygame.time.get_ticks()
-        self.total_paused_ms = 0
-        self.last_fuel_drop_time = 0
+        self.total_paused_ms = 0 
+        
         return self._loop()
-
     # ------------------------------------------------------------------
     #  Stage4To3 갔다가 돌아올 때 호출 (이어달리기)
     # ------------------------------------------------------------------
     def resume(self):
-        # 4→3에 있던 시간만큼을 total_paused_ms에 더해줘서
-        # Stage4 입장에서는 "시간이 멈춰있었던 것"처럼 보이게 함.
         now = pygame.time.get_ticks()
-        self.total_paused_ms += (now - self.stage4to3_pause_start)
+        if self.stage4to3_pause_start > 0:
+            self.total_paused_ms += (now - self.stage4to3_pause_start)
+
         pygame.mixer.music.load(os.path.join(self.audio_path, "cosmic_zoo.mp3"))
         pygame.mixer.music.play(-1)
+        
         return self._loop()
 
-    # ------------------------------------------------------------------
-    #  메인 루프 (run / resume 모두 여기로 들어감)
-    # 문자열은 stage4to3인경우에만 의미있음(일단)
-    # ------------------------------------------------------------------
-
     def _loop(self):
-        guide.show_guide(self.screen,self.guide_bk_img,self.game_font)
-        self.start_ticks = pygame.time.get_ticks()
+       
         running = True
         while running:
             dt = self.clock.tick(60)
@@ -124,7 +120,7 @@ class Stage4:
             self.game_elapsed_time = game_elapsed_time
 
             # 연료 부족 → stage4to3 이동
-            if fuel_manager.fuel < 50:  # 테스트용 기준
+            if fuel_manager.fuel < 70:  # 테스트용 기준
                 pygame.mixer.music.pause()
                 self.screen.blit(self.fuel_failure_img, (0, 0))
                 pygame.display.update()
