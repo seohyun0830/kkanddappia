@@ -124,7 +124,7 @@ class Stage4:
             self.game_elapsed_time = game_elapsed_time
 
             # 연료 부족 → stage4to3 이동
-            if fuel_manager.fuel < 65:  # 테스트용 기준
+            if fuel_manager.fuel < 20:  # 테스트용 기준
                 pygame.mixer.music.pause()
                 self.screen.blit(self.fuel_failure_img, (0, 0))
                 #410,300
