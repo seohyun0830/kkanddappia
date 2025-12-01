@@ -1,4 +1,4 @@
-#HP,압력계,압력텍스트,연료
+#HP,압력계,압력텍스트,연료,타이머
 # stage3/draw_ui.py
 import pygame
 import math
@@ -65,3 +65,29 @@ def draw_pressure_text(screen, pressure):
 
 def draw_hp(screen, hp):
     assets.draw_hp_bar(screen, hp)
+
+#타이머 그리기
+def draw_timer(screen, stage3):
+    # -----------------------------
+    # 튜토리얼 중에는 start_time이 없음
+    # → 타이머 고정(00:00) 표시
+    # -----------------------------
+    if not hasattr(stage3, "start_time"):
+        elapsed = 0     # 시간 0으로 고정
+    else:
+        current_ticks = pygame.time.get_ticks()
+        elapsed = (current_ticks - stage3.start_time) // 1000
+
+    # 총 제한시간: 5분 = 300초
+    remaining = max(5 * 60 - elapsed, 0)
+
+    minutes = remaining // 60
+    seconds = remaining % 60
+
+    text = f"{minutes:02}:{seconds:02}"
+
+    # 타이머 폰트 렌더링
+    surface = assets.timer_font.render(text, True, (220, 220, 220))
+
+    # 화면 좌상단에 그리기
+    screen.blit(surface, (10, 10))

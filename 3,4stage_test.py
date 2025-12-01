@@ -2,6 +2,7 @@ import pygame
 from engine import constants, assets
 from stage3 import Stage3
 from stage4.stage4 import Stage4
+from stage3.story import Stage3Story
 from stage4to3.stage4to3 import Stage4To3
 import builtins 
 
@@ -15,6 +16,11 @@ def main():
     pygame.display.set_caption("stage3,4 merge")
 
     assets.load_all()
+
+    # --------Story-----------
+    story = Stage3Story(screen)
+    story.run() 
+    pygame.event.clear()
     
     # -------- Stage 3 --------
     stage3 = Stage3(screen)

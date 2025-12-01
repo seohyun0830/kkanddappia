@@ -1,7 +1,7 @@
 import pygame
 import random
 
-from engine import  constants, sound, maze
+from engine import  constants, sound, maze, assets
 
 # Stage3 모듈들
 from stage3.movement import try_move_player
@@ -9,7 +9,10 @@ from stage3.pressure import update_pressure_small, update_pressure_spike, user_p
 from stage3.repair import RepairSystem
 from stage3.broken import generate_broken_tile
 from stage3.draw_screen import draw_screen
-from stage3.guide import GuideBook
+from stage3.tutorial import Stage3Tutorial
+from stage3.fail_animation import play_oxygen_fail
+
+
 
 
 class Stage3:
@@ -18,10 +21,19 @@ class Stage3:
         self.screen = screen
         self.game_state = game_state
 
+        if self.game_state is None:
+            self.game_state={}
+
         pygame.font.init()
 
-        # 타이머
-        self.start_time = pygame.time.get_ticks()
+        #드론 애니메이션
+        self.drone_active = False
+        self.drone_x = 0
+        self.drone_y = 0
+        self.drone_target_y = 120
+        self.last_drone_time = 0
+        self.drone_state = "idle"  # idle, entering, dropping, leaving
+        self.drone_speed = 6
 
         # 미로 데이터
         self.maze_data = maze.initialize_grid(constants.GRID_SIZE)
@@ -45,14 +57,17 @@ class Stage3:
         self.low_pressure_start_time = None
         self.last_broken_time = 0
 
+        #아이템 
+        self.item_positions = []      # 미로에 있는 아이템 좌표 리스트
+        self.max_items = 2            # 플레이어 최대 보유 아이템 개수
+        self.teleport_item_count = 0  # 현재 플레이어가 가진 아이템 개수
+        self.selecting_teleport = False
+
         # HP
         self.hp = constants.MAX_HP
 
         # 수리 시스템
         self.repair = RepairSystem()
-
-        # 가이드북 시스템
-        self.guide = GuideBook()
 
         # BGM
         self.current_bgm_state = "normal"
@@ -72,29 +87,6 @@ class Stage3:
 
         self.fps = pygame.time.Clock()
 
-    #엔딩화면들
-    def show_gameover(self):
-        #압력 0,100,HP=0
-        sound.high_bgm.stop()
-        sound.stop_bgm()
-        sound.fail_bgm.play()
-
-        img = pygame.image.load("images/stage3/gameover.png")
-        scale = min(constants.SCREEN_WIDTH / img.get_width(), constants.SCREEN_HEIGHT / img.get_height())
-        img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
-        rect = img.get_rect(center=(constants.SCREEN_WIDTH // 2, constants.SCREEN_HEIGHT // 2))
-
-        running = True
-        while running:
-            for e in pygame.event.get():
-                if e.type == pygame.QUIT:
-                    return
-                if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
-                    return
-
-            self.screen.fill((0,0,0))
-            self.screen.blit(img, rect)
-            pygame.display.update()
 
     def show_timeover(self):
         sound.high_bgm.stop()
@@ -169,17 +161,22 @@ class Stage3:
     #menu는 게임오버하면 돌아갈 stage (아마 stage2)
     def run(self):
         running = True
+    
+        draw_screen(self)
+        pygame.display.update()
+        pygame.time.delay(100)
+
+        if not self.game_state.get("stage3_tutorial_done", False):
+            tutorial = Stage3Tutorial(self.screen)
+            tutorial.run(self)
+            self.game_state["stage3_tutorial_done"] = True
+
+        self.spawn_initial_item()
+        #튜토리얼 종료-> 타이머 시작
+        self.start_time=pygame.time.get_ticks()
 
         while running:
             self.fps.tick(constants.FPS)
-
-            # 가이드북 활성화 시 게임 정지
-            if self.guide.open:
-                if not self.guide.handle_open_events():
-                    return "menu"
-                self.guide.draw(self.screen)
-                pygame.display.update()
-                continue
 
             # 이벤트 처리
             running = self.handle_events()
@@ -190,14 +187,21 @@ class Stage3:
             draw_screen(self)
             pygame.display.update()
 
-            # HP 0 , 압력0/100 -> 실패 (2스테이지로 돌아가도록)
-            if self.hp <= 0 or self.pressure <= 0 or self.pressure>=100:
-                self.show_gameover()
-                return "menu" 
+            if self.pressure <= 0 or self.hp<=0:
+                self.fadeout_with_breath()
+                play_oxygen_fail(self.screen)
+                return "menu"
+
+            elif self.pressure >= 100:
+                from stage3.fail_animation import play_overpressure_fail
+                play_overpressure_fail(self.screen)
+                return "menu"
+
+
 
             # 시간 초과 체크 -> 이것도 2stage..? 플레이시간....
             now = pygame.time.get_ticks()
-            elapsed = now - self.start_time - self.guide.game_paused_time
+            elapsed = now - self.start_time
             if elapsed >= constants.TOTAL_GAME_TIME_SECONDS * 1000:
                 self.show_timeover()
                 return "menu"
@@ -229,11 +233,6 @@ class Stage3:
             if e.type == pygame.KEYUP and e.key == pygame.K_e:
                 self.repair.cancel()
 
-            # 가이드북
-            if e.type == pygame.MOUSEBUTTONDOWN:
-                x, y = e.pos
-                if self.guide.handle_button_click(x, y):
-                    continue
 
             # 압력 변화 이벤트
             if e.type == self.PRESSURE_UPDATE_EVENT:
@@ -247,13 +246,40 @@ class Stage3:
                     random.randint(constants.MIN_SPIKE_INTERVAL, constants.MAX_SPIKE_INTERVAL),
                     1
                 )
+            
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_r:
+                if self.teleport_item_count > 0 and self.broken_tiles:
+                    self.selecting_teleport = True
+
+            # 텔레포트 선택 모드 중
+            if self.selecting_teleport:
+                if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1:
+                    mx, my = e.pos
+                    self.handle_teleport_click(mx, my)
+                    return True
+
+                if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
+                    self.selecting_teleport = False
+
 
         return True
 
     #게임 로직
     def update_logic(self):
+        now = pygame.time.get_ticks()
 
-        # 이동 딜레이 적용
+        # ----------------------------------------
+        # 1) 아이템 획득 처리
+        # ----------------------------------------
+        if (self.player_row, self.player_col) in self.item_positions:
+            if self.teleport_item_count < self.max_items:
+                self.teleport_item_count += 1
+                self.item_positions.remove((self.player_row, self.player_col))
+                sound.item_pickup.play()
+
+        # ----------------------------------------
+        # 2) 이동 딜레이 처리
+        # ----------------------------------------
         self.move_timer += 1
         effective_cd = constants.MOVE_COOLDOWN * (3 if self.pressure <= 40 else 1)
 
@@ -261,24 +287,68 @@ class Stage3:
             self.handle_movement()
             self.move_timer = 0
 
-        # 수리 진행
-        self.repair.update(self.maze_data)
+        # ----------------------------------------
+        # 3) 단선 수리 처리
+        # ----------------------------------------
+        repaired = self.repair.update(self.maze_data)
 
-        # 압력 직접 제어 (Q/W)
+        if repaired:
+            # 압력 회복 +5
+            self.pressure = min(100, self.pressure + 5)
+
+            # 드론 보상 확률 (쿨타임 포함)
+            if now - self.last_drone_time >= 7000:   # 7초 쿨타임
+                if random.random() < 0.3:            # 수리 보상 확률
+                    self.spawn_drone_reward()
+                    self.last_drone_time = now
+
+        # ----------------------------------------
+        # 4) Q/W 압력 조절
+        # ----------------------------------------
         self.pressure, self.key_pressed = user_pressure_control(
             self.pressure, self.key_pressed, self.n
         )
 
-        # 고압 → 단선 발생
+        # ----------------------------------------
+        # 5) 고압 → 단선 생성
+        # ----------------------------------------
         self.update_broken_tiles()
 
-        # HP 체크
+        # ----------------------------------------
+        # 6) HP 감소 체크
+        # ----------------------------------------
         self.update_hp()
 
-        # BGM 교체
+        # ----------------------------------------
+        # 7) BGM 변경
+        # ----------------------------------------
         self.update_bgm()
 
+        # ----------------------------------------
+        # 8) 철문 생성/해제
+        # ----------------------------------------
         self.update_iron_gates()
+
+        # ----------------------------------------
+        # 9) 드론 애니메이션 업데이트
+        # ----------------------------------------
+        if self.drone_active:
+            self.update_drone_animation()
+
+        # ----------------------------------------
+        # 10) 압력이 매우 높거나 매우 낮을 때 드론 보상
+        # ----------------------------------------
+        if now - self.last_drone_time >= 7000:  # 쿨타임 7초
+            # 고압 보상
+            if self.pressure >= 85 and random.random() < 0.15:
+                self.spawn_drone_reward()
+                self.last_drone_time = now
+
+            # 저압 보상
+            if self.pressure <= 25 and random.random() < 0.15:
+                self.spawn_drone_reward()
+                self.last_drone_time = now
+
 
 
 
@@ -398,3 +468,135 @@ class Stage3:
                    self.player_col == 0)#테스트용"""
 
         return all_fixed and reached
+    
+    def spawn_initial_item(self):
+        # PATH인 장소 중 랜덤 1곳 선택
+        candidates = [
+            (r, c)
+            for r in range(constants.GRID_SIZE)
+            for c in range(constants.GRID_SIZE)
+            if self.maze_data[r][c] == constants.PATH
+        ]
+
+        if not candidates:
+            return  # PATH가 없으면 스폰 불가
+
+        r, c = random.choice(candidates)
+
+        self.item_positions.append((r, c))
+
+
+    def handle_teleport_click(self, mx, my):
+        # 마우스 → 타일 좌표 변환
+        col = (mx - constants.GRID_OFFSET_X) // constants.TILE_SIZE
+        row = (my - constants.GRID_OFFSET_Y) // constants.TILE_SIZE
+
+        # 화면 밖 클릭 방지
+        if not (0 <= row < constants.GRID_SIZE and 0 <= col < constants.GRID_SIZE):
+            return
+
+        # 해당 위치가 단선인지 확인
+        for b in self.broken_tiles:
+            if b[0] == row and b[1] == col and b[2]:  # b = [r,c,is_broken]
+                # 텔레포트 실행
+                self.player_row = row
+                self.player_col = col
+
+                self.teleport_item_count -= 1
+                self.selecting_teleport = False
+
+                sound.teleport.play()  # 원하면 다른 소리로 변경
+                return
+
+    def spawn_drone_reward(self):
+        if len(self.item_positions) >= 3:
+            return
+
+        sound.drone_drop.play()
+
+        # 드론 시작 위치 (왼쪽 밖 or 오른쪽 밖)
+        side = random.choice(["left", "right"])
+        if side == "left":
+            self.drone_x = -60
+            self.drone_speed = abs(self.drone_speed)
+        else:
+            self.drone_x = constants.SCREEN_WIDTH + 60
+            self.drone_speed = -abs(self.drone_speed)
+
+        self.drone_y = random.randint(80, 140)
+        self.drone_target_x = random.randint(200, constants.SCREEN_WIDTH - 200)
+
+        self.drone_state = "entering"
+        self.drone_active = True
+
+        self.last_drone_time = pygame.time.get_ticks()
+
+
+    def update_drone_animation(self):
+        if not self.drone_active:
+            return
+
+        # 1) 등장 단계
+        if self.drone_state == "entering":
+            if (self.drone_speed > 0 and self.drone_x < self.drone_target_x) or \
+            (self.drone_speed < 0 and self.drone_x > self.drone_target_x):
+                self.drone_x += self.drone_speed
+            else:
+                self.drone_state = "dropping"
+                self.drop_start_time = pygame.time.get_ticks()
+                self.drop_teleport_item()
+
+        # 2) 투하(호버링)
+        elif self.drone_state == "dropping":
+            if pygame.time.get_ticks() - self.drop_start_time > 500:  # 0.5초 정지
+                self.drone_state = "leaving"
+
+        # 3) 떠나기 (위로 빠르게 상승)
+        elif self.drone_state == "leaving":
+            self.drone_y -= 10
+            if self.drone_y < -50:
+                self.drone_active = False
+                self.drone_state = "idle"
+
+
+    def drop_teleport_item(self):
+        candidates = [
+            (r, c)
+            for r in range(constants.GRID_SIZE)
+            for c in range(constants.GRID_SIZE)
+            if self.maze_data[r][c] == constants.PATH
+        ]
+        if not candidates:
+            return
+
+        drop_pos = random.choice(candidates)
+        self.item_positions.append(drop_pos)
+
+
+    def fadeout_with_breath(self):
+        clock = pygame.time.Clock()
+
+        # 기존 브금 정지 후 숨소리 재생
+        sound.stop_bgm()
+        sound.high_bgm.stop()
+        sound.breath.play()
+
+        fade = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
+        fade.fill((0,0,0))
+
+        # 1초 동안 서서히 까매짐
+        for i in range(200):
+            alpha = min(255, i * 4)   # 0 → 240까지 증가
+            fade.set_alpha(alpha)
+
+            # 기존 게임화면 먼저 그림
+            from stage3.draw_screen import draw_screen
+            draw_screen(self)
+
+            # 드론은 예외처리: 항상 맨 위에 다시 그림
+            if self.drone_active:
+                self.screen.blit(assets.drone_img, (self.drone_x - 20, self.drone_y - 20))
+
+            self.screen.blit(fade, (0,0))
+            pygame.display.update()
+            clock.tick(60)

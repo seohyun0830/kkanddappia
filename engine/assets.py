@@ -10,6 +10,12 @@ pipe_images = {}             # 미로 파이프 이미지
 pressure_regulator_img = None
 needle_img = None
 
+<<<<<<< HEAD
+=======
+teleport_item_img = None
+drone_img = None
+
+>>>>>>> 68ea39ea6b4d0b4b59455b03d254dde54355bff1
 fuel_gage_img = None
 fuel_needle_img = None
 
@@ -17,10 +23,13 @@ bg_img = None                # 배경 이미지(벽)
 player_img = None            # 플레이어 이미지
 back_button_img = None       # Stage4로 돌아가기 버튼
 
+<<<<<<< HEAD
 # 가이드북 이미지
 guide_book_button = None
 guide_images = []            # [g1, g2, g3, g4, g5]
 
+=======
+>>>>>>> 68ea39ea6b4d0b4b59455b03d254dde54355bff1
 # 폰트
 pressure_font_base = pygame.font.SysFont(constants.FONT_NAME, constants.BASE_FONT_SIZE, bold=True)
 timer_font = pygame.font.SysFont(constants.FONT_NAME, constants.TIMER_FONT_SIZE, bold=True)
@@ -49,11 +58,34 @@ def load_background():
     raw = pygame.image.load("images/stage3/bk.jpg")
     bk_img = pygame.transform.scale(raw, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
 
+<<<<<<< HEAD
 #플레이어 이미지
 def load_player():
     global player_img
     raw = pygame.image.load("images/stage3/c1.png")
     player_img = pygame.transform.scale(raw, (constants.TILE_SIZE, constants.TILE_SIZE))
+=======
+# 플레이어 이미지
+def load_player():
+    global player_img
+
+    # 원본 로드
+    player = pygame.image.load("images/stage3/c1.png").convert_alpha()
+
+    # 픽셀아트 선명도 유지하면서 2배 확대
+    player = pygame.transform.scale2x(player)   # 2배
+
+    # 그리고 원하는 최종크기로 resize
+    player = pygame.transform.scale(
+        player,
+        (constants.TILE_SIZE*1.8, constants.TILE_SIZE*1.8)
+    )
+
+    player_img = player
+
+
+
+>>>>>>> 68ea39ea6b4d0b4b59455b03d254dde54355bff1
   
 #압력계 이미지
 def load_pressure_images():
@@ -114,6 +146,7 @@ def draw_hp_bar(screen, hp):
     screen.blit(text, text_rect)
 
 
+<<<<<<< HEAD
 #가이드북
 def load_guide_images():
     global guide_book_button, guide_images
@@ -128,6 +161,8 @@ def load_guide_images():
         img = pygame.image.load(f'images/stage3/guide{i}.jpg')
         guide_images.append(img)
 
+=======
+>>>>>>> 68ea39ea6b4d0b4b59455b03d254dde54355bff1
 def load_fuel_image():
     global fuel_img
     fuel_img = pygame.image.load("images/stage3/fuel.png").convert_alpha()
@@ -139,6 +174,19 @@ def load_back_button():
     raw = pygame.image.load('images/stage3/backto4.png')
     back_button_img = pygame.transform.scale(raw, (150, 150))
 
+<<<<<<< HEAD
+=======
+#아이템 
+def load_item_images():
+    global teleport_item_img, drone_img
+
+    teleport_item_img = pygame.image.load("images/stage3/teleport.png").convert_alpha()
+    teleport_item_img = pygame.transform.scale(teleport_item_img, (constants.TILE_SIZE, constants.TILE_SIZE))
+
+    drone_img = pygame.image.load("images/stage3/drone.png").convert_alpha()
+    drone_img = pygame.transform.scale(drone_img, (100, 100))  # 조절 가능
+
+>>>>>>> 68ea39ea6b4d0b4b59455b03d254dde54355bff1
 
 #게임 시작 시 한번만 호출하면 모든 이미지 로딩됨
 def load_all():
@@ -148,5 +196,10 @@ def load_all():
     load_pressure_images()
     load_fuel_gage_images()
     load_back_button()
+<<<<<<< HEAD
     load_guide_images()
     load_fuel_image()
+=======
+    load_fuel_image()
+    load_item_images()
+>>>>>>> 68ea39ea6b4d0b4b59455b03d254dde54355bff1
