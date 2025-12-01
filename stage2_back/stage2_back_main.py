@@ -144,6 +144,7 @@ class Stage2Back:
             # 드래그 중일 때 하이라이트(테두리)는 삭제됨
         
         # 안내 텍스트
+        '''
         font = pygame.font.Font(None, 30)
         if self.map_manager.assembled_count < TOTAL_PIECES:
             msg = "Move to collect pieces! Drag them to the Launchpad!"
@@ -152,6 +153,7 @@ class Stage2Back:
             
         text_surf = font.render(msg, True, WHITE)
         self.screen.blit(text_surf, (SCREEN_WIDTH // 2 - text_surf.get_width() // 2, UI_HEIGHT + 10))
+        '''
 
 if __name__ == "__main__":
     pygame.init()

@@ -107,12 +107,15 @@ class MapManager:
         pygame.draw.rect(screen, BLACK, (gauge_x, gauge_y, gauge_w, gauge_h), 3)
         ratio = self.assembled_count / TOTAL_PIECES
         fill_w = int(gauge_w * ratio)
-        color = GREEN if self.assembled_count >= TOTAL_PIECES else YELLOW
+        color = GREEN if self.assembled_count >= TOTAL_PIECES else RED
         if fill_w > 0:
             pygame.draw.rect(screen, color, (gauge_x + 3, gauge_y + 3, fill_w - 6, gauge_h - 6))
         
         font = pygame.font.Font(None, 30)
-        text = font.render(f"{self.assembled_count}/{TOTAL_PIECES}", True, WHITE)
+
+        percent=int(ratio*100)
+
+        text = font.render(f"{percent}%", True, WHITE)
         screen.blit(text, (gauge_x + gauge_w + 10, gauge_y))
 
     # [핵심 수정] 마우스 클릭 없이, 플레이어 몸체와 닿으면 획득
