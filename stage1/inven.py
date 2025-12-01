@@ -144,5 +144,5 @@ class Cinven:
             if (itemMap[blockY][blockX] == 4):
                 self.invenCnt[itemMap[blockY][blockX] - 1] += 1
             else:
-                self.invenCnt[itemMap[blockY][blockX] - 1] += 1
+                self.invenCnt[itemMap[blockY][blockX] - 1] += 10
             itemMap[blockY][blockX] = 0 # 맵에서 아이템 제거
