@@ -144,7 +144,8 @@ class Stage3:
             # 이벤트 처리
             running = self.handle_events()
             if not running:
-                return "menu"
+                pygame.quit()
+                quit()
 
             self.update_logic()
             draw_screen(self)
@@ -153,12 +154,12 @@ class Stage3:
             if self.pressure <= 0 or self.hp<=0:
                 self.fadeout_with_breath()
                 play_oxygen_fail(self.screen)
-                return "menu"
+                return "dead"
 
             elif self.pressure >= 100:
                 from stage3.fail_animation import play_overpressure_fail
                 play_overpressure_fail(self.screen)
-                return "menu"
+                return "dead"
 
 
 
@@ -167,14 +168,12 @@ class Stage3:
             elapsed = now - self.start_time
             if elapsed >= constants.TOTAL_GAME_TIME_SECONDS * 1000:
                 self.show_timeover()
-                return "menu"
+                return "dead"
 
             # 클리어
             if self.check_clear():
                 self.show_success()
                 return "stage4"
-
-        return "menu"
 
     #이벤트 로직
     def handle_events(self):
@@ -257,7 +256,7 @@ class Stage3:
 
         if repaired:
             # 압력 회복 +5
-            self.pressure = min(100, self.pressure + 5)
+            self.pressure = min(100, self.pressure + 10)
 
             # 드론 보상 확률 (쿨타임 포함)
             if now - self.last_drone_time >= 7000:   # 7초 쿨타임

@@ -126,6 +126,7 @@ class Stage4:
 
             # 연료 부족 → stage4to3 이동
             if fuel_manager.fuel < 20 and self.fule_stage4to3==False:  # 테스트용 기준
+
                 pygame.mixer.music.pause()
                 self.screen.blit(self.fuel_failure_img, (0, 0))
                 #410,300

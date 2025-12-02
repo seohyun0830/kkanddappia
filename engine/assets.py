@@ -61,7 +61,7 @@ def load_player():
     # 그리고 원하는 최종크기로 resize
     player = pygame.transform.scale(
         player,
-        (constants.TILE_SIZE*1.8, constants.TILE_SIZE*1.8)
+        (constants.TILE_SIZE, constants.TILE_SIZE)
     )
 
     player_img = player
