@@ -41,12 +41,12 @@ rock = pygame.image.load("stage1/assets/rock.png")
 magma1 = pygame.image.load("stage1/assets/magma1.png")
 magma2 = pygame.image.load("stage1/assets/magma2.png")
 magma3 = pygame.image.load("stage1/assets/magma3.png")
-magma_back = pygame.image.load("stage1/assets/magma_background.png")
+magma4 = pygame.image.load("stage1/assets/magma4.png")
 
 water1 = pygame.image.load("stage1/assets/water1.png")
 water2 = pygame.image.load("stage1/assets/water2.png")
 water3 = pygame.image.load("stage1/assets/water3.png")
-water_back = pygame.image.load("stage1/assets/water_background.png")
+water4 = pygame.image.load("stage1/assets/water4.png")
 
 restart_btn = pygame.image.load("stage1/assets/restart_btn.png")
 
@@ -70,8 +70,8 @@ characters = [[LDc, LW1c, LW2c,LDPc], [RDc, RW1c, RW2c,RDPc], [DLc,DLc,DLc,DLc],
 blocks = [block1, block2, block3, block4]
 picks = [[pick_LF, pick_LB], [pick_RF, pick_RB],[pick_LF, pick_LD],[pick_RF, pick_RD]]
 items = [gem, sand, fossil, paper ,ladder, rock]
-magmas = [magma1, magma2, magma3]
-waters = [water1, water2, water3]
+magmas = [magma1, magma2, magma3, magma4]
+waters = [water1, water2, water3, water4]
 rockBlocks = [rockBlock1, rockBlock2, rockBlock3, rockBlock4, rockBlock5]
 soilBlocks = [soilBlock1, soilBlock2, soilBlock3, soilBlock4]
 specialBlocks = [special1, special2, special3]

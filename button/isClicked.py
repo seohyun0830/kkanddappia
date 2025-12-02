@@ -18,6 +18,7 @@ def f_isFail(window, reson):
     
     # 버튼 위치 변수화 (유지보수 용이)
     btn_x, btn_y = 800, 600
+    time = 0
 
     while play:
         fps.tick(60)
@@ -37,7 +38,11 @@ def f_isFail(window, reson):
                     return 11 # (메인 루프의 1스테이지 코드가 11번이라면 11로, 10이면 10으로 맞추세요)
 
         # 4. 그리기
-        window.blit(reson, (0,0))
+        time += 1
+        idx = time // 40
+        if (idx >= len(reson)):
+            idx = len(reson) - 1
+        window.blit(reson[idx], (0,0))
         window.blit(btn_background, (btn_x, btn_y))
         
         # hover 상태에 따라 다른 텍스트 이미지 그리기

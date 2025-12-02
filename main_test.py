@@ -3,7 +3,7 @@ from start.start_main import f_start, f_modeSelect
 from start.story import f_easy, f_hard, f_story1, f_story2
 from stage1.stage1_main import f_stage1
 from button.isClicked import f_isFail
-from stage1.images import water_back, magma_back
+from stage1.images import waters, magmas
 
 from stage2.stage2_main import *
 
@@ -93,9 +93,9 @@ while current_state != STATE_EXIT:
         if result == 0:    
             current_state = STATE_EXIT
         elif result == 1:  
-            current_state = f_isFail(window, magma_back)
+            current_state = f_isFail(window, magmas)
         elif result == 2:  
-            current_state = f_isFail(window, water_back)
+            current_state = f_isFail(window, waters)
         
         elif result == -1: # [클리어] Stage 1 -> Stage 2 이동
             current_state = STATE_STAGE2
