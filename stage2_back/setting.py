@@ -1,0 +1,38 @@
+import pygame
+import os
+
+#화면
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 800
+FPS = 60
+
+#색깔
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 200, 0)
+GRAY = (100, 100, 100)
+YELLOW = (255, 255, 0)
+
+CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
+ASSETS_PATH = os.path.join(CURRENT_PATH, 'assets')
+
+#플레이어
+PLAYER_SPEED = 5
+ANIMATION_SPEED = 8 
+JUMP_STRENGTH = 15
+GRAVITY = 1.0      
+GROUND_Y = 630 
+
+# 우주선 조각 갯수
+TOTAL_PIECES = 9
+PIECE_SIZE = 50
+
+LAUNCHPAD_RECT = pygame.Rect(900, 400, 250, 300)
+
+UI_HEIGHT = 100
+UI_RECT = pygame.Rect(0, SCREEN_HEIGHT - UI_HEIGHT, SCREEN_WIDTH, UI_HEIGHT)
+
+PULSATE_SPEED = 0.005
+PULSATE_MIN_SCALE = 0.95
+PULSATE_MAX_SCALE = 1.05

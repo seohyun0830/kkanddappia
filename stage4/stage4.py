@@ -64,7 +64,8 @@ class Stage4:
         # 이미지 / 사운드 / UI 로드
         self.load_images()
         self.load_sounds()
-
+        
+        self.fule_stage4to3=False
         # UI
         self.navigation = ui.navigation(self.navi)
         self.fuelGauge = ui.fuelgauge(0, 660, self.fuelgauge_img)
@@ -124,7 +125,7 @@ class Stage4:
             self.game_elapsed_time = game_elapsed_time
 
             # 연료 부족 → stage4to3 이동
-            if fuel_manager.fuel < 20:  # 테스트용 기준
+            if fuel_manager.fuel < 20 and self.fule_stage4to3==False:  # 테스트용 기준
                 pygame.mixer.music.pause()
                 self.screen.blit(self.fuel_failure_img, (0, 0))
                 #410,300
@@ -135,7 +136,22 @@ class Stage4:
 
                 # 4→3에 들어가는 시점 기록 (돌아와서 resume()에서 사용)
                 self.stage4to3_pause_start = pygame.time.get_ticks()
+                self.fule_stage4to3=True
                 return "stage4to3"
+            if fuel_manager.fuel < 20 and self.fule_stage4to3==True:    #이미 3갔다왔으면
+                sounds_to_play={'external_failure':self.external_failure_sound,
+                                    'siren':self.siren_sound}
+                crash_ani.zoom_effect(self.screen,self.sp_meteor_crash_img,sounds_to_play)
+                crash_sounds={
+                            'ground_crash':self.crash_ground_sound,
+                            'burning':self.burnning_sound
+                        }
+                crash_ani.crash_animation(self.screen,self.crash_fail_images,crash_sounds)
+                restart_ani.restart_ani(self.screen,self.crash_fail_images[9],self.crash_after_person_images,self.crash_stand_p_img)
+                restart_ani.restart_talk(self.screen,self.talking_box)
+                pygame.display.update()
+                pygame.time.delay(1500)
+                return "dead"
 
             # 연료 감소 (2초마다, defect 아닐 때만)
             if (not self.is_defect_event) and (game_elapsed_time - self.last_fuel_drop_time > 2):
@@ -159,6 +175,8 @@ class Stage4:
                     res = self.handle_defect_input(event)
                     if res == "menu":
                         return "menu"
+                    elif res== "dead":
+                        return "dead"
                 else:
                     self.spaceship.hard_handle_input(event)
 
@@ -330,7 +348,8 @@ class Stage4:
                 crash_ani.crash_animation(self.screen,self.crash_fail_images,crash_sounds)
                 restart_ani.restart_ani(self.screen,self.crash_fail_images[9],self.crash_after_person_images,self.crash_stand_p_img)
                 restart_ani.restart_talk(self.screen,self.talking_box)
-                return "menu"
+                
+                return "dead"
 
             puzzle_end = pygame.time.get_ticks()
             # 퍼즐 하는 동안 흐른 시간은 전부 total_paused_ms에 더해줌
