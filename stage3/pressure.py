@@ -23,7 +23,7 @@ def update_pressure_small(pressure):
 
 """
 압력 급변
-8~12초 랜덤 간격 10~30 강한 압력 변화 발생
+초 랜덤 간격 10~30 강한 압력 변화 발생
 """
 def update_pressure_spike(pressure):
     spike_change = random.uniform(constants.MIN_SPIKE_CHANGE,
@@ -35,6 +35,7 @@ def update_pressure_spike(pressure):
         pressure -= spike_change
 
     pressure = max(0.0, min(100.0, pressure))
+
     return pressure
 
 #Q/W키에 의한 압력 조절

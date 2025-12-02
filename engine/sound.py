@@ -20,7 +20,6 @@ def load_sound(path, volume=1.0):
     return sound
 
 broken_sound = load_sound("sounds/stage3/단선 생길때.mp3", 0.5)
-success_bgm = load_sound("sounds/stage3/성공.mp3", 0.7)
 fail_bgm = load_sound("sounds/stage3/실패.mp3", 0.7)
 oxfail_bgm=load_sound("sounds/stage3/산소부족실패.mp3",0.5)
 item_pickup = load_sound("sounds/stage3/텔레포트겟.mp3", 0.5)
@@ -33,7 +32,9 @@ beep_error=load_sound("sounds/stage3/삐소리.mp3",0.3)
 explosion=load_sound("sounds/stage3/폭발.mp3",0.5)
 fire_loop=load_sound("sounds/stage3/불타는소리.mp3",0.5)
 
-
+success_bgm=load_sound("sounds/stage3/성공.mp3",0.5)
+walking=load_sound("sounds/stage3/걷는소리.mp3")
+click=load_sound("sounds/stage3/딸깍소리.mp3")
 
 
 high_bgm = load_sound("sounds/stage3/고압.mp3", 0.3)

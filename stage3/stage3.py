@@ -11,6 +11,8 @@ from stage3.broken import generate_broken_tile
 from stage3.draw_screen import draw_screen
 from stage3.tutorial import Stage3Tutorial
 from stage3.fail_animation import play_oxygen_fail
+from stage3.success_animation import play_success_animation
+
 
 
 
@@ -110,50 +112,9 @@ class Stage3:
             self.screen.blit(img, rect)
             pygame.display.update()
 
-    #성공시퀀스
     def show_success(self):
-        sound.high_bgm.stop()
-        sound.stop_bgm()
-        sound.success_bgm.play()
+        play_success_animation(self.screen)
 
-        bg = pygame.image.load("images/stage3/ending_img3.png")
-        spaceship_img = pygame.image.load("images/stage3/spaceship.png")
-
-        scale = min(constants.SCREEN_WIDTH / bg.get_width(), constants.SCREEN_HEIGHT / bg.get_height())
-        bg = pygame.transform.scale(bg, (int(bg.get_width() * scale), int(bg.get_height() * scale)))
-        bg_rect = bg.get_rect(center=(constants.SCREEN_WIDTH // 2, constants.SCREEN_HEIGHT // 2))
-
-        spaceship_scale = 2.0
-        spaceship_y = constants.SCREEN_HEIGHT - 300
-        spaceship_x = constants.SCREEN_WIDTH // 2
-
-        running = True
-        while running:
-
-            for e in pygame.event.get():
-                if e.type == pygame.QUIT:
-                    return
-
-            self.screen.blit(bg, bg_rect)
-
-            spaceship_y -= 60 * (1/60)
-            spaceship_scale -= 0.003
-
-            if spaceship_scale < 0:
-                spaceship_scale = 0
-
-            new_w = int(spaceship_img.get_width() * spaceship_scale)
-            new_h = int(spaceship_img.get_height() * spaceship_scale)
-
-            if new_w > 0 and new_h > 0:
-                scaled_ship = pygame.transform.scale(spaceship_img, (new_w, new_h))
-                rect = scaled_ship.get_rect(center=(spaceship_x, int(spaceship_y)))
-                self.screen.blit(scaled_ship, rect)
-
-            pygame.display.update()
-
-            if spaceship_y < -150:
-                return
 
     # ---------------------------------------------------
     #                  메인 루프
@@ -172,6 +133,8 @@ class Stage3:
             self.game_state["stage3_tutorial_done"] = True
 
         self.spawn_initial_item()
+        #게임 시작 시 기본 단선 3개 생성
+        self.spawn_initial_broken(3)
         #튜토리얼 종료-> 타이머 시작
         self.start_time=pygame.time.get_ticks()
 
@@ -600,3 +563,22 @@ class Stage3:
             self.screen.blit(fade, (0,0))
             pygame.display.update()
             clock.tick(60)
+    
+    def spawn_initial_broken(self, count=3):
+        #게임 시작 직후 미리 단선 타일 여러 개를 생성한다.
+        candidates = [
+            (r, c)
+            for r in range(constants.GRID_SIZE)
+            for c in range(constants.GRID_SIZE)
+            if self.maze_data[r][c] == constants.PATH
+        ]
+
+        random.shuffle(candidates)
+
+        for i in range(min(count, len(candidates))):
+            r, c = candidates[i]
+
+            # 단선 타일 등록
+            self.broken_tiles.append([r, c, True])
+            self.maze_data[r][c] = constants.BROKEN
+    
