@@ -36,47 +36,70 @@ class MapManager:
         scale_offset = (math.sin(time_factor) + 1) / 2
         self.current_scale = PULSATE_MIN_SCALE + scale_offset * (PULSATE_MAX_SCALE - PULSATE_MIN_SCALE)
 
+    def is_player_near(self, target_rect):
+        player_center = self.stage.player.rect.center
+        target_center = target_rect.center
+        
+        distance = math.hypot(player_center[0] - target_center[0], player_center[1] - target_center[1])
+        
+        return distance <= INTERACTION_RANGE
+
     def handle_click(self, mouse_pos):
         if self.current_map == "outside1":
             if TREE_AREA.collidepoint(mouse_pos):
-                if not self.is_tree_pressing:
-                    self.is_tree_pressing = True
-                    self.tree_press_start_time = pygame.time.get_ticks()
-                    if self.stage.sounds.tree_sound:
-                        self.stage.sounds.tree_sound.play(loops=-1)
+                if self.is_player_near(TREE_AREA):
+                    if not self.is_tree_pressing:
+                        self.is_tree_pressing = True
+                        self.tree_press_start_time = pygame.time.get_ticks()
+                        if self.stage.sounds.tree_sound:
+                            self.stage.sounds.tree_sound.play(loops=-1)
+                else:
+                    pass
+
                 return
-            if self.check_item_pickup(mouse_pos):
-                return
+
             if OUTSIDE_DOOR_AREA.collidepoint(mouse_pos):
-                self.current_map = "inside"
-                self.stage.player.x = 100
-                self.stage.player.reset_animation()
+                if self.is_player_near(OUTSIDE_DOOR_AREA):
+                    self.current_map = "inside"
+                    self.stage.player.x = 100
+                    self.stage.player.reset_animation()
                 return
+            
             if STAGE1_AREA.collidepoint(mouse_pos):
-                if not self.stage.player.is_fading_out:
-                    self.stage.player.is_fading_out = True
-                    self.stage.player.alpha = 255
+                if self.is_player_near(STAGE1_AREA):
+                    if not self.stage.player.is_fading_out:
+                        self.stage.player.is_fading_out = True
+                        self.stage.player.alpha = 255
                 return
 
         elif self.current_map == "inside":
             if self.stage.is_easy_mode and DIC_AREA.collidepoint(mouse_pos):
-                self.stage.dic_open = not self.stage.dic_open
-                if self.stage.dic_open:
-                    self.stage.close_all_popups()
-                    self.stage.dic_open = True
+                if self.is_player_near(DIC_AREA):
+                    self.stage.dic_open = not self.stage.dic_open
+                    if self.stage.dic_open:
+                        self.stage.close_all_popups()
+                        self.stage.dic_open = True
                 return
+            
             if CLICK_AREA.collidepoint(mouse_pos):
-                self.stage.open_door = True
-                self.stage.is_crafting_open = True
-                self.stage.dic_open = False
+                if self.is_player_near(CLICK_AREA):
+                    self.stage.open_door = True
+                    self.stage.is_crafting_open = True
+                    self.stage.dic_open = False
                 return
 
         elif self.current_map == "outside2":
             if OUTSIDE_MAKE_AREA.collidepoint(mouse_pos):
-                self.stage.open_door = True
-                self.stage.is_crafting_open = True
-                self.stage.dic_open = False
+                if self.is_player_near(OUTSIDE_MAKE_AREA):
+                    self.current_map = "inside"
+                    self.stage.player.x = SCREEN_WIDTH - 150 # 오른쪽에서 등장
+                    self.stage.player.reset_animation()
+
+                    self.stage.open_door = True
+                    self.stage.is_crafting_open = True
+                    self.stage.dic_open = False
                 return
+            
             if SPACESHIP_AREA.collidepoint(mouse_pos):
                 self.handle_spaceship_click()
                 return
@@ -103,13 +126,21 @@ class MapManager:
                 self.stage.dropped_items.pop(i)
                 return True
         return False
+    
+    def check_item_pickup(self, player_rect):
+        for i in range(len(self.stage.dropped_items)-1,-1,-1):
+            item=self.stage.dropped_items[i]
+
+            if player_rect.colliderect(item['rect']):
+                self.stage.inventory.append(item['item_name'])
+                self.stage.dropped_items.pop(i)
 
     def drop_wood(self):
         wood_drop_x = TREE_AREA.x + TREE_AREA.width // 2 - ITEM_SIZE // 2
         wood_drop_y = self.stage.player.y + self.stage.player.image.get_height()
         self.stage.dropped_items.append({
             'item_name': 'wood',
-            'rect': pygame.Rect(wood_drop_x, wood_drop_y, ITEM_SIZE, ITEM_SIZE)
+            'rect': pygame.Rect(wood_drop_x, wood_drop_y-15, ITEM_SIZE, ITEM_SIZE)
         })
 
     def draw(self):

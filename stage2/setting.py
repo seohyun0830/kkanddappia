@@ -33,6 +33,8 @@ SPACESHIP_WALK_Y = 590
 # --- 페이드 아웃 설정 ---
 FADE_SPEED = 5
 
+INTERACTION_RANGE=180
+
 # --- 이미지 크기 ---
 IMG_SIZE_MAKE = (600, 600)
 IMG_SIZE_MAKE2 = (546, 380)

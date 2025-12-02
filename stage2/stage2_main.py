@@ -301,6 +301,9 @@ class Stage2:
         self.player.update()
         self.map_manager.update()
 
+        if self.map_manager.current_map=="outside1":
+            self.map_manager.check_item_pickup(self.player.rect)
+
     def draw(self):
         if self.game_over:
             if self.images.bomb_ending_image:

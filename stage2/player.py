@@ -18,6 +18,8 @@ class Player:
         self.animation_counter = 0
         
         self.image = self.images.all_animations['bag']['stand_right']
+
+        self.rect=pygame.Rect(self.x, self.y, PLAYER_SIZE[0], PLAYER_SIZE[1])
         
         #투명도
         self.alpha = 255
@@ -46,6 +48,8 @@ class Player:
         self.update_fade()
 
         self.update_sound()
+
+        self.rect.topleft = (self.x, self.y)
 
     def update_sound(self):
         """걷는 소리 켜고 끄기 로직"""
@@ -166,7 +170,7 @@ class Player:
         elif current_map == "inside":
             if self.x < 0:
                 self.stage.map_manager.current_map = "outside1"
-                self.x = SCREEN_WIDTH - player_width - 5
+                self.x = OUTSIDE_DOOR_AREA.centerx-(player_width//2)
                 self.reset_animation()
             elif self.x > SCREEN_WIDTH - player_width:
                 self.x = SCREEN_WIDTH - player_width
