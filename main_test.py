@@ -129,7 +129,7 @@ while current_state != STATE_EXIT:
             '''
             print(f"[Main] Stage 1 -> 2 복귀: 인벤={InvenInfo}, 각 갯수={InvenCnt}")
 
-            stage2.reset_game_data(imported_items)
+            stage2.update_resources(imported_items)
     
     # 4. 2스테이지 플레이
     elif current_state == STATE_STAGE2:

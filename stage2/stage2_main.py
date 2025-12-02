@@ -61,7 +61,7 @@ class Stage2:
         if imported_items is not None:
             self.inventory = base_items + imported_items
         else:
-            self.inventory = base_items + ['stone'] * 15
+            self.inventory = base_items
         
         self.crafting_table = [None] * 9
         self.spaceship_assembly_storage = []
@@ -84,6 +84,56 @@ class Stage2:
         self.dictionary = Dictionary(self)
         self.inven_ui = Inventory(self)
         self.crafting_ui = Crafting(self)
+
+    def update_resources(self, imported_items):
+        """
+        Stage 1에서 돌아왔을 때 호출되는 함수.
+        기존 인벤토리에서 '자원'만 Stage 1 데이터로 교체하고, 
+        이미 제작된 도구(망치 등)나 우주선 부품은 그대로 유지합니다.
+        """
+        # 1. 재진입을 위한 상태 초기화
+        self.go_to_stage1 = False 
+        self.game_over = False
+        
+        # 2. 소리 정지 (깔끔한 시작을 위해)
+        if self.sounds.bomb_sound: self.sounds.bomb_sound.stop()
+        if self.sounds.tree_sound: self.sounds.tree_sound.stop()
+        if self.sounds.walk_sound: self.sounds.walk_sound.stop()
+        
+        # 3. 인벤토리 갱신 로직
+        # Stage 1에서 획득 가능한 '자원'들의 목록입니다.
+        # 이 목록에 있는 아이템들은 현재 인벤토리에서 지우고, 가져온 것으로 대체합니다.
+        stage1_resource_names = ['stone', 'soil', 'fossil', 'wood', 'ladder']
+        
+        # 기존 인벤토리에서 '자원'이 아닌 것들(제작템, 불, 물 등)만 남깁니다.
+        kept_inventory = []
+        for item in self.inventory:
+            if item not in stage1_resource_names:
+                kept_inventory.append(item)
+        
+        # 남겨진 아이템에 Stage 1에서 가져온 최신 자원을 합칩니다.
+        if imported_items:
+            kept_inventory.extend(imported_items)
+            
+        self.inventory = kept_inventory
+        
+        # 4. 플레이어 및 맵 상태 초기화 (처음 위치로 이동)
+        self.player.x = PLAYER_START_X
+        self.player.y = PLAYER_START_Y
+        self.player.alpha = 255
+        self.player.is_fading_out = False
+        self.player.is_walking_into_spaceship = False
+        self.player.is_flying_animation_active = False
+        
+        self.map_manager.current_map = "outside1"
+        self.map_manager.is_tree_pressing = False
+        
+        # 열려있는 모든 UI 닫기
+        self.open_door = False
+        self.dic_open = False
+        self.is_crafting_open = False
+        self.is_spaceship_crafting_open = False
+        self.crafting_ui.crafted_item_display = None
 
     def run(self):
         """메인 게임 루프 실행"""
