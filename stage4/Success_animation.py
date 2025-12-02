@@ -6,16 +6,22 @@ import os
 def kkanddappia_land(screen, bk2_img, person_img, person2_img, talk_img, font):
     clock = pygame.time.Clock()
     
-    for i in range(4):
+    for i in range(6):
         pygame.event.pump() 
         screen.blit(bk2_img, (0, 0))
-        screen.blit(person_img, (670 + i * 5, 580 + i * 5))
-        pygame.display.update()
-        pygame.time.delay(500)
+        if i%2==0:
+            screen.blit(person_img, (680 + i * 5, 570 + i * 7))
+            pygame.display.update()
+            pygame.time.delay(500)
+        else:
+            screen.blit(bk2_img, (0, 0))
+            screen.blit(person2_img, (680 + i * 5, 570 + i * 7))
+            pygame.display.update()
+            pygame.time.delay(500)
    
     screen.blit(bk2_img, (0, 0))
 
-    screen.blit(person2_img, (690, 620))
+    screen.blit(person2_img, (720, 630))
     pygame.display.update()
     
     pygame.time.delay(1000)
@@ -26,7 +32,7 @@ def kkanddappia_land(screen, bk2_img, person_img, person2_img, talk_img, font):
         "여기가... 깐따삐아인가?",
         "휴... 나 살았다!"
     ]
-    dialog_rect = talk_img.get_rect(midbottom=(850, 650))
+    dialog_rect = talk_img.get_rect(midbottom=(900, 650))
    
     text_idx = 0
     char_idx = 0

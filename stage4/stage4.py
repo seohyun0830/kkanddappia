@@ -17,7 +17,7 @@ from engine.fuel_manager import fuel_manager
 
 
 class Stage4:
-    def __init__(self, screen):
+    def __init__(self, screen,mode="easy"):
         self.screen = screen
         self.clock = pygame.time.Clock()
 
@@ -31,6 +31,10 @@ class Stage4:
         self.screen_width = 1200
         self.screen_height = 800
 
+        if mode=="easy":
+            self.rotation_cnt=2
+        elif mode=="hard":
+            self.rotation_cnt=1
         current_path = os.path.dirname(__file__)
         self.image_path = os.path.join(current_path, "images")
         self.audio_path = os.path.join(current_path, "audios")
@@ -120,7 +124,7 @@ class Stage4:
             self.game_elapsed_time = game_elapsed_time
 
             # 연료 부족 → stage4to3 이동
-            if fuel_manager.fuel < 65:  # 테스트용 기준
+            if fuel_manager.fuel < 20:  # 테스트용 기준
                 pygame.mixer.music.pause()
                 self.screen.blit(self.fuel_failure_img, (0, 0))
                 #410,300
@@ -347,7 +351,7 @@ class Stage4:
 
         # 자동 회전
         if game_elapsed_time >= self.next_rotation:
-            self.spaceship.idx = (self.spaceship.idx + 1) % 4
+            self.spaceship.idx = (self.spaceship.idx + self.rotation_cnt) % 4
             self.rotate_sound.play()
             self.next_rotation += 25
             self.spaceship.to_x = 0
