@@ -37,6 +37,7 @@ def f_puzzle(window):
         if (remaining_time_sec <= 0):
             play = False
             puzzle_sound.stop()
+            wrong_clicked_sound.stop()
             return -1                                   # fail
 
         for event in pygame.event.get():        

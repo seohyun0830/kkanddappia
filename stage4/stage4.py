@@ -1,5 +1,6 @@
 import pygame
 import os
+import random
 import math
 from . import restart_ani
 from . import guide
@@ -125,7 +126,7 @@ class Stage4:
             self.game_elapsed_time = game_elapsed_time
 
             # 연료 부족 → stage4to3 이동
-            if fuel_manager.fuel < 20 and self.fule_stage4to3==False:  # 테스트용 기준
+            if fuel_manager.fuel < 50 and self.fule_stage4to3==False:  # 테스트용 기준
 
                 pygame.mixer.music.pause()
                 self.screen.blit(self.fuel_failure_img, (0, 0))
@@ -139,10 +140,11 @@ class Stage4:
                 self.stage4to3_pause_start = pygame.time.get_ticks()
                 self.fule_stage4to3=True
                 return "stage4to3"
-            if fuel_manager.fuel < 20 and self.fule_stage4to3==True:    #이미 3갔다왔으면
-                sounds_to_play={'external_failure':self.external_failure_sound,
+            ####연료 부족
+            if fuel_manager.fuel < 50 and self.fule_stage4to3==True:    #이미 3갔다왔으면
+                sounds_to_play={'fuel_empty':self.fuel_empty_sound,
                                     'siren':self.siren_sound}
-                crash_ani.zoom_effect(self.screen,self.sp_meteor_crash_img,sounds_to_play)
+                crash_ani.fuel_empty_ani(self.screen,self.fuel_empty_img,sounds_to_play)
                 crash_sounds={
                             'ground_crash':self.crash_ground_sound,
                             'burning':self.burnning_sound
@@ -152,7 +154,7 @@ class Stage4:
                 restart_ani.restart_talk(self.screen,self.talking_box)
                 pygame.display.update()
                 pygame.time.delay(1500)
-                return "dead"
+                return "dead"   #이건 아예 재시작으로 바꿔야됨 23합치고
 
             # 연료 감소 (2초마다, defect 아닐 때만)
             if (not self.is_defect_event) and (game_elapsed_time - self.last_fuel_drop_time > 2):
@@ -257,6 +259,7 @@ class Stage4:
         self.talking_box=pygame.image.load(os.path.join(self.image_path,"talking.png"))
         self.talking_box2=pygame.image.load(os.path.join(self.image_path,"talking2.png"))
         self.guide_bk_img=pygame.image.load(os.path.join(self.image_path,"guide_background.png"))
+        self.fuel_empty_img=pygame.image.load(os.path.join(self.image_path,"fuel_empty_alarm.png"))
         # life 이미지 (life1 ~ life4)
         self.life_images = [
             pygame.transform.scale(
@@ -314,6 +317,9 @@ class Stage4:
         self.burnning_sound=pygame.mixer.Sound(os.path.join(self.audio_path, "burning.mp3"))
         self.crash_ground_sound=pygame.mixer.Sound(os.path.join(self.audio_path, "crash_ground.mp3"))
         self.external_failure_sound=pygame.mixer.Sound(os.path.join(self.audio_path, "external_failure.mp3"))
+        self.inner_system_sound=pygame.mixer.Sound(os.path.join(self.audio_path, "inner_system.mp3"))
+        self.inner_system_sound.set_volume(1.0)
+        self.fuel_empty_sound=pygame.mixer.Sound(os.path.join(self.audio_path, "fuel_empty.mp3"))
     # ------------------------------------------------------------------
 
     def start_defect_event(self, current_ticks):
@@ -338,10 +344,10 @@ class Stage4:
             puzzle_start = pygame.time.get_ticks()
             result = puzzle_main.f_puzzle(self.screen)
 
-            if result == -1:
+            if result == -1:    #퍼즐 실패
+                self.inner_system_sound.play()
                 self.screen.blit(self.puzzle_fail, (0, 0))
-                pygame.display.update()
-                pygame.time.delay(1500)
+                crash_ani.inner_fail_ani(self.screen,self.puzzle_fail)
                 crash_sounds={
                             'ground_crash':self.crash_ground_sound,
                             'burning':self.burnning_sound
@@ -500,7 +506,7 @@ class Stage4:
                 self.left_life -= 1
                 self.meteors.remove(meteor)
 
-                if self.left_life <= 0:
+                if self.left_life <= 0: #목숨 다 썼을 때
                     sounds_to_play={'external_failure':self.external_failure_sound,
                                     'siren':self.siren_sound}
                     crash_ani.zoom_effect(self.screen,self.sp_meteor_crash_img,sounds_to_play)

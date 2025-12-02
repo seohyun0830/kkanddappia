@@ -1,6 +1,40 @@
 import pygame
 import random
 import os
+
+def inner_fail_ani(screen, image):  #퍼즐실패 애니
+    shake_duration = 3000  
+    shake_intensity = 7   
+    
+    start_shake = pygame.time.get_ticks()
+    clock = pygame.time.Clock()
+
+    while True:
+      
+        pygame.event.pump() 
+        
+        elapsed = pygame.time.get_ticks() - start_shake
+        if elapsed >= shake_duration:
+            break 
+        offset_x = random.randint(-shake_intensity, shake_intensity)
+        offset_y = random.randint(-shake_intensity, shake_intensity)
+        
+        screen.fill((0, 0, 0))
+        screen.blit(image, (offset_x, offset_y))
+        
+        pygame.display.update()
+        clock.tick(60) 
+
+def fuel_empty_ani(screen,img,sounds):  #연료 고갈
+    pygame.mixer.music.pause()
+
+    if 'siren' in sounds:
+        sounds['siren'].play(maxtime=5000)
+
+    if 'fuel_empty' in sounds:
+        sounds['fuel_empty'].play()
+    inner_fail_ani(screen,img)
+
 def zoom_effect(screen, target_image, sounds): 
     clock = pygame.time.Clock()
     pygame.mixer.music.pause()
