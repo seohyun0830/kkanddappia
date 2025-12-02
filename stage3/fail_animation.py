@@ -133,6 +133,6 @@ def play_overpressure_fail(screen):
         sound.fire_loop.stop()
     except:
         pass
-
+    sound.beep_error.stop()
     # 암전 유지 3초
     time.sleep(3)

@@ -20,6 +20,7 @@ def main():
     assets.load_all()
     
     # --------Story-----------
+    #3스토리는 처음 플레이 할 때 한번만 나오게
     story = Stage3Story(screen)
     story.run() 
     pygame.event.clear()
@@ -28,7 +29,11 @@ def main():
             # -------- Stage 3 --------
             stage3 = Stage3(screen)
             next_stage = stage3.run()
-            
+
+            if next_stage=="dead":
+                back_cutscene = Stage2Back(screen)
+                back_cutscene.run()
+                continue
             # -------- Stage 4 --------
             if next_stage == "stage4":
                 stage4=Stage4(screen)
