@@ -8,7 +8,7 @@ class Dictionary:
         
         self.current_page = 1
         
-        self.font = pygame.font.Font(None, 30)
+        self.font = pygame.font.Font('DungGeunMO.ttf', 30)
         
         self.rect = pygame.Rect(DIC_IMAGE_X, DIC_IMAGE_Y, IMG_SIZE_DIC[0], IMG_SIZE_DIC[1])
 

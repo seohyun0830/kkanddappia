@@ -59,7 +59,7 @@ class MapManager:
                 return
 
         elif self.current_map == "inside":
-            if DIC_AREA.collidepoint(mouse_pos):
+            if self.stage.is_easy_mode and DIC_AREA.collidepoint(mouse_pos):
                 self.stage.dic_open = not self.stage.dic_open
                 if self.stage.dic_open:
                     self.stage.close_all_popups()
@@ -245,7 +245,7 @@ class MapManager:
         
         # 텍스트 퍼센트 표시
         percent = int(progress_ratio * 100)
-        font = pygame.font.Font(None, 30)
+        font = pygame.font.Font('DungGeunMO.ttf', 30)
         progress_text = font.render(f"{percent}%", True, WHITE)
         
         text_x = gauge_x + gauge_width // 2 - progress_text.get_width() // 2

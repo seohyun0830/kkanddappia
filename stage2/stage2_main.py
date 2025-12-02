@@ -22,7 +22,7 @@ class Stage2:
         self.images = ImageManager()
         self.sounds = SoundManager()
         
-        self.is_easy_mode = True  
+        self.is_easy_mode = True
         self.done = False
         self.game_over = False
         
@@ -40,7 +40,7 @@ class Stage2:
             btn_width, 
             btn_height
         )
-        self.btn_font = pygame.font.Font(None, 50) 
+        self.btn_font = pygame.font.Font('DungGeunMO.ttf', 50) 
 
         self.reset_game_data()
 
@@ -53,7 +53,6 @@ class Stage2:
         if self.sounds.walk_sound: self.sounds.walk_sound.stop()
         
         base_items = ['fire', 'water'] + \
-                     ['spaceship'] * 1 + \
                      ['spaceship-side'] * 4 + \
                      ['spaceship-roof'] * 4 + \
                      ['fuel tank'] * 7
@@ -320,10 +319,6 @@ class Stage2:
             text_rect = replay_text.get_rect(center=self.replay_btn_rect.center)
             self.screen.blit(replay_text, text_rect)
 
-            small_font = pygame.font.Font(None, 30)
-            sub_text = small_font.render("Press ESC to Quit", True, WHITE)
-            sub_text_rect = sub_text.get_rect(center=(self.replay_btn_rect.centerx, self.replay_btn_rect.top - 30))
-            self.screen.blit(sub_text, sub_text_rect)
             return 
 
         self.screen.fill(BLACK)

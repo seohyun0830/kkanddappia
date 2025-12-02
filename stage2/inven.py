@@ -7,7 +7,7 @@ class Inventory:
     def __init__(self, stage):
         self.stage = stage
         self.images = stage.images
-        self.font = pygame.font.Font(None, 24)
+        self.font = pygame.font.Font('DungGeunMO.ttf', 24)
         
         # 페이지(1:자원, 2:우주선 부품)
         self.current_page = 1

@@ -95,8 +95,9 @@ def f_guide2(window, flag, isDragging):
     skip = "[SPACE] to Skip"
     texts = [
         "책상 위 사전을 선택해 사전을 확인합니다.", 
-        "기계를 클릭해 조합실로 입장합니다.", 
+        "기계를 클릭해 조합실로 입장합니다.",
         "아이템을 드래그 & 드롭한 후 M 버튼을 클릭해 조합합니다.",
+        "E 버튼을 눌러 제작 슬롯을 비웁니다.",
         "왼쪽으로 이동하여 연구실을 나갑니다.",
         ""
     ]
@@ -121,7 +122,7 @@ def f_guide2(window, flag, isDragging):
         pygame.draw.rect(box, hole_color, DIC_AREA)
     elif f_guide2.idx == 1:
         pygame.draw.rect(box, hole_color, CLICK_AREA)
-    elif f_guide2.idx == 2:
+    elif f_guide2.idx == 2 or f_guide2.idx ==3:
         # 제작창 위치 (make2 이미지 기준)
         pygame.draw.rect(box, hole_color, (MAKE2_IMAGE_X, MAKE2_IMAGE_Y, IMG_SIZE_MAKE2[0], IMG_SIZE_MAKE2[1]))
 

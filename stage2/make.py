@@ -7,7 +7,7 @@ class Crafting:
         self.images = stage.images
         
         self.crafted_item_display = None 
-        self.popup_font = pygame.font.Font(None, 50)
+        self.popup_font = pygame.font.Font('DungGeunMO.ttf', 50)
 
     def draw_normal_crafting(self):
         # 6*6
@@ -64,6 +64,10 @@ class Crafting:
         if MAKE_BUTTON_AREA.collidepoint(mouse_pos):
             self.process_crafting()
             return
+        
+        if ERASE_BUTTON_AREA.collidepoint(mouse_pos):
+            self.clear_crafting_table()
+            return
 
         for i in range(len(self.stage.crafting_table)):
             if self.stage.crafting_table[i] is not None:
@@ -77,6 +81,14 @@ class Crafting:
                     self.stage.drag_offset_x = mouse_pos[0] - CRAFT_SLOT_RECTS[i].x
                     self.stage.drag_offset_y = mouse_pos[1] - CRAFT_SLOT_RECTS[i].y
                     break
+
+    def clear_crafting_table(self):
+        for i in range(9):
+            item=self.stage.crafting_table[i]
+            if item is not None:
+                self.stage.inventory.append(item)
+            
+            self.stage.crafting_table[i]=None
 
     def handle_drop_in_crafting(self, mouse_pos):
         for i in range(len(CRAFT_SLOT_RECTS)):
