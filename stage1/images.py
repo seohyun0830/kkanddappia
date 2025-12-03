@@ -64,6 +64,8 @@ soilBlock4 = pygame.image.load("stage1/assets/soil4.png")
 special1 = pygame.image.load("stage1/assets/special1.png")
 special2 = pygame.image.load("stage1/assets/special2.png")
 special3 = pygame.image.load("stage1/assets/special3.png")
+special4 = pygame.image.load("stage1/assets/special4.png")
+special5 = pygame.image.load("stage1/assets/special5.png")
 
 # 각 이미지들 배열에 저장
 characters = [[LDc, LW1c, LW2c,LDPc], [RDc, RW1c, RW2c,RDPc], [DLc,DLc,DLc,DLc], [DRc,DRc,DRc,DRc], [U1,U1,U2,U2]]
@@ -74,4 +76,4 @@ magmas = [magma1, magma2, magma3, magma4]
 waters = [water1, water2, water3, water4]
 rockBlocks = [rockBlock1, rockBlock2, rockBlock3, rockBlock4, rockBlock5]
 soilBlocks = [soilBlock1, soilBlock2, soilBlock3, soilBlock4]
-specialBlocks = [special1, special2, special3]
+specialBlocks = [special1, special2, special3, special4, special5]

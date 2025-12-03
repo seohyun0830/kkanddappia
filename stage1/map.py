@@ -1,4 +1,5 @@
 from . import images
+import random
 
 class Cmap:
     def __init__(self, window, pix):
@@ -50,7 +51,7 @@ class Cmap:
         
         if MODE == 2:
         # 4. 종이 (ID: 4)
-            papers = [(4,5), (1,15), (11,3)]
+            papers = [(0,2), (4,6), (2,11), (11,3), (7, 18), (6,0), (9,13), (12,9)]
 
         # 6. 돌 (ID: 6)
         stones = [(1,9), (1,3), (1,18), (2,2), (6,13), (5,18), (8,2), (9,8), (9,10), (10,15), (12,7)]
@@ -124,7 +125,7 @@ class Cmap:
                         window.blit(images.blocks[blockMotion], pos)
                     else:
                         # 일반 블록 그리기
-                        window.blit(images.specialBlocks[(j + i) % 3], pos)
+                        window.blit(images.specialBlocks[(i+j) % 5], pos)
                 
                 else:                                                           # 일반
                     if j == target_x and i == target_y:
