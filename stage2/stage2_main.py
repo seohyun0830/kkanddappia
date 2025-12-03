@@ -160,7 +160,7 @@ class Stage2:
 
         while not self.done:
             if self.go_to_stage1:
-                self.sounds.stop_background_music()
+                #self.sounds.stop_background_music()
                 return "stage1"
 
             if (timer.get_remianing_time() <= 0):

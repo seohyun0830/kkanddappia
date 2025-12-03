@@ -26,7 +26,8 @@ def f_start(window):
 
     # 버튼 좌표
     btn_x, btn_y = 800, 600
-
+    pygame.mixer.music.load("start/assets/bgm.mp3")
+    pygame.mixer.music.play(-1)
     play = True
     while play:
         clock.tick(60) # FPS 60 고정
@@ -96,9 +97,11 @@ def f_modeSelect(window):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if is_hover_easy:
                     sfx_click.play()
+                    pygame.mixer.music.fadeout(1000)
                     return 1 # EASY 모드 리턴
                 elif is_hover_hard:
                     sfx_click.play()
+                    pygame.mixer.music.fadeout(1000)
                     return 2 # HARD 모드 리턴
 
         # 그리기
