@@ -163,6 +163,9 @@ class Stage2:
                 self.sounds.stop_background_music()
                 return "stage1"
 
+            if (timer.get_remianing_time() <= 0):
+                return "timeOUT"
+
             self.handle_events()
             self.update()
             self.draw(timer)

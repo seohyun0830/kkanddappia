@@ -6,7 +6,8 @@ from button.isClicked import f_isFail
 from stage1.images import waters, magmas
 
 from stage2.stage2_main import *
-from timer import Timer
+from timer.timer import Timer
+from timer.images import overs
 
 STATE_EXIT   = -1  
 STATE_START  = 0   
@@ -101,6 +102,10 @@ while current_state != STATE_EXIT:
             if (f_isFail(window, waters) == True):
                 current_state = STATE_STAGE2
                 timer.reset()
+        elif result == 3:
+            if (f_isFail(window, overs) == True):
+                current_state = STATE_STAGE2
+                timer.reset()
      
         elif result == -1:
             current_state = STATE_STAGE2
@@ -142,7 +147,10 @@ while current_state != STATE_EXIT:
                     InvenCnt[item_id - 1] += 1
 
             print(f"[Main] Stage 2 -> 1 복귀: 인벤={InvenInfo}, 각 갯수={InvenCnt}")
-
+        elif result == "timeOUT":
+            if (f_isFail(window, overs) == True):
+                current_state = STATE_STAGE2
+                timer.reset()
         elif result == "quit" or result == "game_over":
             current_state = STATE_EXIT
 

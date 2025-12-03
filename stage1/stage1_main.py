@@ -45,6 +45,9 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, InvenCnt, timer
     while play:
         deltaTime = fps.tick(50)
 
+        if (timer.get_remianing_time() <= 0):
+            return 3, None, None, None, None
+
         # --- [1. 이벤트 처리] ---
         for event in pygame.event.get():        
             if event.type == pygame.QUIT:
