@@ -100,9 +100,11 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, InvenCnt, timer
         if keys[pygame.K_DOWN]:  Player.f_down(Map.underMap)
         if keys[pygame.K_UP]:
             if bx == col - 3 and by == 0: return -1, Map.underMap, Map.itemMap, Inven.invenList, Inven.invenCnt  # 탈출 성공
-            if Map.itemMap[by][bx] == 5: Player.f_up(Map.itemMap) # 사다리 타기
-            else: 
+            if Map.itemMap[by][bx] == 5 or Map.itemMap[by + 1][bx] == 5: Player.f_up(Map.itemMap) # 사다리 타기
+            elif Map.itemMap[by - 1][bx] != 6 and Map.underMap[by - 1][bx] == 1:
                 Player.f_jump() # 점프
+            print(bx)
+            print("up:", Map.itemMap[by - 1][bx], Map.underMap[by - 1][bx])
                 
 
         # ★ 최적화: 플레이어 위치가 변했을 때만 아이템 획득 시도

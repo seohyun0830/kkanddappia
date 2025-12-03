@@ -111,7 +111,7 @@ class Cplayer:
 
     def f_gravity(self, under_map, itemMap):
         # 1. 사다리 체크
-        if (itemMap[self.blockY][self.blockX] == 5) and self.direction == 4:
+        if (itemMap[self.blockY][self.blockX] == 5 or itemMap[self.blockY + 1][self.blockX] == 5) and self.direction == 4:
             self.isOnGround = True
             self.velocityY = 0
             return 
@@ -120,17 +120,15 @@ class Cplayer:
         self.velocityY += self.gravity
         if self.velocityY > 10: self.velocityY = 10
         
-        # 3. Y 값 갱신 (물리 적용)
         self.realY += self.velocityY
         
-        # 4. ★★★ Y 블록 좌표 "즉시" 갱신 (가장 중요) ★★★
         self.blockY = int(self.realY // self.pix) 
 
         # --- (플레이어 너비가 self.pix라고 가정) ---
         # "왼쪽"과 "오른쪽" X 블록 좌표 계산
-        left_x_block = int((self.realX + 10) // self.pix)
+        left_x_block = int((self.realX + 20) // self.pix)
         # (self.pix - 1) -> 0~59픽셀 너비일 때, 59번째 픽셀을 의미
-        right_x_block = int((self.realX - 10 + self.pix - 1) // self.pix)
+        right_x_block = int((self.realX - 20 + self.pix - 1) // self.pix)
 
         # 5. ★★★★★ 천장 충돌 검사 (2점 확인) ★★★★★
         if self.velocityY < 0: # 상승 중일 때
@@ -165,11 +163,15 @@ class Cplayer:
                 self.isOnGround = False # (두 발 모두 공중에 있음)
 
     def f_up(self, itemMap):
-        if (itemMap[self.blockY + 1][self.blockX] == 5) or (itemMap[self.blockY][self.blockX] == 5):
-            self.direction = 4
-            self.motionTime += 1
-            self.f_motion()
-            self.realY -= 5 # (20은 너무 빠르니 5 정도로 조절)
+        nextY = self.realY - 5
+        if (itemMap[self.blockY][self.blockX] != 5 and nextY < self.blockY * self.pix - 1):
+            self.realY = nextY + 5
+            return
+        self.direction = 4
+        self.motionTime += 1
+        self.f_motion()
+        self.realY = nextY # (20은 너무 빠르니 5 정도로 조절)
+            
 
     def f_breaking(self,under_map):
         self.blockTime += 1
