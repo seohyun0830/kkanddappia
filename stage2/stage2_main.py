@@ -134,7 +134,7 @@ class Stage2:
         self.is_spaceship_crafting_open = False
         self.crafting_ui.crafted_item_display = None
 
-    def run(self):
+    def run(self, timer):
         """메인 게임 루프 실행"""
         self.done = False
         self.go_to_stage1 = False
@@ -165,7 +165,7 @@ class Stage2:
 
             self.handle_events()
             self.update()
-            self.draw()
+            self.draw(timer)
             
             # [추가] 한 프레임 후 스페이스바 입력 상태 초기화
             self.guide_space_pressed = False
@@ -304,7 +304,7 @@ class Stage2:
         if self.map_manager.current_map=="outside1":
             self.map_manager.check_item_pickup(self.player.rect)
 
-    def draw(self):
+    def draw(self, timer):
         if self.game_over:
             if self.images.bomb_ending_image:
                 self.screen.blit(self.images.bomb_ending_image, (0, 0))
@@ -325,7 +325,7 @@ class Stage2:
             return 
 
         self.screen.fill(BLACK)
-        self.map_manager.draw()
+        self.map_manager.draw(timer)
         self.player.draw()
         self.map_manager.draw_dropped_items()
 

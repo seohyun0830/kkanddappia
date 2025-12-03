@@ -8,7 +8,7 @@ from . import guide
 
 # flag 인자
 # 0: 처음 시작 (+가이드) 1: 재시작(리셋) 2: 다시 돌아왔을 때(저장된 상태)
-def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, InvenCnt):
+def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, InvenCnt, timer):
     # --- [초기화] ---
     fps = pygame.time.Clock()
     pix = 60
@@ -80,10 +80,6 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, InvenCnt):
         # --- [2. 게임 로직 업데이트] ---
         keys = pygame.key.get_pressed()
 
-        # 인벤토리 열려 있을 때 게임을 멈출지 여부 (선택사항)
-        # 여기서는 멈추지 않고 계속 진행하는 것으로 유지하되, 
-        # 필요하면 if not keys[pygame.K_TAB]: 안으로 아래 로직을 넣으세요.
-
         # 중력 및 물리 적용
         Player.f_gravity(Map.underMap, Map.itemMap)
         
@@ -148,5 +144,6 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, InvenCnt):
         if (Try == 0):
             guide.f_guide(window, flag, isTab, Inven.invenList, isDragging)
 
-            
+        timerText = timer.get_time_text()
+        window.blit(timerText, (10, 10))
         pygame.display.update()

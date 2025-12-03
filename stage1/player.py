@@ -203,7 +203,5 @@ class Cplayer:
 
     def f_drawPlayer(self, window):
         window.blit(images.characters[self.direction][self.motion], (self.realX, self.realY))
-        if (self.blockMotion != 0):
-            window.blit(images.blocks[self.blockMotion], (self.blockX, self.blockY))
         if (self.direction != 4):
             window.blit(images.picks[self.direction][self.pickMotion], (self.realX, self.realY))

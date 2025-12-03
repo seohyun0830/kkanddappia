@@ -35,7 +35,7 @@ def f_isFail(window, reson):
                 # 3. 미리 계산해둔 hover 상태를 확인합니다.
                 if is_hover:
                     sfx_click.play()
-                    return 11 # (메인 루프의 1스테이지 코드가 11번이라면 11로, 10이면 10으로 맞추세요)
+                    return True # (메인 루프의 1스테이지 코드가 11번이라면 11로, 10이면 10으로 맞추세요)
 
         # 4. 그리기
         time += 1

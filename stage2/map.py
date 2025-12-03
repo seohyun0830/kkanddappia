@@ -143,7 +143,7 @@ class MapManager:
             'rect': pygame.Rect(wood_drop_x, wood_drop_y-15, ITEM_SIZE, ITEM_SIZE)
         })
 
-    def draw(self):
+    def draw(self, timer):
         if self.stage.player.is_flying_animation_active:
             self.stage.screen.blit(self.images.new_background_image, (0, 0))
             return
@@ -171,6 +171,8 @@ class MapManager:
                     self.draw_pulsating_spaceship()
                 else:
                     self.draw_progress_spaceship()
+        timeText = timer.get_time_text()
+        self.stage.screen.blit(timeText, (10, 10))
 
     def draw_progress_spaceship(self):
         current_parts = len(self.stage.spaceship_assembly_storage)
