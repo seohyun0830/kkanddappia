@@ -123,7 +123,12 @@ class Crafting:
 
     def confirm_crafting_result(self):
         if self.crafted_item_display:
-            self.stage.inventory.append(self.crafted_item_display)
+            if self.crafted_item_display == 'screw':
+                self.stage.inventory.append('screw')
+                self.stage.inventory.append('screw')
+            else:
+                self.stage.inventory.append(self.crafted_item_display)
+            
             self.crafted_item_display = None
             return True
         return False

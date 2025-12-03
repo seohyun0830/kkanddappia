@@ -125,6 +125,10 @@ class ImageManager:
             'spaceship-roof-piece': 'spaceship_roof_1_4.png'
         }
 
+        #쪽지
+
+        self.paper_image=self.safe_load_image('paper.png', (PAPER_SIZE, PAPER_SIZE))
+
         for name, filename in items.items():
             self.load_item(name, filename)
 

@@ -33,7 +33,7 @@ SPACESHIP_WALK_Y = 590
 # --- 페이드 아웃 설정 ---
 FADE_SPEED = 5
 
-INTERACTION_RANGE=180
+INTERACTION_RANGE=200
 
 # --- 이미지 크기 ---
 IMG_SIZE_MAKE = (600, 600)
@@ -73,8 +73,8 @@ BAG_ICON_X = DIC_ICON_X - IMG_SIZE_ICON[0]
 BAG_ICON_Y = ICON_MARGIN
 
 # --- 클릭 영역 ---
-CLICK_AREA = pygame.Rect(850, 100, 300, 380) 
-OUTSIDE_DOOR_AREA = pygame.Rect(400, 400, 400, 300) 
+CLICK_AREA = pygame.Rect(850, 100, 300, 400) 
+OUTSIDE_DOOR_AREA = pygame.Rect(400, 400, 400, 300) #out1->in
 OUTSIDE_MAKE_AREA = pygame.Rect(10, 340, 490, 350)  #outside2 연구실 위치
 TREE_AREA = pygame.Rect(840, 430, 120, 290) 
 DIC_AREA = pygame.Rect(250, 480, 250, 100)
@@ -126,6 +126,16 @@ SPACESHIP_PART_NAMES = [
     'spaceship-side', 
     'spaceship-roof', 
 ]
+
+#사전 쪽지
+
+PAPER_LOCATIONS = {
+    "outside1": [(200, 650), (500, 600), (1000, 650)], 
+    "inside":   [(300, 500), (600, 500), (900, 500)],
+    "outside2": [(100, 650), (800, 650)]            
+}
+
+PAPER_SIZE = 40 # 쪽지 크기
 
 # --- 제작 슬롯 좌표 ---
 CRAFT_SLOT_POSITIONS = []

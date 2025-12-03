@@ -19,6 +19,17 @@ class MapManager:
         self.part_reveal_order = list(range(9))
         random.shuffle(self.part_reveal_order)
 
+        self.papers_on_map = {
+            "outside1": [],
+            "inside": [],
+            "outside2": []
+        }
+
+        for map_name, coords in PAPER_LOCATIONS.items():
+            for pos in coords:
+                rect = pygame.Rect(pos[0], pos[1], PAPER_SIZE, PAPER_SIZE)
+                self.papers_on_map[map_name].append(rect)
+
     def update(self):
         current_time = pygame.time.get_ticks()
 
@@ -53,8 +64,7 @@ class MapManager:
                         self.tree_press_start_time = pygame.time.get_ticks()
                         if self.stage.sounds.tree_sound:
                             self.stage.sounds.tree_sound.play(loops=-1)
-                else:
-                    pass
+            
 
                 return
 
@@ -82,10 +92,9 @@ class MapManager:
                 return
             
             if CLICK_AREA.collidepoint(mouse_pos):
-                if self.is_player_near(CLICK_AREA):
-                    self.stage.open_door = True
-                    self.stage.is_crafting_open = True
-                    self.stage.dic_open = False
+                self.stage.open_door = True
+                self.stage.is_crafting_open = True
+                self.stage.dic_open = False
                 return
 
         elif self.current_map == "outside2":
@@ -135,6 +144,16 @@ class MapManager:
                 self.stage.inventory.append(item['item_name'])
                 self.stage.dropped_items.pop(i)
 
+        if not self.stage.is_easy_mode:
+            current_papers = self.papers_on_map.get(self.current_map, [])
+            for i in range(len(current_papers) - 1, -1, -1):
+                note_rect = current_papers[i]
+                
+                if player_rect.colliderect(note_rect):
+                    current_papers.pop(i) # 맵에서 제거
+                    self.stage.collected_papers_count += 1
+                    print(f"쪽지 발견! 현재 해금된 페이지: {self.stage.collected_papers_count}")
+
     def drop_wood(self):
         wood_drop_x = TREE_AREA.x + TREE_AREA.width // 2 - ITEM_SIZE // 2
         wood_drop_y = self.stage.player.y + self.stage.player.image.get_height()
@@ -173,6 +192,11 @@ class MapManager:
                     self.draw_progress_spaceship()
         timeText = timer.get_time_text()
         self.stage.screen.blit(timeText, (10, 10))
+
+        if not self.stage.is_easy_mode:
+            current_papers = self.papers_on_map.get(self.current_map, [])
+            for paper_rect in current_papers:
+                self.stage.screen.blit(self.images.paper_image, paper_rect.topleft)
 
     def draw_progress_spaceship(self):
         current_parts = len(self.stage.spaceship_assembly_storage)

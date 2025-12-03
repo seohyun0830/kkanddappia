@@ -28,6 +28,8 @@ class Stage2:
         
         # [추가] 가이드 넘김용 스페이스바 상태 변수
         self.guide_space_pressed = False
+
+        self.collected_papers_count=0
         
         btn_width = 200
         btn_height = 60
@@ -55,7 +57,8 @@ class Stage2:
         base_items = ['fire', 'water'] + \
                      ['spaceship-side'] * 4 + \
                      ['spaceship-roof'] * 4 + \
-                     ['fuel tank'] * 7
+                     ['fuel tank'] * 7 + \
+                     ['steel']*2
 
         if imported_items is not None:
             self.inventory = base_items + imported_items
@@ -215,7 +218,7 @@ class Stage2:
         if self.inven_ui.handle_icon_click(mouse_pos):
             return
 
-        if self.is_easy_mode and DIC_ICON_AREA.collidepoint(mouse_pos):
+        if DIC_ICON_AREA.collidepoint(mouse_pos):
             self.dic_open = not self.dic_open
             if self.dic_open:
                 self.open_door = False

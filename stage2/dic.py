@@ -31,24 +31,30 @@ class Dictionary:
     def draw(self):
 
         self.stage.screen.blit(self.images.dic_image, (DIC_IMAGE_X, DIC_IMAGE_Y))
-        
-        dic_page_name = f'dic_p{self.current_page}'
-        dic_page_image = self.images.item_images.get(dic_page_name)
-        
-        if dic_page_image:
-            bg_width = self.images.dic_image.get_width()
-            bg_height = self.images.dic_image.get_height()
-            page_width = dic_page_image.get_width()
-            page_height = dic_page_image.get_height()
-            
-            page_x = DIC_IMAGE_X + (bg_width - page_width) // 2
-            page_y = DIC_IMAGE_Y + (bg_height - page_height) // 2
-            
-            self.stage.screen.blit(dic_page_image, (page_x, page_y))
 
-        page_text = self.font.render(f"{self.current_page} / {MAX_DIC_PAGES}", True, BLACK)
+        is_unlocked=self.stage.is_easy_mode or (self.stage.collected_papers_count>=self.current_page)
+
+        if is_unlocked:
+        
+            dic_page_name = f'dic_p{self.current_page}'
+            dic_page_image = self.images.item_images.get(dic_page_name)
+            
+            if dic_page_image:
+                bg_width = self.images.dic_image.get_width()
+                bg_height = self.images.dic_image.get_height()
+                page_width = dic_page_image.get_width()
+                page_height = dic_page_image.get_height()
+                
+                page_x = DIC_IMAGE_X + (bg_width - page_width) // 2
+                page_y = DIC_IMAGE_Y + (bg_height - page_height) // 2
+                
+                self.stage.screen.blit(dic_page_image, (page_x, page_y))
+
+
+        page_str = f"{self.current_page} / {MAX_DIC_PAGES}"
+        page_text = self.font.render(page_str, True, BLACK)
         
         text_x = DIC_IMAGE_X + (self.images.dic_image.get_width() // 2) - (page_text.get_width() // 2)
-        text_y = DIC_IMAGE_Y + self.images.dic_image.get_height() - 30
+        text_y = DIC_IMAGE_Y + self.images.dic_image.get_height() - 40
         
         self.stage.screen.blit(page_text, (text_x, text_y))
