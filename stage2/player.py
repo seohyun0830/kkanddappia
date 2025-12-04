@@ -98,6 +98,11 @@ class Player:
         else:
             active_set = self.images.all_animations['bag']
 
+        if active_set['right']:
+            total_frames = len(active_set['right'])
+            if self.current_frame_index >= total_frames:
+                self.current_frame_index = self.current_frame_index % total_frames
+
         if self.is_moving:
             self.animation_counter += 1
             if self.animation_counter >= target_speed:
