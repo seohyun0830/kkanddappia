@@ -20,6 +20,8 @@ STATE_STORY2  = 9
 STATE_STAGE1 = 20  # 1스테이지
 STATE_STAGE2 = 11  # 2스테이지
 
+##얍
+
 # --- [초기화] ---
 pygame.init()
 window_width = 1200
