@@ -19,6 +19,7 @@ STATE_STORY1  = 8
 STATE_STORY2  = 9
 STATE_STAGE1 = 20  # 1스테이지
 STATE_STAGE2 = 11  # 2스테이지
+STATE_STAGE3 = 30 
 
 ##얍
 
@@ -36,6 +37,8 @@ mode = -1
 MODE = 0
 Try = 0
 MapInfo, ItemMapInfo, InvenInfo, InvenCnt = 0, 0, 0, [0,0,0,0,0]
+
+FUEL=0
 
 stage2 = Stage2(window) 
 timer = Timer()
@@ -136,6 +139,15 @@ while current_state != STATE_EXIT:
         if Try == 0:
             timer.reset()
         result = stage2.run(timer)
+
+        if isinstance(result, tuple):
+            next_stage, count = result  # 튜플 분해
+            
+            if next_stage == "stage3":
+                FUEL = count  # 연료 개수 저장
+                print(f"Stage 2 클리어! 획득한 연료: {FUEL}개")
+                
+                current_state = STATE_STAGE3 # 3스테이지로 이동 (상수 정의 필요)
         
         if result == "stage1":
             # [클리어/이동] Stage 2 -> Stage 1 복귀

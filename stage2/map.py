@@ -263,7 +263,7 @@ class MapManager:
                 self.stage.screen.blit(part_img_scaled, (px, py))
 
     def draw_pulsating_spaceship(self):
-        SCALE_FACTOR = 0.3 # 크기 비율 맞추기
+        SCALE_FACTOR = 0.7 # 크기 비율 맞추기
         original_w, original_h = self.images.spaceship_completed_image.get_size()
         
         base_w = int(original_w * SCALE_FACTOR)
