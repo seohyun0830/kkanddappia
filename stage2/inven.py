@@ -15,6 +15,40 @@ class Inventory:
     def get_stacked_inventory(self, flat_inventory):
         counts = Counter(flat_inventory)
         stacked_inventory = []
+        
+        # [수정됨] 정렬 로직 변경
+        # 1. 우선순위 아이템 정의 (이 순서대로 앞에 나옵니다)
+        priority_items = ['fire', 'water', 'hammer', 'axe']
+        
+        # 2. 인벤토리에 있는 모든 아이템 키 가져오기
+        all_keys = list(counts.keys())
+        
+        sorted_item_names = []
+        
+        # 3. 우선순위 아이템 먼저 담기 (가지고 있는 것만)
+        for p_item in priority_items:
+            if p_item in all_keys:
+                sorted_item_names.append(p_item)
+                
+        # 4. 나머지 아이템들은 알파벳순 정렬해서 뒤에 붙이기
+        others = [item for item in all_keys if item not in priority_items]
+        others.sort()
+        sorted_item_names.extend(others)
+        
+        # 5. 정렬된 순서대로 리스트 생성
+        for item_name in sorted_item_names:
+            if item_name in self.images.item_images:
+                total_count = counts[item_name]
+                while total_count > 0:
+                    stack_count = min(total_count, MAX_STACK_SIZE)
+                    stacked_inventory.append({'name': item_name, 'count': stack_count})
+                    total_count -= stack_count
+                    
+        return stacked_inventory
+    '''
+    def get_stacked_inventory(self, flat_inventory):
+        counts = Counter(flat_inventory)
+        stacked_inventory = []
         sorted_item_names = sorted(counts.keys())
         
         for item_name in sorted_item_names:
@@ -25,7 +59,7 @@ class Inventory:
                     stacked_inventory.append({'name': item_name, 'count': stack_count})
                     total_count -= stack_count
         return stacked_inventory
-
+    '''
     def get_current_page_items(self):
         full_stacked = self.get_stacked_inventory(self.stage.inventory)
         page_items = []
@@ -79,7 +113,7 @@ class Inventory:
 
                 self.stage.screen.blit(item_img, (draw_x, draw_y))
                 
-                if item_name in ['fire', 'water']:
+                if item_name in ['fire', 'water','hammer', 'axe']:
                     count_text = self.font.render("", True, YELLOW) 
                 else:
                     count_text = self.font.render(f"x{item_count}", True, YELLOW)
@@ -128,7 +162,7 @@ class Inventory:
                     self.stage.is_drag = True
                     self.stage.drag_item = self.stage.inventory[flat_index]
                     
-                    if item_name not in ['fire', 'water']:
+                    if item_name not in ['fire', 'water', 'hammer', 'axe']:
                         self.stage.inventory.pop(flat_index)
                     
                     self.stage.drag_item_original = f"inventory_slot_{i}_p{self.current_page}"
@@ -159,7 +193,7 @@ class Inventory:
                 self.stage.dic_open = False
                 
             if self.stage.is_drag:
-                 if self.stage.drag_item not in ['fire', 'water']:
+                 if self.stage.drag_item not in ['fire', 'water', 'hammer', 'axe']:
                      self.stage.inventory.append(self.stage.drag_item)
                  self.stage.reset_drag()
                  

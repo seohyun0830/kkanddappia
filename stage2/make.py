@@ -126,6 +126,9 @@ class Crafting:
             if self.crafted_item_display == 'screw':
                 self.stage.inventory.append('screw')
                 self.stage.inventory.append('screw')
+            elif self.crafted_item_display == 'stick':
+                self.stage.inventory.append('stick')
+                self.stage.inventory.append('stick')
             else:
                 self.stage.inventory.append(self.crafted_item_display)
             

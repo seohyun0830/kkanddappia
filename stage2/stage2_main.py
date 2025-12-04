@@ -74,7 +74,8 @@ class Stage2:
                      ['spaceship-side'] * 4 + \
                      ['spaceship-roof'] * 4 + \
                      ['fuel tank'] * 7 + \
-                     ['steel'] * 2
+                     ['steel'] * 2 + \
+                     ['axe']
 
         if imported_items is not None:
             self.inventory = base_items + imported_items
@@ -260,7 +261,7 @@ class Stage2:
             
             if not is_handled and not (is_on_dic_icon or BAG_ICON_AREA.collidepoint(mouse_pos)):
                 if self.is_drag:
-                    if self.drag_item not in ['fire', 'water']:
+                    if self.drag_item not in ['fire', 'water', 'axe', 'hammer']:
                         self.inventory.append(self.drag_item)
                     self.reset_drag()
                 self.close_all_popups()
