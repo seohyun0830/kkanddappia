@@ -56,13 +56,15 @@ class Stage3:
     # ------------------------------
     # 생성자
     # ------------------------------
-    def __init__(self, screen, game_state=None):
+    def __init__(self, screen,mode, game_state=None):
         self.screen = screen
         self.game_state = game_state if game_state else {}
 
         pygame.font.init()
 
         # 난이도 적용
+        
+        #if(mode=="hard"):
         self.apply_difficulty("HARD")
 
         # 미로

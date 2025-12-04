@@ -18,7 +18,7 @@ from engine.fuel_manager import fuel_manager
 
 
 class Stage4:
-    def __init__(self, screen,mode="easy"):
+    def __init__(self, screen,mode):
         self.screen = screen
         self.clock = pygame.time.Clock()
 
@@ -154,7 +154,7 @@ class Stage4:
                 restart_ani.restart_talk(self.screen,self.talking_box)
                 pygame.display.update()
                 pygame.time.delay(1500)
-                return "dead"   #이건 아예 재시작으로 바꿔야됨 23합치고
+                return "fule_empty"   #이건 아예 재시작으로 바꿔야됨 23합치고
 
             # 연료 감소 (2초마다, defect 아닐 때만)
             if (not self.is_defect_event) and (game_elapsed_time - self.last_fuel_drop_time > 2):
