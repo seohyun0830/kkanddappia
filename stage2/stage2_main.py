@@ -31,6 +31,10 @@ class Stage2:
 
         # 모은 쪽지 개수 (사전 해금용)
         self.collected_notes_count = 0
+
+        #폭발 애니메이션
+        self.bomb_animation_index = 0
+        self.bomb_animation_timer = 0
         
         # 리플레이 버튼
         btn_width = 200
@@ -57,6 +61,9 @@ class Stage2:
         self.game_over = False
         self.go_to_stage1 = False
         self.collected_notes_count = 0 # 쪽지 초기화
+
+        self.bomb_animation_index = 0
+        self.bomb_animation_timer = 0
         
         if self.sounds.bomb_sound: self.sounds.bomb_sound.stop()
         if self.sounds.tree_sound: self.sounds.tree_sound.stop()
@@ -321,8 +328,18 @@ class Stage2:
     def draw(self, timer=None):
         # 1. 게임 오버 화면
         if self.game_over:
-            if self.images.bomb_ending_image:
-                self.screen.blit(self.images.bomb_ending_image, (0, 0))
+            self.bomb_animation_timer += 1
+            
+            if self.bomb_animation_index < len(self.images.bomb_frames) - 1:
+                self.bomb_animation_timer += 1
+                if self.bomb_animation_timer >= 20: # 속도 (클수록 느림)
+                    self.bomb_animation_index += 1
+                    self.bomb_animation_timer = 0
+            
+            # 현재 프레임 그리기
+            if self.images.bomb_frames:
+                current_frame = self.images.bomb_frames[self.bomb_animation_index]
+                self.screen.blit(current_frame, (0, 0))
             else:
                 self.screen.fill(BLACK)
 

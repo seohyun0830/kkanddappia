@@ -85,6 +85,12 @@ class ImageManager:
         self.new_background_image = self.safe_load_image('2to3.jpg', (SCREEN_WIDTH, SCREEN_HEIGHT), False)
         self.bomb_ending_image=self.safe_load_image('bomb_ending.jpg', (SCREEN_WIDTH, SCREEN_HEIGHT), False)
         
+        self.bomb_frames = [
+            self.safe_load_image('bomb_back1.png', (SCREEN_WIDTH, SCREEN_HEIGHT), False),
+            self.safe_load_image('bomb_back2.png', (SCREEN_WIDTH, SCREEN_HEIGHT), False),
+            self.safe_load_image('bomb_back3.png', (SCREEN_WIDTH, SCREEN_HEIGHT), False)
+        ]
+
         #쪽지
         self.paper_image = self.safe_load_image('paper.png', (PAPER_SIZE, PAPER_SIZE))
 
