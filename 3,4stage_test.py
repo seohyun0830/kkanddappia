@@ -19,6 +19,7 @@ def main():
 
     assets.load_all()
     
+   
     # --------Story-----------
     #3스토리는 처음 플레이 할 때 한번만 나오게
     story = Stage3Story(screen)
@@ -57,9 +58,8 @@ def main():
                     fuel_manager.fuel=80    #연료 초기화
                     back_cutscene = Stage2Back(screen)
                     back_cutscene.run()
-                    continue
-
-                           
+                    continue 
+                                
             pygame.quit()
 
 if __name__ == "__main__":

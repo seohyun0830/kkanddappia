@@ -41,40 +41,41 @@ class Spaceship:
 
     def hard_handle_input(self,event):
         if event.type == pygame.KEYDOWN:
+            # a좌 d우 w상 s하
             if self.idx == 0:
-                if event.key == pygame.K_LEFT: self.to_x = -self.speed
-                elif event.key == pygame.K_RIGHT: self.to_x = self.speed
-                elif event.key == pygame.K_DOWN: self.to_y = self.speed
-                elif event.key == pygame.K_UP: self.to_y = -self.speed
+                if event.key == pygame.K_a: self.to_x = -self.speed
+                elif event.key == pygame.K_d: self.to_x = self.speed
+                elif event.key == pygame.K_s: self.to_y = self.speed
+                elif event.key == pygame.K_w: self.to_y = -self.speed
             elif self.idx == 1:
-                if event.key == pygame.K_LEFT: self.to_y = -self.speed
-                elif event.key == pygame.K_RIGHT: self.to_y = self.speed
-                elif event.key == pygame.K_DOWN: self.to_x = -self.speed
-                elif event.key == pygame.K_UP: self.to_x = self.speed
+                if event.key == pygame.K_a: self.to_y = -self.speed
+                elif event.key == pygame.K_d: self.to_y = self.speed
+                elif event.key == pygame.k_s: self.to_x = -self.speed
+                elif event.key == pygame.K_w: self.to_x = self.speed
             elif self.idx == 2:
-                if event.key == pygame.K_LEFT: self.to_x = self.speed
-                elif event.key == pygame.K_RIGHT: self.to_x = -self.speed
-                elif event.key == pygame.K_DOWN: self.to_y = -self.speed
-                elif event.key == pygame.K_UP: self.to_y = self.speed
+                if event.key == pygame.K_a: self.to_x = self.speed
+                elif event.key == pygame.K_d: self.to_x = -self.speed
+                elif event.key == pygame.K_s: self.to_y = -self.speed
+                elif event.key == pygame.K_w: self.to_y = self.speed
             else: 
-                if event.key == pygame.K_LEFT: self.to_y = self.speed
-                elif event.key == pygame.K_RIGHT: self.to_y = -self.speed
-                elif event.key == pygame.K_DOWN: self.to_x = self.speed
-                elif event.key == pygame.K_UP: self.to_x = -self.speed
+                if event.key == pygame.K_a: self.to_y = self.speed
+                elif event.key == pygame.K_d: self.to_y = -self.speed
+                elif event.key == pygame.K_s: self.to_x = self.speed
+                elif event.key == pygame.K_w: self.to_x = -self.speed
         
         if event.type == pygame.KEYUP:
             if self.idx == 0:
-                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: self.to_x = 0
-                elif event.key == pygame.K_UP or event.key == pygame.K_DOWN: self.to_y = 0
+                if event.key == pygame.K_a or event.key == pygame.K_d: self.to_x = 0
+                elif event.key == pygame.K_w or event.key == pygame.K_s: self.to_y = 0
             elif self.idx == 1:
-                if event.key == pygame.K_UP or event.key == pygame.K_DOWN: self.to_x = 0
-                elif event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: self.to_y = 0
+                if event.key == pygame.K_w or event.key == pygame.K_s: self.to_x = 0
+                elif event.key == pygame.K_a or event.key == pygame.K_d: self.to_y = 0
             elif self.idx == 2:
-                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: self.to_x = 0
-                elif event.key == pygame.K_UP or event.key == pygame.K_DOWN: self.to_y = 0
+                if event.key == pygame.K_a or event.key == pygame.K_d: self.to_x = 0
+                elif event.key == pygame.K_w or event.key == pygame.K_s: self.to_y = 0
             else: # 3
-                if event.key == pygame.K_UP or event.key == pygame.K_DOWN: self.to_x = 0
-                elif event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: self.to_y = 0
+                if event.key == pygame.K_w or event.key == pygame.K_s: self.to_x = 0
+                elif event.key == pygame.K_a or event.key == pygame.K_d: self.to_y = 0
     
     
     # 무적 상태 설정
