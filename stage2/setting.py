@@ -113,8 +113,8 @@ for rel_y in INV_Y_REL_COORDS:
 # --- 2페이지 슬롯 ---
 INVENTORY_PAGE2_SLOT_POSITIONS = []
 INVENTORY_PAGE2_SLOT_RECTS = []
-INV_P2_X_REL = [215, 385] 
-INV_P2_Y_REL = [215, 385]
+INV_P2_X_REL = [120, 380] 
+INV_P2_Y_REL = [120, 380]
 for rel_y in INV_P2_Y_REL:
     for rel_x in INV_P2_X_REL:
         absolute_x = INVEN_IMAGE_X + rel_x - (SPACESHIP_ITEM_SIZE // 2)
@@ -122,7 +122,7 @@ for rel_y in INV_P2_Y_REL:
         INVENTORY_PAGE2_SLOT_POSITIONS.append((absolute_x, absolute_y))
         INVENTORY_PAGE2_SLOT_RECTS.append(pygame.Rect(absolute_x, absolute_y, SPACESHIP_ITEM_SIZE, SPACESHIP_ITEM_SIZE))
 
-SPACESHIP_PART_NAMES = ['spaceship', 'spaceship-side', 'spaceship-roof', 'fuel tank']
+SPACESHIP_PART_NAMES = ['spaceship-side-piece', 'spaceship-roof-piece','spaceship-side', 'spaceship-roof']
 
 # --- 제작 슬롯 ---
 CRAFT_SLOT_POSITIONS = []
