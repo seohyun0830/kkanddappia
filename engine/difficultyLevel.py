@@ -25,16 +25,16 @@ DIFFICULTY = {
         "MIN_SPIKE_CHANGE": 10,
         "MAX_SPIKE_CHANGE": 25,
 
-        "BROKEN_LOW_CHANCE": 0.01,        
-        "BROKEN_MID_CHANCE": 0.02,         
-        "BROKEN_HIGH_CHANCE": 0.03,        
+        "BROKEN_LOW_CHANCE": 0.006,        
+        "BROKEN_MID_CHANCE": 0.012,         
+        "BROKEN_HIGH_CHANCE": 0.022,        
 
-        "HP_DAMAGE": 5,                   
-        "HP_DAMAGE_INTERVAL": 2000,        
+        "HP_DAMAGE": 3,                   
+        "HP_DAMAGE_INTERVAL": 1500,        
 
-        "BEGIN_BROKEN_CNT": 3,
+        "BEGIN_BROKEN_CNT": 0,
 
-        "DRONE_CHANCE": 0.2,            
+        "DRONE_CHANCE": 0.15,            
 
         "PRESSURE_CONTROL_AMOUNT": 3,      
     },
@@ -46,21 +46,21 @@ DIFFICULTY = {
         "MIN_RANDOM_CHANGE": 1,
         "MAX_RANDOM_CHANGE": 4,
 
-        "MIN_SPIKE_INTERVAL": 3000,
-        "MAX_SPIKE_INTERVAL": 5000,
+        "MIN_SPIKE_INTERVAL": 4000,
+        "MAX_SPIKE_INTERVAL": 6000,
         "MIN_SPIKE_CHANGE": 10,
         "MAX_SPIKE_CHANGE": 30,
 
-        "BROKEN_LOW_CHANCE": 0.02,
-        "BROKEN_MID_CHANCE": 0.03,
-        "BROKEN_HIGH_CHANCE": 0.05,
+        "BROKEN_LOW_CHANCE": 0.008,
+        "BROKEN_MID_CHANCE": 0.015,
+        "BROKEN_HIGH_CHANCE": 0.025,
 
-        "HP_DAMAGE": 8,
-        "HP_DAMAGE_INTERVAL": 1500,
+        "HP_DAMAGE": 5,
+        "HP_DAMAGE_INTERVAL": 1800,
 
-        "BEGIN_BROKEN_CNT": 5,
+        "BEGIN_BROKEN_CNT": 3,
 
-        "DRONE_CHANCE": 0.06,     # EASY보다 확률 낮음
+        "DRONE_CHANCE": 0.10,     # EASY보다 확률 낮음
 
         "PRESSURE_CONTROL_AMOUNT": 2,
     },
