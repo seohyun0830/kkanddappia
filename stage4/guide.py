@@ -6,9 +6,10 @@ def show_guide(screen, background_img, font):
     clock = pygame.time.Clock()
 
     messages = [
-        "방향키로 우주선을 조종하여",
+        "w,a,s,d 키로 우주선을 조종하여",
         "사방에서 날아오는 운석을 피해",
-        "무사히 깐따삐아에 도착하십시오!"
+        "무사히 깐따삐아에 도착하십시오!",
+        "a좌, d우, w상, s하"
     ]
     
     screen_width = screen.get_width()
