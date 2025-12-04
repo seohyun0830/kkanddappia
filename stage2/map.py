@@ -34,17 +34,18 @@ class MapManager:
         current_time = pygame.time.get_ticks()
 
         # [추가] 1. 시간에 따라 쪽지 생성
-        if self.next_note_index < len(NOTE_DATA):
-            # (인덱스+1) * 간격 만큼 시간이 지나면 생성
-            if current_time - self.start_time > (self.next_note_index + 1) * NOTE_APPEAR_INTERVAL:
-                note_info = NOTE_DATA[self.next_note_index]
-                
-                new_note = {
-                    'map': note_info['map'],
-                    'rect': pygame.Rect(note_info['pos'][0], note_info['pos'][1], PAPER_SIZE, PAPER_SIZE)
-                }
-                self.spawned_notes.append(new_note)
-                self.next_note_index += 1
+        if not self.stage.is_easy_mode:
+            if self.next_note_index < len(NOTE_DATA):
+                # (인덱스+1) * 간격 만큼 시간이 지나면 생성
+                if current_time - self.start_time > (self.next_note_index + 1) * NOTE_APPEAR_INTERVAL:
+                    note_info = NOTE_DATA[self.next_note_index]
+                    
+                    new_note = {
+                        'map': note_info['map'],
+                        'rect': pygame.Rect(note_info['pos'][0], note_info['pos'][1], PAPER_SIZE, PAPER_SIZE)
+                    }
+                    self.spawned_notes.append(new_note)
+                    self.next_note_index += 1
 
         # 2. 나무 캐기 완료 체크
         if self.current_map == "outside1" and self.is_tree_pressing:
@@ -156,13 +157,14 @@ class MapManager:
                 self.stage.dropped_items.pop(i)
 
         # 2. [추가] 쪽지 습득 (현재 맵에 있는 것만)
-        for i in range(len(self.spawned_notes) - 1, -1, -1):
-            note = self.spawned_notes[i]
-            if note['map'] == self.current_map:
-                if player_rect.colliderect(note['rect']):
-                    self.spawned_notes.pop(i)
-                    self.stage.collected_notes_count += 1
-                    # print(f"쪽지 획득! 해금 페이지: {self.stage.collected_notes_count}")
+        if not self.stage.is_easy_mode:
+            for i in range(len(self.spawned_notes) - 1, -1, -1):
+                note = self.spawned_notes[i]
+                if note['map'] == self.current_map:
+                    if player_rect.colliderect(note['rect']):
+                        self.spawned_notes.pop(i)
+                        self.stage.collected_notes_count += 1
+                        # print(f"쪽지 획득! 해금 페이지: {self.stage.collected_notes_count}")
 
     def drop_wood(self):
         wood_drop_x = TREE_AREA.x + TREE_AREA.width // 2 - ITEM_SIZE // 2
@@ -202,9 +204,10 @@ class MapManager:
                     self.draw_progress_spaceship()
         
         # [추가] 쪽지 그리기
-        for note in self.spawned_notes:
-            if note['map'] == self.current_map:
-                self.stage.screen.blit(self.images.paper_image, note['rect'].topleft)
+        if not self.stage.is_easy_mode:
+            for note in self.spawned_notes:
+                if note['map'] == self.current_map:
+                    self.stage.screen.blit(self.images.paper_image, note['rect'].topleft)
 
         # 타이머 표시 (timer 객체가 넘어왔을 때만)
         if timer:
