@@ -51,14 +51,15 @@ def kkanddappia_land(screen, bk2_img, person_img, person2_img, talk_img, font):
             if event.type == pygame.QUIT:
                 return 
             
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if typing_finished:
-                    text_idx += 1
-                    char_idx = 0
-                    typing_finished = False
-                else:
-                    char_idx = len(current_full_text)
-                    typing_finished = True
+            if event.type == pygame.KEYDOWN:
+                if event.key==pygame.K_SPACE:
+                    if typing_finished:
+                        text_idx += 1
+                        char_idx = 0
+                        typing_finished = False
+                    else:
+                        char_idx = len(current_full_text)
+                        typing_finished = True
 
         if not typing_finished:
             if current_time - last_time > typing_speed:
@@ -171,14 +172,15 @@ def final_ending(screen, bk3, bk4, talk_img, font,mode):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if typing_finished:
-                    text_idx += 1
-                    char_idx = 0
-                    typing_finished = False
-                else:
-                    char_idx = len(current_full_text)
-                    typing_finished = True
+            if event.type == pygame.KEYDOWN:
+                if event.key==pygame.K_SPACE:
+                    if typing_finished:
+                        text_idx += 1
+                        char_idx = 0
+                        typing_finished = False
+                    else:
+                        char_idx = len(current_full_text)
+                        typing_finished = True
 
         if not typing_finished:
             if current_time - last_time > typing_speed:

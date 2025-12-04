@@ -59,14 +59,15 @@ def restart_talk(screen, dialog_img):
             if event.type == pygame.QUIT:
                 break
             
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if typing_finished:
-                    idx += 1
-                    char_index = 0
-                    typing_finished = False
-                else:
-                    char_index = len(current_full_text)
-                    typing_finished = True
+            if event.type == pygame.KEYDOWN:
+                if event.key==pygame.K_SPACE:
+                    if typing_finished:
+                        idx += 1
+                        char_index = 0
+                        typing_finished = False
+                    else:
+                        char_index = len(current_full_text)
+                        typing_finished = True
 
         current_time = pygame.time.get_ticks()
 

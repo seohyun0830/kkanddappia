@@ -1,0 +1,257 @@
+[1mdiff --git a/engine/assets.py b/engine/assets.py[m
+[1mindex 634fd30..2e24114 100644[m
+[1m--- a/engine/assets.py[m
+[1m+++ b/engine/assets.py[m
+[36m@@ -61,7 +61,7 @@[m [mdef load_player():[m
+     # 그리고 원하는 최종크기로 resize[m
+     player = pygame.transform.scale([m
+         player,[m
+[31m-        (constants.TILE_SIZE*1.8, constants.TILE_SIZE*1.8)[m
+[32m+[m[32m        (constants.TILE_SIZE, constants.TILE_SIZE)[m
+     )[m
+ [m
+     player_img = player[m
+[1mdiff --git a/engine/constants.py b/engine/constants.py[m
+[1mindex dcec50a..657b798 100644[m
+[1m--- a/engine/constants.py[m
+[1m+++ b/engine/constants.py[m
+[36m@@ -39,7 +39,7 @@[m [mPULSATE_MAX_OFFSET = 10[m
+ PULSATE_SPEED = 0.005[m
+ [m
+ # 미세 변화 (0.2초마다)[m
+[31m-PRESSURE_UPDATE_INTERVAL = 200[m
+[32m+[m[32mPRESSURE_UPDATE_INTERVAL = 150[m
+ MIN_RANDOM_CHANGE = 1[m
+ MAX_RANDOM_CHANGE = 4 #압력편차 수정[m
+ [m
+[1mdiff --git a/images/stage3/gameover.png b/images/stage3/gameover.png[m
+[1mdeleted file mode 100644[m
+[1mindex 90e566c..0000000[m
+Binary files a/images/stage3/gameover.png and /dev/null differ
+[1mdiff --git a/images/stage3/guide1.jpg b/images/stage3/guide1.jpg[m
+[1mdeleted file mode 100644[m
+[1mindex 48a1da5..0000000[m
+Binary files a/images/stage3/guide1.jpg and /dev/null differ
+[1mdiff --git a/images/stage3/guide2.jpg b/images/stage3/guide2.jpg[m
+[1mdeleted file mode 100644[m
+[1mindex c579bc3..0000000[m
+Binary files a/images/stage3/guide2.jpg and /dev/null differ
+[1mdiff --git a/images/stage3/guide3.jpg b/images/stage3/guide3.jpg[m
+[1mdeleted file mode 100644[m
+[1mindex 37eb525..0000000[m
+Binary files a/images/stage3/guide3.jpg and /dev/null differ
+[1mdiff --git a/images/stage3/guide4.jpg b/images/stage3/guide4.jpg[m
+[1mdeleted file mode 100644[m
+[1mindex 8dee23c..0000000[m
+Binary files a/images/stage3/guide4.jpg and /dev/null differ
+[1mdiff --git a/images/stage3/guide5.jpg b/images/stage3/guide5.jpg[m
+[1mdeleted file mode 100644[m
+[1mindex 4d5099a..0000000[m
+Binary files a/images/stage3/guide5.jpg and /dev/null differ
+[1mdiff --git a/images/stage3/guidebook.png b/images/stage3/guidebook.png[m
+[1mdeleted file mode 100644[m
+[1mindex 2749812..0000000[m
+Binary files a/images/stage3/guidebook.png and /dev/null differ
+[1mdiff --git a/images/stage3/spaceship.png b/images/stage3/spaceship.png[m
+[1mdeleted file mode 100644[m
+[1mindex c1ffae0..0000000[m
+Binary files a/images/stage3/spaceship.png and /dev/null differ
+[1mdiff --git a/sounds/stage3/Optimistic-background-music.mp3 b/sounds/stage3/Optimistic-background-music.mp3[m
+[1mdeleted file mode 100644[m
+[1mindex 8723212..0000000[m
+Binary files a/sounds/stage3/Optimistic-background-music.mp3 and /dev/null differ
+[1mdiff --git "a/sounds/stage3/\354\204\261\352\263\265.mp3" "b/sounds/stage3/\354\204\261\352\263\265.mp3"[m
+[1mindex fed850e..8723212 100644[m
+Binary files "a/sounds/stage3/\354\204\261\352\263\265.mp3" and "b/sounds/stage3/\354\204\261\352\263\265.mp3" differ
+[1mdiff --git a/stage3/guide.py b/stage3/guide.py[m
+[1mdeleted file mode 100644[m
+[1mindex 8603084..0000000[m
+[1m--- a/stage3/guide.py[m
+[1m+++ /dev/null[m
+[36m@@ -1,112 +0,0 @@[m
+[31m-import pygame[m
+[31m-from engine import constants, assets[m
+[31m-[m
+[31m-"""[m
+[31m-3stage가이드북 [m
+[31m-열기,닫기 상태 관리[m
+[31m-페이지 이동, 반투명 오버레이[m
+[31m-"""[m
+[31m-[m
+[31m-class GuideBook:[m
+[31m-    def __init__(self):[m
+[31m-        self.open = False[m
+[31m-        self.current_page = 1[m
+[31m-        self.total_pages = 5[m
+[31m-        self.pause_start_time = 0   # 열린 시간 기록[m
+[31m-        self.game_paused_time = 0   # 전체 일시정지 누적시간[m
+[31m-[m
+[31m-    #가이드북 버튼 클릭여부[m
+[31m-    def handle_button_click(self, x, y):[m
+[31m-        btn_rect = assets.guide_book_button.get_rect([m
+[31m-            topleft=(constants.SCREEN_WIDTH - 120, 20)[m
+[31m-        )[m
+[31m-[m
+[31m-        # 버튼을 누르지 않았다면 False 그대로 반환[m
+[31m-        if not btn_rect.collidepoint(x, y):[m
+[31m-            return False[m
+[31m-[m
+[31m-        # 가이드북 토글[m
+[31m-        if not self.open:[m
+[31m-            # 처음 열었을 때[m
+[31m-            self.open = True[m
+[31m-            self.current_page = 1[m
+[31m-            self.pause_start_time = pygame.time.get_ticks()[m
+[31m-[m
+[31m-        else:[m
+[31m-            # 닫을 때[m
+[31m-            self.open = False[m
+[31m-            paused_duration = pygame.time.get_ticks() - self.pause_start_time[m
+[31m-            self.game_paused_time += paused_duration[m
+[31m-[m
+[31m-        return True[m
+[31m-[m
+[31m-    #가이드북 활성화 상태 키보드 이벤트[m
+[31m-    def handle_open_events(self):[m
+[31m-        for e in pygame.event.get():[m
+[31m-            if e.type == pygame.QUIT:[m
+[31m-                return False[m
+[31m-[m
+[31m-            if e.type == pygame.KEYDOWN:[m
+[31m-                # ESC → 닫기[m
+[31m-                if e.key == pygame.K_ESCAPE:[m
+[31m-                    self.close()[m
+[31m-                    continue[m
+[31m-[m
+[31m-                # 좌우 페이지 이동[m
+[31m-                if e.key == pygame.K_LEFT:[m
+[31m-                    self.current_page = max(1, self.current_page - 1)[m
+[31m-                elif e.key == pygame.K_RIGHT:[m
+[31m-                    self.current_page = min(self.total_pages, self.current_page + 1)[m
+[31m-[m
+[31m-            # 마우스로 클릭해도 페이지 이동[m
+[31m-            if e.type == pygame.MOUSEBUTTONDOWN:[m
+[31m-                x, y = e.pos[m
+[31m-[m
+[31m-                # 버튼 다시 눌러도 닫기 가능[m
+[31m-                if self.handle_button_click(x, y):[m
+[31m-                    continue[m
+[31m-[m
+[31m-                # 화면 왼쪽 영역 → 이전 페이지[m
+[31m-                if x < 200:[m
+[31m-                    self.current_page = max(1, self.current_page - 1)[m
+[31m-[m
+[31m-                # 화면 오른쪽 영역 → 다음 페이지[m
+[31m-                elif x > constants.SCREEN_WIDTH - 200:[m
+[31m-                    self.current_page = min(self.total_pages, self.current_page + 1)[m
+[31m-[m
+[31m-        return True[m
+[31m-[m
+[31m-    def close(self):[m
+[31m-        self.open = False[m
+[31m-        paused_duration = pygame.time.get_ticks() - self.pause_start_time[m
+[31m-        self.game_paused_time += paused_duration[m
+[31m-[m
+[31m-    def draw(self, screen):[m
+[31m-        # 1) 반투명 검은 배경[m
+[31m-        overlay = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))[m
+[31m-        overlay.set_alpha(210)[m
+[31m-        overlay.fill((0, 0, 0))[m
+[31m-        screen.blit(overlay, (0, 0))[m
+[31m-[m
+[31m-        # 2) 페이지 이미지 선택[m
+[31m-        guide_imgs = assets.guide_images[m
+[31m-        img = guide_imgs[self.current_page - 1][m
+[31m-[m
+[31m-        # 3) 화면 중앙 700x700로 스케일링[m
+[31m-        scaled = pygame.transform.scale(img, (700, 700))[m
+[31m-        rect = scaled.get_rect(center=(constants.SCREEN_WIDTH // 2,[m
+[31m-                                       constants.SCREEN_HEIGHT // 2))[m
+[31m-        screen.blit(scaled, rect)[m
+[31m-[m
+[31m-        # 4) 좌우 페이지 버튼 텍스트[m
+[31m-        font = pygame.font.SysFont(constants.FONT_NAME, 40, bold=True)[m
+[31m-        left = font.render("<", True, (255, 255, 255))[m
+[31m-        right = font.render(">", True, (255, 255, 255))[m
+[31m-[m
+[31m-        screen.blit(left, (120, constants.SCREEN_HEIGHT // 2 - 20))[m
+[31m-        screen.blit(right, (constants.SCREEN_WIDTH - 120, constants.SCREEN_HEIGHT // 2 - 20))[m
+[31m-[m
+[31m-        # 5) ESC 안내[m
+[31m-        exit_text = font.render("ESC : 닫기", True, (180, 180, 180))[m
+[31m-        screen.blit(exit_text, (constants.SCREEN_WIDTH // 2 - 100,[m
+[31m-                                constants.SCREEN_HEIGHT - 80))[m
+[1mdiff --git a/stage3/stage3.py b/stage3/stage3.py[m
+[1mindex df24f56..85672cd 100644[m
+[1m--- a/stage3/stage3.py[m
+[1m+++ b/stage3/stage3.py[m
+[36m@@ -144,7 +144,8 @@[m [mclass Stage3:[m
+             # 이벤트 처리[m
+             running = self.handle_events()[m
+             if not running:[m
+[31m-                return "menu"[m
+[32m+[m[32m                pygame.quit()[m
+[32m+[m[32m                quit()[m
+ [m
+             self.update_logic()[m
+             draw_screen(self)[m
+[36m@@ -153,12 +154,12 @@[m [mclass Stage3:[m
+             if self.pressure <= 0 or self.hp<=0:[m
+                 self.fadeout_with_breath()[m
+                 play_oxygen_fail(self.screen)[m
+[31m-                return "menu"[m
+[32m+[m[32m                return "dead"[m
+ [m
+             elif self.pressure >= 100:[m
+                 from stage3.fail_animation import play_overpressure_fail[m
+                 play_overpressure_fail(self.screen)[m
+[31m-                return "menu"[m
+[32m+[m[32m                return "dead"[m
+ [m
+ [m
+ [m
+[36m@@ -167,15 +168,13 @@[m [mclass Stage3:[m
+             elapsed = now - self.start_time[m
+             if elapsed >= constants.TOTAL_GAME_TIME_SECONDS * 1000:[m
+                 self.show_timeover()[m
+[31m-                return "menu"[m
+[32m+[m[32m                return "dead"[m
+ [m
+             # 클리어[m
+             if self.check_clear():[m
+                 self.show_success()[m
+                 return "stage4"[m
+ [m
+[31m-        return "menu"[m
+[31m-[m
+     #이벤트 로직[m
+     def handle_events(self):[m
+         for e in pygame.event.get():[m
+[36m@@ -257,7 +256,7 @@[m [mclass Stage3:[m
+ [m
+         if repaired:[m
+             # 압력 회복 +5[m
+[31m-            self.pressure = min(100, self.pressure + 5)[m
+[32m+[m[32m            self.pressure = min(100, self.pressure + 10)[m
+ [m
+             # 드론 보상 확률 (쿨타임 포함)[m
+             if now - self.last_drone_time >= 7000:   # 7초 쿨타임[m
+[1mdiff --git a/stage4/puzzle/__pycache__/images.cpython-313.pyc b/stage4/puzzle/__pycache__/images.cpython-313.pyc[m
+[1mindex 285a208..a36c443 100644[m
+Binary files a/stage4/puzzle/__pycache__/images.cpython-313.pyc and b/stage4/puzzle/__pycache__/images.cpython-313.pyc differ
+[1mdiff --git a/stage4/puzzle/__pycache__/puzzle_main.cpython-313.pyc b/stage4/puzzle/__pycache__/puzzle_main.cpython-313.pyc[m
+[1mindex e441cbd..e6ed89c 100644[m
+Binary files a/stage4/puzzle/__pycache__/puzzle_main.cpython-313.pyc and b/stage4/puzzle/__pycache__/puzzle_main.cpython-313.pyc differ
+[1mdiff --git a/stage4/stage4.py b/stage4/stage4.py[m
+[1mindex 0d93880..5ad5e24 100644[m
+[1m--- a/stage4/stage4.py[m
+[1m+++ b/stage4/stage4.py[m
+[36m@@ -124,7 +124,7 @@[m [mclass Stage4:[m
+             self.game_elapsed_time = game_elapsed_time[m
+ [m
+             # 연료 부족 → stage4to3 이동[m
+[31m-            if fuel_manager.fuel < 20:  # 테스트용 기준[m
+[32m+[m[32m            if fuel_manager.fuel < 60:  # 테스트용 기준[m
+                 pygame.mixer.music.pause()[m
+                 self.screen.blit(self.fuel_failure_img, (0, 0))[m
+                 #410,300[m
