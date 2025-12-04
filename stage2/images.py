@@ -84,6 +84,10 @@ class ImageManager:
         self.second_background_image = self.safe_load_image('outside2.jpg', (SCREEN_WIDTH, SCREEN_HEIGHT), False)
         self.new_background_image = self.safe_load_image('2to3.jpg', (SCREEN_WIDTH, SCREEN_HEIGHT), False)
         self.bomb_ending_image=self.safe_load_image('bomb_ending.jpg', (SCREEN_WIDTH, SCREEN_HEIGHT), False)
+        
+        #쪽지
+        self.paper_image = self.safe_load_image('paper.png', (PAPER_SIZE, PAPER_SIZE))
+
         # 사람
         self.load_animation_set(self.BAG_FRAMES, 'bag')
         self.load_animation_set(self.IN_FRAMES, 'in')
@@ -124,10 +128,6 @@ class ImageManager:
             'spaceship-roof': 'spaceship_roof_piece.png',
             'spaceship-roof-piece': 'spaceship_roof_1_4.png'
         }
-
-        #쪽지
-
-        self.paper_image=self.safe_load_image('paper.png', (PAPER_SIZE, PAPER_SIZE))
 
         for name, filename in items.items():
             self.load_item(name, filename)

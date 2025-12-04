@@ -1,4 +1,3 @@
-
 import pygame
 import sys
 from .setting import *
@@ -25,12 +24,15 @@ class Stage2:
         self.is_easy_mode = True
         self.done = False
         self.game_over = False
+        self.go_to_stage1 = False
         
-        # [추가] 가이드 넘김용 스페이스바 상태 변수
+        # 가이드 넘김용 스페이스바 상태 변수
         self.guide_space_pressed = False
 
-        self.collected_papers_count=0
+        # 모은 쪽지 개수 (사전 해금용)
+        self.collected_notes_count = 0
         
+        # 리플레이 버튼
         btn_width = 200
         btn_height = 60
         margin_right = 30
@@ -42,23 +44,30 @@ class Stage2:
             btn_width, 
             btn_height
         )
-        self.btn_font = pygame.font.Font('DungGeunMO.ttf', 50) 
+        
+        try:
+            self.btn_font = pygame.font.Font('DungGeunMO.ttf', 50)
+        except:
+            self.btn_font = pygame.font.Font(None, 50)
 
         self.reset_game_data()
 
     def reset_game_data(self, imported_items=None):
+        """게임을 처음 상태로 되돌림 (REPLAY용)"""
         self.game_over = False
         self.go_to_stage1 = False
+        self.collected_notes_count = 0 # 쪽지 초기화
         
         if self.sounds.bomb_sound: self.sounds.bomb_sound.stop()
         if self.sounds.tree_sound: self.sounds.tree_sound.stop()
         if self.sounds.walk_sound: self.sounds.walk_sound.stop()
         
+        # 기본 아이템 (불, 물 + 테스트용 부품들)
         base_items = ['fire', 'water'] + \
                      ['spaceship-side'] * 4 + \
                      ['spaceship-roof'] * 4 + \
                      ['fuel tank'] * 7 + \
-                     ['steel']*2
+                     ['steel'] * 2
 
         if imported_items is not None:
             self.inventory = base_items + imported_items
@@ -88,38 +97,26 @@ class Stage2:
         self.crafting_ui = Crafting(self)
 
     def update_resources(self, imported_items):
-        """
-        Stage 1에서 돌아왔을 때 호출되는 함수.
-        기존 인벤토리에서 '자원'만 Stage 1 데이터로 교체하고, 
-        이미 제작된 도구(망치 등)나 우주선 부품은 그대로 유지합니다.
-        """
-        # 1. 재진입을 위한 상태 초기화
+        """Stage 1에서 돌아올 때 자원만 갱신"""
         self.go_to_stage1 = False 
         self.game_over = False
         
-        # 2. 소리 정지 (깔끔한 시작을 위해)
         if self.sounds.bomb_sound: self.sounds.bomb_sound.stop()
         if self.sounds.tree_sound: self.sounds.tree_sound.stop()
         if self.sounds.walk_sound: self.sounds.walk_sound.stop()
         
-        # 3. 인벤토리 갱신 로직
-        # Stage 1에서 획득 가능한 '자원'들의 목록입니다.
-        # 이 목록에 있는 아이템들은 현재 인벤토리에서 지우고, 가져온 것으로 대체합니다.
         stage1_resource_names = ['stone', 'soil', 'fossil', 'wood', 'ladder']
         
-        # 기존 인벤토리에서 '자원'이 아닌 것들(제작템, 불, 물 등)만 남깁니다.
-        kept_inventory = []
+        new_inventory = []
         for item in self.inventory:
             if item not in stage1_resource_names:
-                kept_inventory.append(item)
+                new_inventory.append(item)
         
-        # 남겨진 아이템에 Stage 1에서 가져온 최신 자원을 합칩니다.
         if imported_items:
-            kept_inventory.extend(imported_items)
+            new_inventory.extend(imported_items)
             
-        self.inventory = kept_inventory
+        self.inventory = new_inventory
         
-        # 4. 플레이어 및 맵 상태 초기화 (처음 위치로 이동)
         self.player.x = PLAYER_START_X
         self.player.y = PLAYER_START_Y
         self.player.alpha = 255
@@ -130,19 +127,19 @@ class Stage2:
         self.map_manager.current_map = "outside1"
         self.map_manager.is_tree_pressing = False
         
-        # 열려있는 모든 UI 닫기
         self.open_door = False
         self.dic_open = False
         self.is_crafting_open = False
         self.is_spaceship_crafting_open = False
         self.crafting_ui.crafted_item_display = None
 
-    def run(self, timer):
+    def run(self, timer=None):
         """메인 게임 루프 실행"""
         self.done = False
         self.go_to_stage1 = False
         self.game_over = False
         
+        # 플레이어 위치 복구
         self.player.x = PLAYER_START_X
         self.player.y = PLAYER_START_Y
         self.player.alpha = 255
@@ -162,18 +159,21 @@ class Stage2:
         self.sounds.play_background_music('background_sound.mp3', volume=0.3)
 
         while not self.done:
+            # Stage 1 이동 신호
             if self.go_to_stage1:
                 #self.sounds.stop_background_music()
                 return "stage1"
 
-            if (timer.get_remianing_time() <= 0):
+            # 타이머 종료 체크
+            if timer and timer.get_remianing_time() <= 0: # 오타 수정: remianing -> remaining
+                self.sounds.stop_background_music()
                 return "timeOUT"
 
             self.handle_events()
             self.update()
             self.draw(timer)
             
-            # [추가] 한 프레임 후 스페이스바 입력 상태 초기화
+            # 가이드용 키 입력 플래그 리셋
             self.guide_space_pressed = False
             
             pygame.display.flip()
@@ -194,7 +194,7 @@ class Stage2:
                         self.reset_game_data()
                 continue 
 
-            # [추가] 가이드 스킵을 위한 스페이스바 입력 감지
+            # 가이드 스킵 키
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.guide_space_pressed = True
@@ -211,13 +211,16 @@ class Stage2:
     def handle_mouse_down(self, event):
         mouse_pos = pygame.mouse.get_pos()
         
+        # 0. 팝업 닫기
         if self.crafting_ui.crafted_item_display:
             self.crafting_ui.confirm_crafting_result()
             return
         
+        # 1. 아이콘 클릭
         if self.inven_ui.handle_icon_click(mouse_pos):
             return
 
+        # 2. 사전 아이콘
         if DIC_ICON_AREA.collidepoint(mouse_pos):
             self.dic_open = not self.dic_open
             if self.dic_open:
@@ -229,12 +232,14 @@ class Stage2:
                     self.reset_drag()
             return
 
+        # 3. 사전 페이지 넘김
         if self.dic_open:
             if self.dictionary.handle_click(mouse_pos):
                 return
             else:
                 self.dic_open = False 
 
+        # 4. UI 창 닫기
         elif self.open_door or self.is_spaceship_crafting_open:
             is_handled = False
             if self.open_door:
@@ -244,17 +249,20 @@ class Stage2:
                 if self.crafting_ui.is_click_inside_spaceship_ui(mouse_pos):
                     is_handled = True
             
-            is_on_dic_icon = self.is_easy_mode and DIC_ICON_AREA.collidepoint(mouse_pos)
+            is_on_dic_icon = DIC_ICON_AREA.collidepoint(mouse_pos)
             
             if not is_handled and not (is_on_dic_icon or BAG_ICON_AREA.collidepoint(mouse_pos)):
                 if self.is_drag:
-                    self.inventory.append(self.drag_item)
+                    if self.drag_item not in ['fire', 'water']:
+                        self.inventory.append(self.drag_item)
                     self.reset_drag()
                 self.close_all_popups()
 
+        # 5. 맵 상호작용
         elif not self.open_door and not self.dic_open and not self.is_spaceship_crafting_open:
             self.map_manager.handle_click(mouse_pos)
 
+        # 6. 드래그 시작
         if self.open_door or self.is_spaceship_crafting_open:
              if self.inven_ui.handle_drag_start(mouse_pos):
                  pass
@@ -306,11 +314,12 @@ class Stage2:
             return 
         self.player.update()
         self.map_manager.update()
+        
+        # [자동 습득] 이동 중 아이템/쪽지 획득 체크
+        self.map_manager.check_item_pickup(self.player.rect)
 
-        if self.map_manager.current_map=="outside1":
-            self.map_manager.check_item_pickup(self.player.rect)
-
-    def draw(self, timer):
+    def draw(self, timer=None):
+        # 1. 게임 오버 화면
         if self.game_over:
             if self.images.bomb_ending_image:
                 self.screen.blit(self.images.bomb_ending_image, (0, 0))
@@ -330,16 +339,19 @@ class Stage2:
 
             return 
 
+        # --- 일반 게임 화면 ---
         self.screen.fill(BLACK)
-        self.map_manager.draw(timer)
+        self.map_manager.draw(timer) # 맵 매니저가 타이머도 그림
         self.player.draw()
         self.map_manager.draw_dropped_items()
 
+        # 우주선 게이지
         if self.map_manager.current_map == "outside2" and \
            not self.player.is_walking_into_spaceship and \
            not self.player.is_flying_animation_active:
              self.map_manager.draw_spaceship_gauge()
         
+        # UI
         if self.open_door:
             current_x = INVEN_IMAGE_X if self.is_crafting_open else CENTERED_INV_X
             self.inven_ui.draw(current_x)
@@ -350,11 +362,12 @@ class Stage2:
         elif self.dic_open:
             self.dictionary.draw()
 
+        # 아이콘
         if not self.player.is_flying_animation_active and not self.player.is_walking_into_spaceship:
             self.screen.blit(self.images.icon_bag_image, (BAG_ICON_X, BAG_ICON_Y))
-            if self.is_easy_mode:
-                self.screen.blit(self.images.icon_dic_image, (DIC_ICON_X, DIC_ICON_Y))
+            self.screen.blit(self.images.icon_dic_image, (DIC_ICON_X, DIC_ICON_Y))
 
+        # 드래그 중인 아이템
         if self.is_drag and self.drag_item:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             item_img = self.images.item_images.get(self.drag_item)
@@ -363,27 +376,22 @@ class Stage2:
 
         self.crafting_ui.draw_result_popup()
 
-        # [추가] 가이드 그리기 (최상단)
-        # Easy 모드일 때만 가이드를 표시하고 싶다면 조건문 추가: if self.is_easy_mode:
-        
+        # 가이드 그리기
         if self.map_manager.current_map == "outside1":
             f_guide1(self.screen, self.guide_space_pressed, self.is_drag)
-                
         elif self.map_manager.current_map == "inside":
             f_guide2(self.screen, self.guide_space_pressed, self.is_drag)
-            
         elif self.map_manager.current_map == "outside2":
             f_guide3(self.screen, self.guide_space_pressed, self.is_drag)
 
-# --- 테스트 실행용 코드 (단독 실행 시) ---
+# --- 테스트 실행용 코드 ---
 if __name__ == "__main__":
     pygame.init()
-    pygame.display.set_caption("KKANDDABBIA! - Stage 2 (Modularized)")
+    pygame.display.set_caption("KKANDDABBIA! - Stage 2")
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    
     stage = Stage2(screen)
-    stage.run()
-    
+    # 테스트 시에는 타이머 없이 실행
+    stage.run(None)
     pygame.quit()
 
 '''

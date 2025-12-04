@@ -15,24 +15,38 @@ class MapManager:
         self.pulsate_time_start = pygame.time.get_ticks()
         self.current_scale = 1.0
 
-        #우주선 조각 랜덤
+        # 우주선 조각 랜덤 순서
         self.part_reveal_order = list(range(9))
         random.shuffle(self.part_reveal_order)
 
-        self.papers_on_map = {
-            "outside1": [],
-            "inside": [],
-            "outside2": []
-        }
+        # [추가] 쪽지 시스템 초기화
+        self.start_time = pygame.time.get_ticks()
+        self.spawned_notes = [] 
+        self.next_note_index = 0
 
-        for map_name, coords in PAPER_LOCATIONS.items():
-            for pos in coords:
-                rect = pygame.Rect(pos[0], pos[1], PAPER_SIZE, PAPER_SIZE)
-                self.papers_on_map[map_name].append(rect)
+        # [최적화] 폰트 미리 로드 (draw에서 매번 로드하면 렉 걸림)
+        try:
+            self.font = pygame.font.Font("DungGeunMO.ttf", 30)
+        except:
+            self.font = pygame.font.Font(None, 30)
 
     def update(self):
         current_time = pygame.time.get_ticks()
 
+        # [추가] 1. 시간에 따라 쪽지 생성
+        if self.next_note_index < len(NOTE_DATA):
+            # (인덱스+1) * 간격 만큼 시간이 지나면 생성
+            if current_time - self.start_time > (self.next_note_index + 1) * NOTE_APPEAR_INTERVAL:
+                note_info = NOTE_DATA[self.next_note_index]
+                
+                new_note = {
+                    'map': note_info['map'],
+                    'rect': pygame.Rect(note_info['pos'][0], note_info['pos'][1], PAPER_SIZE, PAPER_SIZE)
+                }
+                self.spawned_notes.append(new_note)
+                self.next_note_index += 1
+
+        # 2. 나무 캐기 완료 체크
         if self.current_map == "outside1" and self.is_tree_pressing:
             if current_time - self.tree_press_start_time >= GATHER_DURATION:
                 self.drop_wood()
@@ -42,7 +56,7 @@ class MapManager:
                 if self.stage.sounds.tree_sound:
                     self.stage.sounds.tree_sound.stop()
 
-        # 우주선 깜박임
+        # 3. 우주선 깜박임
         time_factor = (current_time - self.pulsate_time_start) * PULSATE_SPEED
         scale_offset = (math.sin(time_factor) + 1) / 2
         self.current_scale = PULSATE_MIN_SCALE + scale_offset * (PULSATE_MAX_SCALE - PULSATE_MIN_SCALE)
@@ -64,10 +78,9 @@ class MapManager:
                         self.tree_press_start_time = pygame.time.get_ticks()
                         if self.stage.sounds.tree_sound:
                             self.stage.sounds.tree_sound.play(loops=-1)
-            
-
                 return
 
+            # 문 클릭
             if OUTSIDE_DOOR_AREA.collidepoint(mouse_pos):
                 if self.is_player_near(OUTSIDE_DOOR_AREA):
                     self.current_map = "inside"
@@ -75,6 +88,7 @@ class MapManager:
                     self.stage.player.reset_animation()
                 return
             
+            # 지하 이동
             if STAGE1_AREA.collidepoint(mouse_pos):
                 if self.is_player_near(STAGE1_AREA):
                     if not self.stage.player.is_fading_out:
@@ -83,34 +97,39 @@ class MapManager:
                 return
 
         elif self.current_map == "inside":
-            if self.stage.is_easy_mode and DIC_AREA.collidepoint(mouse_pos):
-                if self.is_player_near(DIC_AREA):
-                    self.stage.dic_open = not self.stage.dic_open
-                    if self.stage.dic_open:
-                        self.stage.close_all_popups()
-                        self.stage.dic_open = True
+            if DIC_AREA.collidepoint(mouse_pos):
+                # 거리 체크 추가 (선택사항)
+                # if self.is_player_near(DIC_AREA):
+                self.stage.dic_open = not self.stage.dic_open
+                if self.stage.dic_open:
+                    self.stage.close_all_popups()
+                    self.stage.dic_open = True
                 return
             
             if CLICK_AREA.collidepoint(mouse_pos):
+                # if self.is_player_near(CLICK_AREA):
                 self.stage.open_door = True
                 self.stage.is_crafting_open = True
                 self.stage.dic_open = False
                 return
 
         elif self.current_map == "outside2":
+            # 외부 제작대 -> 내부로 이동
             if OUTSIDE_MAKE_AREA.collidepoint(mouse_pos):
                 if self.is_player_near(OUTSIDE_MAKE_AREA):
                     self.current_map = "inside"
-                    self.stage.player.x = SCREEN_WIDTH - 150 # 오른쪽에서 등장
+                    self.stage.player.x = SCREEN_WIDTH - 150 
                     self.stage.player.reset_animation()
 
-                    self.stage.open_door = True
-                    self.stage.is_crafting_open = True
+                    self.stage.open_door = False
+                    self.stage.is_crafting_open = False
                     self.stage.dic_open = False
                 return
             
+            # 우주선 조립
             if SPACESHIP_AREA.collidepoint(mouse_pos):
-                self.handle_spaceship_click()
+                if self.is_player_near(SPACESHIP_AREA):
+                    self.handle_spaceship_click()
                 return
 
     def handle_spaceship_click(self):
@@ -127,42 +146,33 @@ class MapManager:
             self.stage.is_crafting_open = False
             self.stage.dic_open = False
 
-    def check_item_pickup(self, mouse_pos):
+    def check_item_pickup(self, player_rect):
+        """자동 습득 (아이템 + 쪽지)"""
+        # 1. 아이템 습득
         for i in range(len(self.stage.dropped_items) - 1, -1, -1):
             item = self.stage.dropped_items[i]
-            if item['rect'].collidepoint(mouse_pos):
-                self.stage.inventory.append(item['item_name'])
-                self.stage.dropped_items.pop(i)
-                return True
-        return False
-    
-    def check_item_pickup(self, player_rect):
-        for i in range(len(self.stage.dropped_items)-1,-1,-1):
-            item=self.stage.dropped_items[i]
-
             if player_rect.colliderect(item['rect']):
                 self.stage.inventory.append(item['item_name'])
                 self.stage.dropped_items.pop(i)
 
-        if not self.stage.is_easy_mode:
-            current_papers = self.papers_on_map.get(self.current_map, [])
-            for i in range(len(current_papers) - 1, -1, -1):
-                note_rect = current_papers[i]
-                
-                if player_rect.colliderect(note_rect):
-                    current_papers.pop(i) # 맵에서 제거
-                    self.stage.collected_papers_count += 1
-                    print(f"쪽지 발견! 현재 해금된 페이지: {self.stage.collected_papers_count}")
+        # 2. [추가] 쪽지 습득 (현재 맵에 있는 것만)
+        for i in range(len(self.spawned_notes) - 1, -1, -1):
+            note = self.spawned_notes[i]
+            if note['map'] == self.current_map:
+                if player_rect.colliderect(note['rect']):
+                    self.spawned_notes.pop(i)
+                    self.stage.collected_notes_count += 1
+                    # print(f"쪽지 획득! 해금 페이지: {self.stage.collected_notes_count}")
 
     def drop_wood(self):
         wood_drop_x = TREE_AREA.x + TREE_AREA.width // 2 - ITEM_SIZE // 2
         wood_drop_y = self.stage.player.y + self.stage.player.image.get_height()
         self.stage.dropped_items.append({
             'item_name': 'wood',
-            'rect': pygame.Rect(wood_drop_x, wood_drop_y-15, ITEM_SIZE, ITEM_SIZE)
+            'rect': pygame.Rect(wood_drop_x, wood_drop_y - 15, ITEM_SIZE, ITEM_SIZE)
         })
 
-    def draw(self, timer):
+    def draw(self, timer=None):
         if self.stage.player.is_flying_animation_active:
             self.stage.screen.blit(self.images.new_background_image, (0, 0))
             return
@@ -190,36 +200,35 @@ class MapManager:
                     self.draw_pulsating_spaceship()
                 else:
                     self.draw_progress_spaceship()
-        timeText = timer.get_time_text()
-        self.stage.screen.blit(timeText, (10, 10))
+        
+        # [추가] 쪽지 그리기
+        for note in self.spawned_notes:
+            if note['map'] == self.current_map:
+                self.stage.screen.blit(self.images.paper_image, note['rect'].topleft)
 
-        if not self.stage.is_easy_mode:
-            current_papers = self.papers_on_map.get(self.current_map, [])
-            for paper_rect in current_papers:
-                self.stage.screen.blit(self.images.paper_image, paper_rect.topleft)
+        # 타이머 표시 (timer 객체가 넘어왔을 때만)
+        if timer:
+            timeText = timer.get_time_text()
+            self.stage.screen.blit(timeText, (10, 10))
 
     def draw_progress_spaceship(self):
         current_parts = len(self.stage.spaceship_assembly_storage)
         if current_parts == 0: return
 
-        #비율
+        # 비율 계산
         ratio = current_parts / MAX_SPACESHIP_PARTS
         num_pieces_to_show = int(ratio * 9)
         
         if current_parts > 0 and num_pieces_to_show == 0:
             num_pieces_to_show = 1
 
-        # 그리드
         cols = 3
-        
-        #조각 크기 조절
         SCALE_FACTOR = 0.3
         
         if not self.images.spaceship_parts:
             return
 
         sample = self.images.spaceship_parts[0]
-        
         part_w = int(sample.get_width() * SCALE_FACTOR)
         part_h = int(sample.get_height() * SCALE_FACTOR)
         
@@ -227,13 +236,12 @@ class MapManager:
         total_h = part_h * 3
         
         center_x = SPACESHIP_AREA.x + SPACESHIP_AREA.width // 2
-        
         top_y = SPACESHIP_AREA.y - total_h - 40
         
         draw_base_x = center_x - total_w // 2
         draw_base_y = top_y
         
-        # 3. 랜덤 순서대로 개수만큼 그리기
+        # 랜덤 순서대로 그리기
         for i in range(num_pieces_to_show):
             if i >= len(self.part_reveal_order): break
             
@@ -241,7 +249,6 @@ class MapManager:
             
             if part_idx < len(self.images.spaceship_parts):
                 part_img_original = self.images.spaceship_parts[part_idx]
-                
                 part_img_scaled = pygame.transform.scale(part_img_original, (part_w, part_h))
                 
                 r = part_idx // cols
@@ -253,11 +260,11 @@ class MapManager:
                 self.stage.screen.blit(part_img_scaled, (px, py))
 
     def draw_pulsating_spaceship(self):
-        
+        SCALE_FACTOR = 0.3 # 크기 비율 맞추기
         original_w, original_h = self.images.spaceship_completed_image.get_size()
         
-        base_w = original_w
-        base_h = original_h
+        base_w = int(original_w * SCALE_FACTOR)
+        base_h = int(original_h * SCALE_FACTOR)
         
         new_w = int(base_w * self.current_scale)
         new_h = int(base_h * self.current_scale)
@@ -265,7 +272,6 @@ class MapManager:
         scaled_image = pygame.transform.scale(self.images.spaceship_completed_image, (new_w, new_h))
         
         center_x = SPACESHIP_AREA.x + SPACESHIP_AREA.width // 2
-        # 위치 조정
         top_y = SPACESHIP_AREA.y - new_h - 50 
         draw_x = center_x - new_w // 2
         draw_y = top_y
@@ -284,15 +290,12 @@ class MapManager:
 
         gauge_width = 280
         gauge_height = 20
-        
         gauge_x = SPACESHIP_AREA.x
         gauge_y = SPACESHIP_AREA.y + SPACESHIP_AREA.height + 10 
         
-        # 외곽선
         gauge_rect_outer = pygame.Rect(gauge_x, gauge_y, gauge_width, gauge_height)
         pygame.draw.rect(self.stage.screen, BLACK, gauge_rect_outer, 3)
 
-        # 채워진 부분
         progress_ratio = min(1.0, part_count / MAX_SPACESHIP_PARTS)
         filled_width = int(gauge_width * progress_ratio)
         gauge_color = GREEN if is_completed else RED
@@ -300,10 +303,9 @@ class MapManager:
         gauge_rect_filled = pygame.Rect(gauge_x, gauge_y, filled_width, gauge_height)
         pygame.draw.rect(self.stage.screen, gauge_color, gauge_rect_filled)
         
-        # 텍스트 퍼센트 표시
         percent = int(progress_ratio * 100)
-        font = pygame.font.Font('DungGeunMO.ttf', 30)
-        progress_text = font.render(f"{percent}%", True, WHITE)
+        # [최적화] self.font 사용
+        progress_text = self.font.render(f"{percent}%", True, WHITE)
         
         text_x = gauge_x + gauge_width // 2 - progress_text.get_width() // 2
         text_y = gauge_y + gauge_height // 2 - progress_text.get_height() // 2
