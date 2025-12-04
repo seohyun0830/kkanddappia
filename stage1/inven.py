@@ -32,7 +32,7 @@ class Cinven:
         # invenList에 있는 아이템 순서대로 개수를 배정합니다.
         for item_id in self.invenList:
             idx = item_id - 1 # 아이템 인덱스 (0~4)
-            
+
             if temp_cnt[idx] >= 10:
                 self.blockCount.append(10) # 10개 꽉 채움
                 temp_cnt[idx] -= 10
@@ -139,10 +139,13 @@ class Cinven:
         if (len(self.invenList) >= self.invenCol * self.invenRow):
             return
         if 0 < itemMap[blockY][blockX] < 5:
-            self.invenList.append(itemMap[blockY][blockX])
-            self.invenList.sort()
             if (itemMap[blockY][blockX] == 4):
+                if (self.invenCnt[3] == 0):
+                    self.invenList.append(4)
+
                 self.invenCnt[itemMap[blockY][blockX] - 1] += 1
             else:
+                self.invenList.append(itemMap[blockY][blockX])
                 self.invenCnt[itemMap[blockY][blockX] - 1] += 10
+            self.invenList.sort()
             itemMap[blockY][blockX] = 0 # 맵에서 아이템 제거
