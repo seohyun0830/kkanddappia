@@ -98,10 +98,10 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, InvenCnt, timer
         bx, by = Player.blockX, Player.blockY # 지역 변수로 캐싱
 
         # 키 입력 이동
-        if keys[pygame.K_LEFT]:  Player.f_left(Map.underMap, Map.itemMap)
-        if keys[pygame.K_RIGHT]: Player.f_right(Map.underMap, Map.itemMap)
-        if keys[pygame.K_DOWN]:  Player.f_down(Map.underMap)
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_a]:  Player.f_left(Map.underMap, Map.itemMap)
+        if keys[pygame.K_d]: Player.f_right(Map.underMap, Map.itemMap)
+        if keys[pygame.K_s]:  Player.f_down(Map.underMap)
+        if keys[pygame.K_w]:
             if bx == col - 3 and by == 0: return -1, Map.underMap, Map.itemMap, Inven.invenList, Inven.invenCnt  # 탈출 성공
             if Map.itemMap[by][bx] == 5 or Map.itemMap[by + 1][bx] == 5: Player.f_up(Map.itemMap) # 사다리 타기
             elif Map.itemMap[by - 1][bx] != 6 and Map.underMap[by - 1][bx] == 1:
