@@ -200,6 +200,11 @@ class MapManager:
                 
                 if is_completed:
                     self.draw_pulsating_spaceship()
+
+                    text = self.font.render("우주선을 클릭해 탑승하세요!", True, WHITE)
+                    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, 100))
+                    self.stage.screen.blit(text, text_rect)
+
                 else:
                     self.draw_progress_spaceship()
         

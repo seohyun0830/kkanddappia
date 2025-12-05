@@ -17,7 +17,7 @@ from timer.images import overs, sfx_bombSound
 from engine import assets
 from stage3 import Stage3
 from stage4.stage4 import Stage4
-from stage3.story import Stage3Story
+from stage3.story import Stage3Story    
 from stage4to3.stage4to3 import Stage4To3
 from stage2_back.stage2_back_main import Stage2Back
 from engine.fuel_manager import fuel_manager
@@ -54,8 +54,7 @@ def main():
     mode = -1                  
     MODE = 0
     Try = 0
-    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
-    
+    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = 0, 0, 0, [0,0,0,0,0]    
     current_state = STATE_START 
    
     # 1, 2스테이지 객체
@@ -162,22 +161,35 @@ def main():
 
             elif result == "stage1":
                 current_state = STATE_STAGE1
-                # 인벤토리 복구 
+                
+                # --- [핵심: Stage 2 -> 1 데이터 복구] ---
                 s2_inventory = stage2.inventory
-                InvenCnt =[0, 0, 0, 0, 0]
+                
+                # 초기화
+                InvenInfo = []           # 아이템 ID 리스트 (예: [1, 1, 5])
+                InvenCnt = [0, 0, 0, 0, 0] # 개수 카운트 (예: [2, 0, 0, 0, 1])
+                
                 for item_name in s2_inventory:
+                    # Stage 1에서 사용하는 아이템인지 확인
                     if item_name in ITEM_NAME_TO_ID:
-                        InvenCnt[ITEM_NAME_TO_ID[item_name] - 1] += 1
-            
+                        item_id = ITEM_NAME_TO_ID[item_name]
+                        
+                        # 1) ID 리스트에 추가
+                        InvenInfo.append(item_id)
+                        
+                        # 2) 개수 증가 (인덱스는 ID-1)
+                        if 1 <= item_id <= 5:
+                            InvenCnt[item_id - 1] += 1
+
             elif result == "timeOUT":
                 sfx_bombSound.play()
                 if f_isFail(screen, overs):
                     current_state = STATE_STAGE2
-                    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
+                    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = 0, 0, 0, [0,0,0,0,0] 
                     timer.reset()
 
             elif result=="reset":
-                MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
+                MapInfo, ItemMapInfo, InvenInfo, InvenCnt = 0, 0, 0, [0,0,0,0,0] 
                 Try = 0
                 timer.reset()
                 
@@ -186,7 +198,7 @@ def main():
                 current_state = STATE_STAGE2
                     
             elif result == "quit" or result == "game_over":
-                MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
+                MapInfo, ItemMapInfo, InvenInfo, InvenCnt = 0, 0, 0, [0,0,0,0,0] 
                 timer.reset()
                 current_state = STATE_EXIT
 
@@ -251,3 +263,14 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+'''
+            elif result == "stage1":
+                current_state = STATE_STAGE1
+                # 인벤토리 복구 
+                s2_inventory = stage2.inventory
+                InvenCnt =[0, 0, 0, 0, 0]
+                for item_name in s2_inventory:
+                    if item_name in ITEM_NAME_TO_ID:
+                        InvenCnt[ITEM_NAME_TO_ID[item_name] - 1] += 1
+'''

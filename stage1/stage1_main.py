@@ -25,6 +25,12 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, InvenCnt, timer
     Map.underMap[Player.blockY][Player.blockX] = 1
     if (Try == 0):
         Map.f_defaultItemMap(MODE)
+
+        if InvenInfo is not None and InvenCnt is not None:
+            Inven.invenList = InvenInfo
+            Inven.invenCnt = InvenCnt
+            Inven.f_blockCount()
+            
     else:
         Map.underMap = MapInfo
         Map.itemMap = ItemMapInfo

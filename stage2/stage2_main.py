@@ -76,9 +76,10 @@ class Stage2:
         base_items = ['fire', 'water'] + \
                      ['spaceship-side'] * 4 + \
                      ['spaceship-roof'] * 4 + \
-                     ['fuel tank'] * 7 + \
+                     ['fuel tank'] * 15 + \
                      ['steel'] * 2 + \
-                     ['axe']
+                     ['axe'] + \
+                     ['ladder']*5
 
         if imported_items is not None:
             self.inventory = base_items + imported_items
@@ -116,7 +117,7 @@ class Stage2:
         if self.sounds.tree_sound: self.sounds.tree_sound.stop()
         if self.sounds.walk_sound: self.sounds.walk_sound.stop()
         
-        stage1_resource_names = ['stone', 'soil', 'fossil', 'wood', 'ladder']
+        stage1_resource_names = ['stone', 'soil', 'fossil', 'paper', 'ladder']
         
         new_inventory = []
         for item in self.inventory:
@@ -193,7 +194,6 @@ class Stage2:
                             
                             # 연료통 개수 세기
                 fuel_count = self.inventory.count('fuel-tank')
-                print(f"[Stage2] 클리어! 남은 연료통: {fuel_count}개")
                             
                             # 튜플 형태로 (다음 스테이지, 연료 개수) 반환
                 return ("stage3", fuel_count)
