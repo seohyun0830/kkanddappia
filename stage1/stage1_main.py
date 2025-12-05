@@ -23,32 +23,14 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, InvenCnt, timer
     # 초기 맵 설정
     # (Player의 초기 blockX, blockY를 사용하여 설정)
     Map.underMap[Player.blockY][Player.blockX] = 1
-    if (Try == 0):
-        # 1. 맵 생성
+    if (Try == 0 or Try == -1):
         Map.f_defaultItemMap(MODE)
-        
-        # Stage 2에서 넘어온 데이터가 있다면
-        if InvenCnt is not None:
-            Inven.invenCnt = InvenCnt
-            
-            # [추가] 개수에 맞춰 invenList 재구성 (수동)
-            Inven.invenList = []
-            for item_id in range(1, 6): # 1~5번 아이템
-                count = InvenCnt[item_id - 1]
-                # 5개마다 슬롯 하나씩 추가
-                slots_needed = (count + 4) // 5 # 올림 나눗셈 (1~5개->1슬롯, 6~10개->2슬롯)
-                for _ in range(slots_needed):
-                    Inven.invenList.append(item_id)
-            Inven.invenList.sort()
-            
     else:
         # 재시작/로드 시 복구
         Map.underMap = MapInfo
         Map.itemMap = ItemMapInfo
-        Inven.invenList = InvenInfo
-        Inven.invenCnt = InvenCnt
-    
-    # 블록 개수 표시 갱신
+    Inven.invenList = InvenInfo
+    Inven.invenCnt = InvenCnt
     Inven.f_blockCount()
 
     # 변수 초기화
@@ -165,7 +147,7 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, InvenCnt, timer
             Inven.f_ladder(mouseX, mouseY, window)
         
         
-        if (Try == 0):
+        if (Try == -1):
             guide.f_guide(window, flag, isTab, Inven.invenList, isDragging)
 
         timerText = timer.get_time_text()
