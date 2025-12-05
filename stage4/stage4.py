@@ -127,7 +127,7 @@ class Stage4:
             self.game_elapsed_time = game_elapsed_time
 
             # 연료 부족 → stage4to3 이동
-            if fuel_manager.fuel < 50 and self.fule_stage4to3==False:  # 테스트용 기준
+            if fuel_manager.fuel < 60 and self.fule_stage4to3==False:  # 테스트용 기준
 
                 pygame.mixer.music.pause()
                 self.screen.blit(self.fuel_failure_img, (0, 0))
@@ -142,7 +142,7 @@ class Stage4:
                 self.fule_stage4to3=True
                 return "stage4to3"
             ####연료 부족
-            if fuel_manager.fuel < 50 and self.fule_stage4to3==True:    #이미 3갔다왔으면
+            if fuel_manager.fuel < 60 and self.fule_stage4to3==True:    #이미 3갔다왔으면
                 sounds_to_play={'fuel_empty':self.fuel_empty_sound,
                                     'siren':self.siren_sound}
                 crash_ani.fuel_empty_ani(self.screen,self.fuel_empty_img,sounds_to_play)
@@ -151,8 +151,8 @@ class Stage4:
                             'burning':self.burnning_sound
                         }
                 crash_ani.crash_animation(self.screen,self.crash_fail_images,crash_sounds)
-                restart_ani.restart_ani(self.screen,self.crash_fail_images[9],self.crash_after_person_images,self.crash_stand_p_img)
-                restart_ani.restart_talk(self.screen,self.talking_box)
+                #restart_ani.restart_ani(self.screen,self.crash_fail_images[9],self.crash_after_person_images,self.crash_stand_p_img)
+                #restart_ani.restart_talk(self.screen,self.talking_box)
                 pygame.display.update()
                 pygame.time.delay(1500)
                 return "fule_empty"   #이건 아예 재시작으로 바꿔야됨 23합치고
