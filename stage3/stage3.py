@@ -44,7 +44,7 @@ class Stage3:
         # 압력 조절
         self.PRESSURE_CONTROL_AMOUNT = cfg["PRESSURE_CONTROL_AMOUNT"]
 
-    def __init__(self, screen, mode="hard", game_state=None):
+    def __init__(self, screen, mode="easy", game_state=None):
         self.screen = screen
         self.game_state = game_state or {}
 

@@ -14,7 +14,7 @@ from timer.timer import Timer
 from timer.images import overs, sfx_bombSound
 
 # 3,4
-from engine import constants, assets
+from engine import assets
 from stage3 import Stage3
 from stage4.stage4 import Stage4
 from stage3.story import Stage3Story
@@ -200,7 +200,7 @@ def main():
                 result_4 = stage4.run()
                 while True:
                     if result_4 == "stage4to3":
-                        stage4to3 = Stage4To3(screen)
+                        stage4to3 = Stage4To3(screen,num_fuels=count)
                         back = stage4to3.run()
 
                         if back == "stage4":

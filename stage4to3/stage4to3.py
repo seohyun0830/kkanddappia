@@ -7,7 +7,7 @@ from engine.fuel_manager import fuel_manager   # ★ fuel_manager 사용!
 
 
 class Stage4To3:
-    def __init__(self, screen):
+    def __init__(self, screen,num_fules):
         self.screen = screen
         pygame.font.init()
 
@@ -27,7 +27,7 @@ class Stage4To3:
         self.move_timer = 0
 
         # 연료 스폰 설정
-        self.NUM_FUELS = 10
+        self.NUM_FUELS = num_fules #연료 2에서 가져온만큼 뿌리기
         self.FUEL_PER_ITEM = 10
 
         candidates = [
