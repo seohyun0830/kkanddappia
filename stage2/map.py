@@ -214,6 +214,27 @@ class MapManager:
             timeText = timer.get_time_text()
             self.stage.screen.blit(timeText, (10, 10))
 
+        self.draw_guide_arrow()
+
+    def draw_guide_arrow(self):
+        """상호작용 가능 대상에 화살표 표시"""
+        time = pygame.time.get_ticks()
+        offset_y = math.sin(time * 0.005) * 10 
+        
+        targets = []
+        if self.current_map == "outside1":
+            targets = [TREE_AREA, OUTSIDE_DOOR_AREA, STAGE1_AREA]
+        elif self.current_map == "inside":
+            targets = [DIC_AREA, CLICK_AREA] 
+        elif self.current_map == "outside2":
+            targets = [OUTSIDE_MAKE_AREA, SPACESHIP_AREA]
+            
+        for rect in targets:
+            if self.is_player_near(rect):
+                arrow_x = rect.centerx - (ARROW_SIZE // 2)
+                arrow_y = rect.top - ARROW_SIZE - 10 + offset_y
+                self.stage.screen.blit(self.images.arrow_image, (arrow_x, arrow_y))
+
     def draw_progress_spaceship(self):
         current_parts = len(self.stage.spaceship_assembly_storage)
         if current_parts == 0: return

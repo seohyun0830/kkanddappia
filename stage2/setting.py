@@ -47,6 +47,9 @@ ITEM_SIZE = 70
 SPACESHIP_ITEM_SIZE = 90
 SLOT_SIZE_PX = 92
 
+#화살표
+ARROW_SIZE=70
+
 # --- [추가] 쪽지(Paper) 설정 ---
 PAPER_SIZE = 40
 NOTE_APPEAR_INTERVAL = 5000  # 5초(5000ms)마다 하나씩 나타남

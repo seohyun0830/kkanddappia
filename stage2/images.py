@@ -94,6 +94,9 @@ class ImageManager:
         #쪽지
         self.paper_image = self.safe_load_image('paper.png', (PAPER_SIZE, PAPER_SIZE))
 
+        #화살표
+        self.arrow_image = self.safe_load_image('arrow.png', (ARROW_SIZE, ARROW_SIZE))
+
         # 사람
         self.load_animation_set(self.BAG_FRAMES, 'bag')
         self.load_animation_set(self.IN_FRAMES, 'in')
