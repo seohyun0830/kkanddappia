@@ -25,8 +25,9 @@ class Stage2:
         self.done = False
         self.game_over = False
         self.go_to_stage1 = False
-
         self.stage_clear = False
+        
+        self.game_reset=False
         
         # 가이드 넘김용 스페이스바 상태 변수
         self.guide_space_pressed = False
@@ -148,6 +149,7 @@ class Stage2:
         self.done = False
         self.go_to_stage1 = False
         self.game_over = False
+        self.game_reset=False
         
         # 플레이어 위치 복구
         self.player.x = PLAYER_START_X
@@ -173,6 +175,10 @@ class Stage2:
             if self.go_to_stage1:
                 #self.sounds.stop_background_music()
                 return "stage1"
+            
+            if self.game_reset:
+                self.sounds.stop_background_music()
+                return "reset"
         
 
             # 타이머 종료 체크
@@ -211,7 +217,7 @@ class Stage2:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     if self.replay_btn_rect.collidepoint(mouse_pos):
-                        self.reset_game_data()
+                        self.game_reset=True
                 continue 
 
             # 가이드 스킵 키

@@ -175,6 +175,15 @@ def main():
                     current_state = STATE_STAGE2
                     MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
                     timer.reset()
+
+            elif result=="reset":
+                MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
+                Try = 0
+                timer.reset()
+                
+                stage2.reset_game_data()
+                
+                current_state = STATE_STAGE2
                     
             elif result == "quit" or result == "game_over":
                 MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
