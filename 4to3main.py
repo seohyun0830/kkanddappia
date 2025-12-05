@@ -10,8 +10,10 @@ pygame.display.set_caption("to get fuel")
 # 에셋 로드
 assets.load_all()
 
+count=7 ################테스트용
+
 # 스테이지 실행
-stage = Stage4To3(screen)
+stage = Stage4To3(screen,num_fules=count)
 stage.run()
 
 pygame.quit()

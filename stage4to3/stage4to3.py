@@ -43,7 +43,7 @@ class Stage4To3:
         self.collected_fuels = []
 
         self.fuel_spawn_index = 0
-        self.FUEL_DELAY = 2000
+        self.FUEL_DELAY = 1000
         self.last_spawn = pygame.time.get_ticks()
 
         # 연료 UI (★ fuel_manager 사용)
@@ -190,7 +190,7 @@ class Stage4To3:
         # Fuel % 텍스트
         text = f"{int(fuel_manager.fuel)}%"
         txt_surface = self.font.render(text, True, (255, 255, 255))
-        screen.blit(txt_surface, (65, 650))
+        screen.blit(txt_surface, (63, 640))
 
         # Fuel 아이템
         self.draw_fuel_items()

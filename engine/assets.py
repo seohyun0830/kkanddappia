@@ -21,7 +21,7 @@ player_img = None            # 플레이어 이미지
 back_button_img = None       # Stage4로 돌아가기 버튼
 
 # 폰트
-pressure_font_base = pygame.font.SysFont(constants.FONT_NAME, constants.BASE_FONT_SIZE, bold=True)
+pressure_font_base = pygame.font.SysFont(constants.FONT_NAME, constants.BASE_FONT_SIZE, bold=False)
 timer_font = pygame.font.SysFont(constants.FONT_NAME, constants.TIMER_FONT_SIZE, bold=True)
 
 fuel_img=None
