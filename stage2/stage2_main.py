@@ -79,7 +79,7 @@ class Stage2:
                      ['fuel tank'] * 15 + \
                      ['steel'] * 2 + \
                      ['axe'] + \
-                     ['ladder']*5
+                     ['ladder']*10
 
         if imported_items is not None:
             self.inventory = base_items + imported_items
