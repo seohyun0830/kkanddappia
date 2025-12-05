@@ -53,7 +53,7 @@ def main():
 
     mode = -1                  
     MODE = 0
-    Try = 0
+    Try = -1
     MapInfo, ItemMapInfo, InvenInfo, InvenCnt = 0, 0, 0, [0,0,0,0,0]    
     current_state = STATE_START 
    
@@ -187,7 +187,7 @@ def main():
                     count = InvenCnt[i] # 해당 아이템의 총 개수
                     while count > 0:
                         InvenInfo.append(item_id) # 슬롯 추가
-                        count -= 6   
+                        count -= 5
 
             elif result == "timeOUT":
                 sfx_bombSound.play()
