@@ -54,7 +54,7 @@ def main():
     mode = -1                  
     MODE = 0
     Try = 0
-    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = 0, 0, 0, [0,0,0,0,0]
+    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
     
     current_state = STATE_START 
    
@@ -174,8 +174,11 @@ def main():
                 sfx_bombSound.play()
                 if f_isFail(screen, overs):
                     current_state = STATE_STAGE2
+                    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
                     timer.reset()
             elif result == "quit" or result == "game_over":
+                MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
+                timer.reset()
                 current_state = STATE_EXIT
 
         # ---------------------------------------
