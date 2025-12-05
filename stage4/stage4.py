@@ -110,7 +110,8 @@ class Stage4:
 
         pygame.mixer.music.load(os.path.join(self.audio_path, "cosmic_zoo.mp3"))
         pygame.mixer.music.play(-1)
-        
+        self.spaceship.to_x = 0
+        self.spaceship.to_y = 0
         return self._loop()
 
     def _loop(self):

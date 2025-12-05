@@ -154,13 +154,11 @@ def main():
                 if next_stage == "stage3":  #3스테이지 이동
                     fuel_manager.set_fuel(count*10+70) # 연료 
                     #print(f"Stage 2 클리어! 획득한 연료: {count}개")
-                   
+                    
                     story = Stage3Story(screen)
                     story.run()
                     pygame.event.clear()
-                    
                     current_state = STATE_STAGE3 
-            
             elif result == "stage1":
                 current_state = STATE_STAGE1
                 # 인벤토리 복구 
@@ -183,6 +181,7 @@ def main():
         # ---------------------------------------
         elif current_state == STATE_STAGE3:
             # --- Stage 3  ---
+           
             stage3 = Stage3(screen, mode=game_difficulty,game_state=game_state)
             next_stage_3 = stage3.run()
             
@@ -201,6 +200,7 @@ def main():
                 while True:
                     if result_4 == "stage4to3":
                         stage4to3 = Stage4To3(screen)
+
                         back = stage4to3.run()
 
                         if back == "stage4":
