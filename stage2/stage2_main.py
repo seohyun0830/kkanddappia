@@ -124,6 +124,10 @@ class Stage2:
             if item not in stage1_resource_names:
                 new_inventory.append(item)
         
+        for item in imported_items:
+            if item == 'paper':
+                self.collected_notes_count += 1
+
         if imported_items:
             new_inventory.extend(imported_items)
             

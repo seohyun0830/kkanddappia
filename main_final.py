@@ -35,7 +35,7 @@ STATE_STAGE2 = 11  # 2스테이지
 STATE_STAGE3 = 30  
 
 ITEM_ID_TO_NAME = {
-    1: 'stone', 2: 'soil', 3: 'fossil', 4: 'wood', 5: 'ladder'
+    1: 'stone', 2: 'soil', 3: 'fossil', 4: 'paper', 5: 'ladder'
 }
 # 2. Stage 2(문자) -> Stage 1(숫자)
 ITEM_NAME_TO_ID = {v: k for k, v in ITEM_ID_TO_NAME.items()}
@@ -93,7 +93,7 @@ def main():
             current_state = f_story1(screen)
         elif current_state == STATE_STORY2:
             current_state = f_story2(screen)
-            start_ticks = pygame.time.get_ticks()
+            timer.reset()
 
         # ---------------------------------------
         #Stage 1 
@@ -137,7 +137,7 @@ def main():
                     stage2.reset_game_data()
             elif result == -1: 
                 current_state = STATE_STAGE2
-                Try += 1
+                Try += 2
                 # 아이템 연동
                 imported_items = []
                 for i, count in enumerate(InvenCnt):
@@ -150,7 +150,7 @@ def main():
         # Stage 2 
         # ---------------------------------------
         elif current_state == STATE_STAGE2:
-            if Try == 0: 
+            if Try == -1: 
                 timer.reset()
             result = stage2.run(timer)
 
@@ -177,10 +177,11 @@ def main():
                 
                 cnt = 0
                 for item_name in s2_inventory:
-                    print(s2_inventory)
                     # Stage 1에서 사용하는 아이템인지 확인
                     if item_name in ITEM_NAME_TO_ID:
                         item_id = ITEM_NAME_TO_ID[item_name]
+                        if item_id == 4:
+                            continue
                         InvenCnt[item_id - 1] += 1
                 for i in range(5): # 아이템 ID 1~5번 확인
                     item_id = i + 1
