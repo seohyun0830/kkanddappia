@@ -173,16 +173,7 @@ class Stage2:
             if self.go_to_stage1:
                 #self.sounds.stop_background_music()
                 return "stage1"
-            
-            if self.stage_clear:
-                self.sounds.stop_background_music()
-                
-                # 연료통 개수 세기
-                fuel_count = self.inventory.count('fuel-tank')
-                print(f"[Stage2] 클리어! 남은 연료통: {fuel_count}개")
-                
-                # 튜플 형태로 (다음 스테이지, 연료 개수) 반환
-                return ("stage3", fuel_count)
+        
 
             # 타이머 종료 체크
             if timer and timer.get_remianing_time() <= 0: # 오타 수정: remianing -> remaining
@@ -191,6 +182,15 @@ class Stage2:
 
             self.handle_events()
             self.update()
+            if self.stage_clear:
+                self.sounds.stop_background_music()
+                            
+                            # 연료통 개수 세기
+                fuel_count = self.inventory.count('fuel-tank')
+                print(f"[Stage2] 클리어! 남은 연료통: {fuel_count}개")
+                            
+                            # 튜플 형태로 (다음 스테이지, 연료 개수) 반환
+                return ("stage3", fuel_count)
             self.draw(timer)
             
             # 가이드용 키 입력 플래그 리셋
