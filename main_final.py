@@ -159,6 +159,7 @@ def main():
                     story.run()
                     pygame.event.clear()
                     current_state = STATE_STAGE3 
+
             elif result == "stage1":
                 current_state = STATE_STAGE1
                 # 인벤토리 복구 
@@ -174,6 +175,7 @@ def main():
                     current_state = STATE_STAGE2
                     MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
                     timer.reset()
+                    
             elif result == "quit" or result == "game_over":
                 MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
                 timer.reset()

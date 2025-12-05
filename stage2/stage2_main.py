@@ -335,8 +335,7 @@ class Stage2:
         self.player.update()
         self.map_manager.update()
         
-        if not self.is_easy_mode:
-            self.map_manager.check_item_pickup(self.player.rect)
+        self.map_manager.check_item_pickup(self.player.rect)
 
     def draw(self, timer=None):
         # 1. 게임 오버 화면
