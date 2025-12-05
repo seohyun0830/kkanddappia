@@ -159,7 +159,7 @@ for rel_x, rel_y in _slot_relative_coords:
     SPACESHIP_SLOT_RECTS.append(pygame.Rect(absolute_x, absolute_y, SLOT_SIZE_PX, SLOT_SIZE_PX))
 
 MAX_STACK_SIZE = 10
-MAX_DIC_PAGES = 11
+MAX_DIC_PAGES = 14
 GATHER_DURATION = 3000
 PULSATE_SPEED = 0.003
 PULSATE_MIN_SCALE = 0.9
@@ -186,10 +186,6 @@ RECIPES = [
                None, 'stick', None],
     'result':'hammer'
     },
-    {'recipe':['steel', 'steel', 'steel',
-               None, 'stick', None,
-               None, 'stick', None],
-    'result':'axe'},
     {'recipe':[None, None, None,
                None, 'steel', None,
                None, 'steel', None],

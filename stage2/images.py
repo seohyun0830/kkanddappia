@@ -118,7 +118,7 @@ class ImageManager:
         self.spaceship_display_image = self.safe_load_image('spaceship.png', (190, 100))
         self.spaceship_completed_image = self.safe_load_image('spaceship.png', (250, 200))
 
-        for i in range(1, 10):
+        for i in range(1, 14):
             part_name = f'piece_{i}.png'
             img = self.safe_load_image(part_name, convert_alpha=True)
             self.spaceship_parts.append(img)
