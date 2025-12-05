@@ -232,7 +232,7 @@ class MapManager:
         for rect in targets:
             if self.is_player_near(rect):
                 arrow_x = rect.centerx - (ARROW_SIZE // 2)
-                arrow_y = rect.top - ARROW_SIZE - 10 + offset_y
+                arrow_y = rect.top - ARROW_SIZE - 30 + offset_y
                 self.stage.screen.blit(self.images.arrow_image, (arrow_x, arrow_y))
 
     def draw_progress_spaceship(self):
