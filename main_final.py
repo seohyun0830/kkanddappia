@@ -54,7 +54,7 @@ def main():
     mode = -1                  
     MODE = 0
     Try = 0
-    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = 0, 0, 0, [0,0,0,0,0]
+    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
     
     current_state = STATE_START 
    
@@ -154,13 +154,11 @@ def main():
                 if next_stage == "stage3":  #3스테이지 이동
                     fuel_manager.set_fuel(count*10+70) # 연료 
                     #print(f"Stage 2 클리어! 획득한 연료: {count}개")
-                   
+                    
                     story = Stage3Story(screen)
                     story.run()
                     pygame.event.clear()
-                    
                     current_state = STATE_STAGE3 
-            
             elif result == "stage1":
                 current_state = STATE_STAGE1
                 # 인벤토리 복구 
@@ -174,8 +172,11 @@ def main():
                 sfx_bombSound.play()
                 if f_isFail(screen, overs):
                     current_state = STATE_STAGE2
+                    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
                     timer.reset()
             elif result == "quit" or result == "game_over":
+                MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
+                timer.reset()
                 current_state = STATE_EXIT
 
         # ---------------------------------------
@@ -183,6 +184,7 @@ def main():
         # ---------------------------------------
         elif current_state == STATE_STAGE3:
             # --- Stage 3  ---
+           
             stage3 = Stage3(screen, mode=game_difficulty,game_state=game_state)
             next_stage_3 = stage3.run()
             
@@ -202,7 +204,6 @@ def main():
                     if result_4 == "stage4to3":
                         stage4to3 = Stage4To3(screen,num_fuels=count)
                         back = stage4to3.run()
-
                         if back == "stage4":
                             result_4 = stage4.resume()
                         else:
