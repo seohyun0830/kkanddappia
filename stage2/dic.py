@@ -12,11 +12,16 @@ class Dictionary:
         try:
             self.font = pygame.font.Font('DungGeunMO.ttf', 30)
             self.lock_font = pygame.font.Font('DungGeunMO.ttf', 50)
+            self.warning_font=pygame.font.Font('DungGeunMO.ttf', 50)
         except:
             self.font = pygame.font.Font(None, 30)
             self.lock_font = pygame.font.Font(None, 50)
+            self.warning_font=pygame.font.Font(None, 50)
         
         self.rect = pygame.Rect(DIC_IMAGE_X, DIC_IMAGE_Y, IMG_SIZE_DIC[0], IMG_SIZE_DIC[1])
+
+        self.show_warning=False
+        self.warning_time=0
 
     def handle_click(self, mouse_pos):
         if self.rect.collidepoint(mouse_pos):
@@ -29,8 +34,6 @@ class Dictionary:
             
             # 2. 오른쪽 클릭 (다음 페이지)
             else:
-                # [해금 제한]
-                # Easy 모드면 무제한, Hard 모드면 (1 + 쪽지 수)페이지까지만 이동 가능
                 if self.stage.is_easy_mode:
                     limit = MAX_DIC_PAGES
                 else:
@@ -43,8 +46,10 @@ class Dictionary:
                 if self.current_page < final_limit:
                     self.current_page += 1
                 else:
-                    # 아직 해금되지 않았을 때 (디버깅용 메시지)
-                    print(f"잠겨있습니다! 쪽지를 더 찾아주세요. (현재 {self.stage.collected_notes_count}개)")
+                    if not self.stage.is_easy_mode and self.current_page < MAX_DIC_PAGES:
+                        self.show_warning = True
+                        self.warning_start_time = pygame.time.get_ticks()
+                        print(f"잠겨있음! 쪽지 부족 (현재 {self.stage.collected_notes_count}개)")
             
             return True
         
@@ -103,3 +108,13 @@ class Dictionary:
         text_y = DIC_IMAGE_Y + self.images.dic_image.get_height() - 40
         
         self.stage.screen.blit(page_text, (text_x, text_y))
+
+        if self.show_warning:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.warning_start_time < 2000: # 3000ms = 3초
+                warning_text = self.warning_font.render("쪽지를 더 모으세요!", True, BLACK)
+                warning_rect = warning_text.get_rect(center=(SCREEN_WIDTH // 2, 80))
+                
+                self.stage.screen.blit(warning_text, warning_rect)
+            else:
+                self.show_warning = False 
