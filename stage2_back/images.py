@@ -26,6 +26,8 @@ class ImageManager:
         #우주선 완성
         self.completed_spaceship = self.safe_load_image('back_spaceship.png', (250, 200))
 
+        self.arrow_image=self.safe_load_image('arrow.png', (ARROW_SIZE, ARROW_SIZE))
+
         self.spaceship_parts = []
         for i in range(1, 10):
             part_name = f'piece{i}.png'
