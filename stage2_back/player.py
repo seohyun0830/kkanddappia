@@ -32,16 +32,16 @@ class Player:
         keys = pygame.key.get_pressed()
         self.is_moving = False
         
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_a]:
             self.x -= PLAYER_SPEED
             self.direction = "left"
             self.is_moving = True
-        elif keys[pygame.K_RIGHT]:
+        elif keys[pygame.K_d]:
             self.x += PLAYER_SPEED
             self.direction = "right"
             self.is_moving = True
             
-        if keys[pygame.K_UP] and not self.is_jumping:
+        if keys[pygame.K_w] and not self.is_jumping:
             self.vel_y = -JUMP_STRENGTH
             self.is_jumping = True
             self.is_moving = True
