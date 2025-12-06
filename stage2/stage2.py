@@ -856,11 +856,11 @@ while not done:
         is_moving = False
 
         if not open_door and not dic_open and not is_spaceship_crafting_open and not is_tree_pressing:
-            if keys[pygame.K_LEFT]:
+            if keys[pygame.K_a]:
                 person_x -= person_speed
                 person_direction_right = False
                 is_moving = True
-            elif keys[pygame.K_RIGHT]:
+            elif keys[pygame.K_d]:
                 person_x += person_speed
                 person_direction_right = True
                 is_moving = True

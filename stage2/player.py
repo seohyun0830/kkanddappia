@@ -65,11 +65,11 @@ class Player:
             return
         keys = pygame.key.get_pressed()
         self.is_moving = False
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_a]:
             self.x -= self.speed
             self.direction_right = False
             self.is_moving = True
-        elif keys[pygame.K_RIGHT]:
+        elif keys[pygame.K_d]:
             self.x += self.speed
             self.direction_right = True
             self.is_moving = True

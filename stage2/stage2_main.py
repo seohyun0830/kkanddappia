@@ -40,20 +40,18 @@ class Stage2:
         self.bomb_animation_timer = 0
         
         # 리플레이 버튼
-        btn_width = 200
-        btn_height = 60
-        margin_right = 30
-        margin_bottom = 30
-        
+        self.btn_width = 360
+        self.btn_height = 108
+        self.btn_background = pygame.image.load("button/assets/btn_background.png")
         self.replay_btn_rect = pygame.Rect(
-            SCREEN_WIDTH - btn_width - margin_right, 
-            SCREEN_HEIGHT - btn_height - margin_bottom, 
-            btn_width, 
-            btn_height
+            800, 
+            600, 
+            self.btn_width, 
+            self.btn_height
         )
         
         try:
-            self.btn_font = pygame.font.Font('DungGeunMO.ttf', 50)
+            self.btn_font = pygame.font.Font('DungGeunMO.ttf', 90)
         except:
             self.btn_font = pygame.font.Font(None, 50)
 
@@ -369,12 +367,13 @@ class Stage2:
 
             mouse_pos = pygame.mouse.get_pos()
             is_hover = self.replay_btn_rect.collidepoint(mouse_pos)
-            
+            self.screen.blit(self.btn_background, (800, 600))
+            '''
             pygame.draw.rect(self.screen, (180, 180, 180), self.replay_btn_rect, border_radius=10)
             pygame.draw.rect(self.screen, BLACK, self.replay_btn_rect, width=3, border_radius=10)
-            
+            '''
             text_color = BLACK if is_hover else WHITE
-            replay_text = self.btn_font.render("REPLAY", True, text_color)
+            replay_text = self.btn_font.render("RESTART", True, text_color)
             text_rect = replay_text.get_rect(center=self.replay_btn_rect.center)
             self.screen.blit(replay_text, text_rect)
 
