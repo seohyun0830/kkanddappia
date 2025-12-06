@@ -8,7 +8,7 @@ def f_guide(window, flag, isTab, invenList, isDragging):
 
     skip = "[SPACE] to Skip"
     texts = [
-        "방향키를 눌러 이동합니다.", 
+        "WASD를 눌러 이동합니다.", 
         "블록 앞에서 방향키를 3초 이상 눌러 블록을 깹니다.", 
         "TAB 키를 눌러 아이템을 확인합니다.", 
         "사다리를 드래그 & 드롭하여 설치합니다.", 

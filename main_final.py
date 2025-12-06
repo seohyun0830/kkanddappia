@@ -17,7 +17,7 @@ from timer.images import overs, sfx_bombSound
 from engine import assets
 from stage3 import Stage3
 from stage4.stage4 import Stage4
-from stage3.story import Stage3Story
+from stage3.story import Stage3Story    
 from stage4to3.stage4to3 import Stage4To3
 from stage2_back.stage2_back_main import Stage2Back
 from engine.fuel_manager import fuel_manager
@@ -35,7 +35,7 @@ STATE_STAGE2 = 11  # 2스테이지
 STATE_STAGE3 = 30  
 
 ITEM_ID_TO_NAME = {
-    1: 'stone', 2: 'soil', 3: 'fossil', 4: 'wood', 5: 'ladder'
+    1: 'stone', 2: 'soil', 3: 'fossil', 4: 'paper', 5: 'ladder'
 }
 # 2. Stage 2(문자) -> Stage 1(숫자)
 ITEM_NAME_TO_ID = {v: k for k, v in ITEM_ID_TO_NAME.items()}
@@ -53,9 +53,8 @@ def main():
 
     mode = -1                  
     MODE = 0
-    Try = 0
-    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
-    
+    Try = -1
+    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = 0, 0, 0, [0,0,0,0,0]    
     current_state = STATE_START 
    
     # 1, 2스테이지 객체
@@ -94,7 +93,7 @@ def main():
             current_state = f_story1(screen)
         elif current_state == STATE_STORY2:
             current_state = f_story2(screen)
-            start_ticks = pygame.time.get_ticks()
+            timer.reset()
 
         # ---------------------------------------
         #Stage 1 
@@ -120,19 +119,25 @@ def main():
                 if f_isFail(screen, magmas):
                     current_state = STATE_STAGE2
                     timer.reset()
+                    Try = 0
+                    stage2.reset_game_data()
             elif result == 2:
                 sfx_water.play()
                 if f_isFail(screen, waters):
                     current_state = STATE_STAGE2
                     timer.reset()
+                    Try = 0
+                    stage2.reset_game_data()
             elif result == 3: 
                 sfx_bombSound.play()
                 if f_isFail(screen, overs):
                     current_state = STATE_STAGE2
                     timer.reset()
+                    Try = 0
+                    stage2.reset_game_data()
             elif result == -1: 
                 current_state = STATE_STAGE2
-                Try += 1
+                Try += 2
                 # 아이템 연동
                 imported_items = []
                 for i, count in enumerate(InvenCnt):
@@ -145,7 +150,7 @@ def main():
         # Stage 2 
         # ---------------------------------------
         elif current_state == STATE_STAGE2:
-            if Try == 0: 
+            if Try == -1: 
                 timer.reset()
             result = stage2.run(timer)
 
@@ -153,29 +158,56 @@ def main():
                 next_stage, count = result
                 if next_stage == "stage3":  #3스테이지 이동
                     fuel_manager.set_fuel(count*10+70) # 연료 
-                    #print(f"Stage 2 클리어! 획득한 연료: {count}개")
+                    print(f"Stage 2 클리어! 획득한 연료: {count}개")
                     
                     story = Stage3Story(screen)
                     story.run()
                     pygame.event.clear()
                     current_state = STATE_STAGE3 
+
             elif result == "stage1":
                 current_state = STATE_STAGE1
-                # 인벤토리 복구 
+                
+                # --- [핵심: Stage 2 -> 1 데이터 복구] ---
                 s2_inventory = stage2.inventory
-                InvenCnt =[0, 0, 0, 0, 0]
+                
+                # 초기화
+                InvenInfo = []           # 아이템 ID 리스트 (예: [1, 1, 5])
+                InvenCnt = [0, 0, 0, 0, 0] # 개수 카운트 (예: [2, 0, 0, 0, 1])
+                
+                cnt = 0
                 for item_name in s2_inventory:
+                    # Stage 1에서 사용하는 아이템인지 확인
                     if item_name in ITEM_NAME_TO_ID:
-                        InvenCnt[ITEM_NAME_TO_ID[item_name] - 1] += 1
-            
+                        item_id = ITEM_NAME_TO_ID[item_name]
+                        if item_id == 4:
+                            continue
+                        InvenCnt[item_id - 1] += 1
+                for i in range(5): # 아이템 ID 1~5번 확인
+                    item_id = i + 1
+                    count = InvenCnt[i] # 해당 아이템의 총 개수
+                    while count > 0:
+                        InvenInfo.append(item_id) # 슬롯 추가
+                        count -= 5
+
             elif result == "timeOUT":
                 sfx_bombSound.play()
                 if f_isFail(screen, overs):
                     current_state = STATE_STAGE2
-                    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
+                    MapInfo, ItemMapInfo, InvenInfo, InvenCnt = 0, 0, 0, [0,0,0,0,0] 
                     timer.reset()
+
+            elif result=="reset":
+                MapInfo, ItemMapInfo, InvenInfo, InvenCnt = 0, 0, 0, [0,0,0,0,0] 
+                Try = 0
+                timer.reset()
+                
+                stage2.reset_game_data()
+                
+                current_state = STATE_STAGE2
+                    
             elif result == "quit" or result == "game_over":
-                MapInfo, ItemMapInfo, InvenInfo, InvenCnt = None, None, None, None
+                MapInfo, ItemMapInfo, InvenInfo, InvenCnt = 0, 0, 0, [0,0,0,0,0] 
                 timer.reset()
                 current_state = STATE_EXIT
 
@@ -240,3 +272,14 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+'''
+            elif result == "stage1":
+                current_state = STATE_STAGE1
+                # 인벤토리 복구 
+                s2_inventory = stage2.inventory
+                InvenCnt =[0, 0, 0, 0, 0]
+                for item_name in s2_inventory:
+                    if item_name in ITEM_NAME_TO_ID:
+                        InvenCnt[ITEM_NAME_TO_ID[item_name] - 1] += 1
+'''

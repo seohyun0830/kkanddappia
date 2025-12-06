@@ -94,6 +94,9 @@ class ImageManager:
         #쪽지
         self.paper_image = self.safe_load_image('paper.png', (PAPER_SIZE, PAPER_SIZE))
 
+        #화살표
+        self.arrow_image = self.safe_load_image('arrow.png', (ARROW_SIZE, ARROW_SIZE))
+
         # 사람
         self.load_animation_set(self.BAG_FRAMES, 'bag')
         self.load_animation_set(self.IN_FRAMES, 'in')
@@ -115,7 +118,7 @@ class ImageManager:
         self.spaceship_display_image = self.safe_load_image('spaceship.png', (190, 100))
         self.spaceship_completed_image = self.safe_load_image('spaceship.png', (250, 200))
 
-        for i in range(1, 10):
+        for i in range(1, 14):
             part_name = f'piece_{i}.png'
             img = self.safe_load_image(part_name, convert_alpha=True)
             self.spaceship_parts.append(img)
@@ -132,7 +135,8 @@ class ImageManager:
             'spaceship-side': 'spaceship_side_piece.png',
             'spaceship-side-piece': 'spaceship_side_1_9.png',
             'spaceship-roof': 'spaceship_roof_piece.png',
-            'spaceship-roof-piece': 'spaceship_roof_1_4.png'
+            'spaceship-roof-piece': 'spaceship_roof_1_4.png',
+            'paper' : 'paper.png'
         }
 
         for name, filename in items.items():

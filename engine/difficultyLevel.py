@@ -32,7 +32,7 @@ DIFFICULTY = {
         "HP_DAMAGE": 3,                   
         "HP_DAMAGE_INTERVAL": 1500,        
 
-        "BEGIN_BROKEN_CNT": 0,
+        "BEGIN_BROKEN_CNT": 2,
 
         "DRONE_CHANCE": 0.15,            
 
@@ -58,7 +58,7 @@ DIFFICULTY = {
         "HP_DAMAGE": 5,
         "HP_DAMAGE_INTERVAL": 1800,
 
-        "BEGIN_BROKEN_CNT": 3,
+        "BEGIN_BROKEN_CNT": 4,
 
         "DRONE_CHANCE": 0.10,     # EASY보다 확률 낮음
 

@@ -39,7 +39,7 @@ def draw_screen(stage3):
     )
 
     # 아이템 표시
-    teleport_img = assets.teleport_item_img  # 너가 로드한 teleport.png
+    teleport_img = assets.teleport_item_img  
     for (r, c) in stage3.item_positions:
         x = constants.GRID_OFFSET_X + c * constants.TILE_SIZE
         y = constants.GRID_OFFSET_Y + r * constants.TILE_SIZE
@@ -142,8 +142,11 @@ def draw_item_ui(screen, count):
     screen.blit(icon, (x, y))
 
     # 개수 텍스트
-    font = pygame.font.SysFont(constants.FONT_NAME, 32, bold=False)
+    font = pygame.font.Font('DungGeunMO.ttf', 32)
+    font2=pygame.font.Font('DungGeunMO.ttf', 15)
     text = font.render(f"x {count}", True, (255, 255, 255))
+    text2=font2.render("R키를 눌러 사용하세요",True,(255,255,255))
+    screen.blit(text2,(x-25,y+40))
     screen.blit(text, (x + 50, y + 5))
 
 def draw_teleport_overlay(screen, stage3):
@@ -168,7 +171,7 @@ def draw_teleport_overlay(screen, stage3):
         screen.blit(glow, (x, y))
 
     # 안내 텍스트
-    font = pygame.font.SysFont(constants.FONT_NAME, 36, bold=False)
+    font = pygame.font.Font('DungGeunMO.ttf', 36)
     text = font.render("이동할 단선을 클릭하세요 (ESC 취소)", True, (255, 255, 255))
     tr = text.get_rect(center=(constants.SCREEN_WIDTH//2, constants.SCREEN_HEIGHT//2 - 200))
     screen.blit(text, tr)

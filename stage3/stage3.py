@@ -77,7 +77,7 @@ class Stage3:
         self.move_timer = 0
         self.key_states = {
             k: False for k in [
-                pygame.K_UP, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_LEFT
+                pygame.K_w, pygame.K_s, pygame.K_d, pygame.K_a
             ]
         }
 
@@ -354,13 +354,13 @@ class Stage3:
     def handle_movement(self):
         r, c = self.player_row, self.player_col
 
-        if self.key_states[pygame.K_UP]:
+        if self.key_states[pygame.K_w]:
             r, c = try_move_player(self.maze_data, (r, c), -1, 0, self.iron_gates, self.broken_tiles)
-        elif self.key_states[pygame.K_DOWN]:
+        elif self.key_states[pygame.K_s]:
             r, c = try_move_player(self.maze_data, (r, c), 1, 0, self.iron_gates, self.broken_tiles)
-        elif self.key_states[pygame.K_LEFT]:
+        elif self.key_states[pygame.K_a]:
             r, c = try_move_player(self.maze_data, (r, c), 0, -1, self.iron_gates, self.broken_tiles)
-        elif self.key_states[pygame.K_RIGHT]:
+        elif self.key_states[pygame.K_d]:
             r, c = try_move_player(self.maze_data, (r, c), 0, 1, self.iron_gates, self.broken_tiles)
 
         self.player_row, self.player_col = r, c

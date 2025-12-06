@@ -47,7 +47,7 @@ ITEM_ID_TO_NAME = {
     1: 'stone',
     2: 'soil',
     3: 'fossil',
-    4: 'wood',   #쪽지로 대체해야함!!
+    4: 'paper',   #쪽지로 대체해야함!!
     5: 'ladder'
 }
 

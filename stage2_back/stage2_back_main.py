@@ -1,5 +1,6 @@
 import pygame
 import sys
+import math
 from stage2_back.setting import *
 from stage2_back.images import ImageManager
 from stage2_back.player import Player
@@ -23,6 +24,11 @@ class Stage2Back:
         
         self.done = False
         self.cutscene_active = False
+
+        try:
+            self.font=pygame.font.Font("DungGeunMo.ttf", 30)
+        except:
+            self.font=pygame.font.Font(None, 30)
 
     def run(self):
         while not self.done:
@@ -126,17 +132,32 @@ class Stage2Back:
         for i, rect in enumerate(self.inventory_pieces):
             self.screen.blit(self.images.broken_piece, rect.topleft)
         
-        # 텍스트(넣을까말까)
-        '''
-        font = pygame.font.Font(None, 30)
-        if self.map_manager.assembled_count < TOTAL_PIECES:
-            msg = "Move to collect pieces! Drag them to the Launchpad!"
+        #텍스트
+
+        msg=""
+
+        total_found=len(self.inventory_pieces)+self.map_manager.assembled_count
+
+        if total_found<TOTAL_PIECES:
+            msg="움직이며 우주선 조각을 모두 모으세요!"
+
+        elif self.map_manager.assembled_count<TOTAL_PIECES:
+            msg="조각을 발사대에 드래그 & 드롭해 우주선을 완성하세요!"
+
+            time=pygame.time.get_ticks()
+            offset_y=math.sin(time*0.008)*10
+
+            arrow_x = LAUNCHPAD_RECT.centerx - (ARROW_SIZE // 2)
+            arrow_y = LAUNCHPAD_RECT.top - ARROW_SIZE - 10 + offset_y
+                
+            # 화살표 그리기
+            self.screen.blit(self.images.arrow_image, (arrow_x, arrow_y))
+
         else:
-            msg = "Spaceship Ready! Click to Launch!"
-            
-        text_surf = font.render(msg, True, WHITE)
-        self.screen.blit(text_surf, (SCREEN_WIDTH // 2 - text_surf.get_width() // 2, UI_HEIGHT + 10))
-        '''
+            msg="우주선을 클릭해 우주선으로 입장하세요!"
+
+        text_surf=self.font.render(msg, True, WHITE)
+        self.screen.blit(text_surf, (SCREEN_WIDTH//2-text_surf.get_width()//2, UI_HEIGHT+10))
 
 if __name__ == "__main__":
     pygame.init()

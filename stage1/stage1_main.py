@@ -23,13 +23,14 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, InvenCnt, timer
     # 초기 맵 설정
     # (Player의 초기 blockX, blockY를 사용하여 설정)
     Map.underMap[Player.blockY][Player.blockX] = 1
-    if (Try == 0):
+    if (Try == 0 or Try == -1):
         Map.f_defaultItemMap(MODE)
     else:
+        # 재시작/로드 시 복구
         Map.underMap = MapInfo
         Map.itemMap = ItemMapInfo
-        Inven.invenList = InvenInfo
-        Inven.invenCnt = InvenCnt
+    Inven.invenList = InvenInfo
+    Inven.invenCnt = InvenCnt
     Inven.f_blockCount()
 
     # 변수 초기화
@@ -146,7 +147,7 @@ def f_stage1(window, MODE, Try, MapInfo, ItemMapInfo, InvenInfo, InvenCnt, timer
             Inven.f_ladder(mouseX, mouseY, window)
         
         
-        if (Try == 0):
+        if (Try == -1):
             guide.f_guide(window, flag, isTab, Inven.invenList, isDragging)
 
         timerText = timer.get_time_text()

@@ -25,8 +25,9 @@ class Stage2:
         self.done = False
         self.game_over = False
         self.go_to_stage1 = False
-
         self.stage_clear = False
+        
+        self.game_reset=False
         
         # 가이드 넘김용 스페이스바 상태 변수
         self.guide_space_pressed = False
@@ -39,20 +40,18 @@ class Stage2:
         self.bomb_animation_timer = 0
         
         # 리플레이 버튼
-        btn_width = 200
-        btn_height = 60
-        margin_right = 30
-        margin_bottom = 30
-        
+        self.btn_width = 360
+        self.btn_height = 108
+        self.btn_background = pygame.image.load("button/assets/btn_background.png")
         self.replay_btn_rect = pygame.Rect(
-            SCREEN_WIDTH - btn_width - margin_right, 
-            SCREEN_HEIGHT - btn_height - margin_bottom, 
-            btn_width, 
-            btn_height
+            800, 
+            600, 
+            self.btn_width, 
+            self.btn_height
         )
         
         try:
-            self.btn_font = pygame.font.Font('DungGeunMO.ttf', 50)
+            self.btn_font = pygame.font.Font('DungGeunMO.ttf', 90)
         except:
             self.btn_font = pygame.font.Font(None, 50)
 
@@ -62,6 +61,7 @@ class Stage2:
         """게임을 처음 상태로 되돌림 (REPLAY용)"""
         self.game_over = False
         self.go_to_stage1 = False
+
         self.collected_notes_count = 0 # 쪽지 초기화
 
         self.bomb_animation_index = 0
@@ -75,14 +75,17 @@ class Stage2:
         base_items = ['fire', 'water'] + \
                      ['spaceship-side'] * 4 + \
                      ['spaceship-roof'] * 4 + \
-                     ['fuel tank'] * 7 + \
+                     ['fuel tank'] * 15 + \
                      ['steel'] * 2 + \
-                     ['axe']
+                     ['axe'] + \
+                     ['ladder']*10
 
         if imported_items is not None:
             self.inventory = base_items + imported_items
         else:
             self.inventory = base_items
+
+        self.collected_notes_count=self.inventory.count('paper')
         
         self.crafting_table = [None] * 9
         self.spaceship_assembly_storage = []
@@ -115,17 +118,19 @@ class Stage2:
         if self.sounds.tree_sound: self.sounds.tree_sound.stop()
         if self.sounds.walk_sound: self.sounds.walk_sound.stop()
         
-        stage1_resource_names = ['stone', 'soil', 'fossil', 'wood', 'ladder']
+        stage1_resource_names = ['stone', 'soil', 'fossil', 'ladder']
         
         new_inventory = []
         for item in self.inventory:
             if item not in stage1_resource_names:
                 new_inventory.append(item)
-        
+
         if imported_items:
             new_inventory.extend(imported_items)
-            
+             
         self.inventory = new_inventory
+
+        self.collected_notes_count = self.inventory.count('paper')
         
         self.player.x = PLAYER_START_X
         self.player.y = PLAYER_START_Y
@@ -148,6 +153,7 @@ class Stage2:
         self.done = False
         self.go_to_stage1 = False
         self.game_over = False
+        self.game_reset=False
         
         # 플레이어 위치 복구
         self.player.x = PLAYER_START_X
@@ -173,6 +179,10 @@ class Stage2:
             if self.go_to_stage1:
                 #self.sounds.stop_background_music()
                 return "stage1"
+            
+            if self.game_reset:
+                self.sounds.stop_background_music()
+                return "reset"
         
 
             # 타이머 종료 체크
@@ -186,10 +196,10 @@ class Stage2:
                 self.sounds.stop_background_music()
                             
                             # 연료통 개수 세기
-                fuel_count = self.inventory.count('fuel-tank')
-                print(f"[Stage2] 클리어! 남은 연료통: {fuel_count}개")
+                fuel_count = self.inventory.count('fuel tank')
                             
                             # 튜플 형태로 (다음 스테이지, 연료 개수) 반환
+                print(fuel_count)
                 return ("stage3", fuel_count)
             self.draw(timer)
             
@@ -211,7 +221,7 @@ class Stage2:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     if self.replay_btn_rect.collidepoint(mouse_pos):
-                        self.reset_game_data()
+                        self.game_reset=True
                 continue 
 
             # 가이드 스킵 키
@@ -335,8 +345,7 @@ class Stage2:
         self.player.update()
         self.map_manager.update()
         
-        if not self.is_easy_mode:
-            self.map_manager.check_item_pickup(self.player.rect)
+        self.map_manager.check_item_pickup(self.player.rect)
 
     def draw(self, timer=None):
         # 1. 게임 오버 화면
@@ -358,12 +367,13 @@ class Stage2:
 
             mouse_pos = pygame.mouse.get_pos()
             is_hover = self.replay_btn_rect.collidepoint(mouse_pos)
-            
+            self.screen.blit(self.btn_background, (800, 600))
+            '''
             pygame.draw.rect(self.screen, (180, 180, 180), self.replay_btn_rect, border_radius=10)
             pygame.draw.rect(self.screen, BLACK, self.replay_btn_rect, width=3, border_radius=10)
-            
+            '''
             text_color = BLACK if is_hover else WHITE
-            replay_text = self.btn_font.render("REPLAY", True, text_color)
+            replay_text = self.btn_font.render("RESTART", True, text_color)
             text_rect = replay_text.get_rect(center=self.replay_btn_rect.center)
             self.screen.blit(replay_text, text_rect)
 

@@ -60,7 +60,7 @@ def play_success_animation(screen):
             walking_sound_played = True
 
         # 프레임 재생
-        for _ in range(25):
+        for _ in range(15):
             shake_x = random.randint(-3, 3)
             shake_y = random.randint(-3, 3)
 
@@ -72,7 +72,7 @@ def play_success_animation(screen):
             screen.blit(fade_surf, (0, 0))
 
             pygame.display.update()
-            clock.tick(12)
+            clock.tick(20)
 
     # 걷는 소리 중지
     try:
@@ -85,12 +85,12 @@ def play_success_animation(screen):
     # ----------------------------------------
 
     # win6 먼저 표시
-    for _ in range(20):
+    for _ in range(15):
         shake_x = random.randint(-2, 2)
         shake_y = random.randint(-2, 2)
         screen.blit(frames[5], (shake_x, shake_y))
         pygame.display.update()
-        clock.tick(12)
+        clock.tick(18)
 
     # 버튼 눌리는 순간 "딸깍!"
     try:
@@ -99,7 +99,7 @@ def play_success_animation(screen):
         pass
 
     # win7 표시 (눌린 상태)
-    for _ in range(25):
+    for _ in range(15):
         shake_x = random.randint(-2, 2)
         shake_y = random.randint(-2, 2)
 
@@ -110,7 +110,7 @@ def play_success_animation(screen):
         screen.blit(fade_surf, (0, 0))
 
         pygame.display.update()
-        clock.tick(12)
+        clock.tick(15)
 
     # ----------------------------------------
     #   3) 마지막 완전 페이드아웃
@@ -121,7 +121,7 @@ def play_success_animation(screen):
         pygame.display.update()
         clock.tick(20)
 
-    time.sleep(2)  # 여운
+    time.sleep(1)  # 여운
 
         # --- 애니메이션 종료 후 모든 소리 정지 ---
     try:

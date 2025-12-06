@@ -160,10 +160,14 @@ class MapManager:
         if not self.stage.is_easy_mode:
             for i in range(len(self.spawned_notes) - 1, -1, -1):
                 note = self.spawned_notes[i]
+
                 if note['map'] == self.current_map:
                     if player_rect.colliderect(note['rect']):
                         self.spawned_notes.pop(i)
-                        self.stage.collected_notes_count += 1
+
+                        self.stage.inventory.append('paper')
+
+                        self.stage.collected_notes_count = self.stage.inventory.count('paper')
                         # print(f"쪽지 획득! 해금 페이지: {self.stage.collected_notes_count}")
 
     def drop_wood(self):
@@ -200,6 +204,11 @@ class MapManager:
                 
                 if is_completed:
                     self.draw_pulsating_spaceship()
+
+                    text = self.font.render("우주선을 클릭해 탑승하세요!", True, WHITE)
+                    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, 100))
+                    self.stage.screen.blit(text, text_rect)
+
                 else:
                     self.draw_progress_spaceship()
         
@@ -213,6 +222,27 @@ class MapManager:
         if timer:
             timeText = timer.get_time_text()
             self.stage.screen.blit(timeText, (10, 10))
+
+        self.draw_guide_arrow()
+
+    def draw_guide_arrow(self):
+        """상호작용 가능 대상에 화살표 표시"""
+        time = pygame.time.get_ticks()
+        offset_y = math.sin(time * 0.005) * 10 
+        
+        targets = []
+        if self.current_map == "outside1":
+            targets = [TREE_AREA, OUTSIDE_DOOR_AREA, STAGE1_AREA]
+        elif self.current_map == "inside":
+            targets = [DIC_AREA, CLICK_AREA] 
+        elif self.current_map == "outside2":
+            targets = [OUTSIDE_MAKE_AREA, SPACESHIP_AREA]
+            
+        for rect in targets:
+            if self.is_player_near(rect):
+                arrow_x = rect.centerx - (ARROW_SIZE // 2)
+                arrow_y = rect.top - ARROW_SIZE - 30 + offset_y
+                self.stage.screen.blit(self.images.arrow_image, (arrow_x, arrow_y))
 
     def draw_progress_spaceship(self):
         current_parts = len(self.stage.spaceship_assembly_storage)
