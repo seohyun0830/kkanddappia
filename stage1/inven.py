@@ -63,7 +63,9 @@ class Cinven:
                     # ★★★ 1:1 매칭된 개수 표시 ★★★
                     # 이제 list_index를 그대로 쓰면 됩니다.
                     count = self.blockCount[list_index]
-                    
+                    if (count == 0):
+                        self.invenList.remove(item_id)
+                        self.blockCount.remove(count)
                     # (0개인 경우는 안 그리도록 예외 처리 가능)
                     if count > 0:
                         text = self.font.render(f"{count}", True, (255, 255, 255))
