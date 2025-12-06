@@ -198,9 +198,10 @@ class Stage2:
                 self.sounds.stop_background_music()
                             
                             # 연료통 개수 세기
-                fuel_count = self.inventory.count('fuel-tank')
+                fuel_count = self.inventory.count('fuel tank')
                             
                             # 튜플 형태로 (다음 스테이지, 연료 개수) 반환
+                print(fuel_count)
                 return ("stage3", fuel_count)
             self.draw(timer)
             

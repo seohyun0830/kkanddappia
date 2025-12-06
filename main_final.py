@@ -158,7 +158,7 @@ def main():
                 next_stage, count = result
                 if next_stage == "stage3":  #3스테이지 이동
                     fuel_manager.set_fuel(count*10+70) # 연료 
-                    #print(f"Stage 2 클리어! 획득한 연료: {count}개")
+                    print(f"Stage 2 클리어! 획득한 연료: {count}개")
                     
                     story = Stage3Story(screen)
                     story.run()
