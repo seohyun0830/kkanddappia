@@ -52,18 +52,18 @@ ARROW_SIZE=70
 
 # --- [추가] 쪽지(Paper) 설정 ---
 PAPER_SIZE = 40
-NOTE_APPEAR_INTERVAL = 60000 #1분에 하나씩
+NOTE_APPEAR_INTERVAL = 5000 #1분에 하나씩
 
 # 쪽지 8개의 위치 (맵 이름, x좌표, y좌표) - 순서대로 나타납니다.
 NOTE_DATA = [
     {"map": "outside1", "pos": (200, 650)},  # 1번
     {"map": "outside1", "pos": (600, 650)},  # 2번
-    {"map": "inside",   "pos": (300, 500)},  # 3번
-    {"map": "inside",   "pos": (900, 500)},  # 4번
+    {"map": "inside",   "pos": (300, 650)},  # 3번
+    {"map": "inside",   "pos": (900, 650)},  # 4번
     {"map": "outside2", "pos": (100, 650)},  # 5번
     {"map": "outside2", "pos": (800, 650)},  # 6번
     {"map": "outside1", "pos": (1000, 650)}, # 7번
-    {"map": "inside",   "pos": (600, 500)}   # 8번
+    {"map": "inside",   "pos": (600, 650)}   # 8번
 ]
 
 # --- UI 위치 ---
