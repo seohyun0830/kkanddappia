@@ -43,7 +43,8 @@ def draw_pressure_text(screen, pressure):
         pulsation = (math.sin(current_time * constants.PULSATE_SPEED) + 1.0)
         pulsation *= (constants.PULSATE_MAX_OFFSET / 2)
         size = constants.BASE_FONT_SIZE + pulsation
-        font = pygame.font.SysFont(constants.FONT_NAME, int(size), bold=True)
+        font = pygame.font.Font('DungGeunMO.ttf', int(size))
+        font.bold = True
 
     # 저압 (40 이하 → 보라색 + 깜빡임)
     elif pressure < 40:
@@ -52,7 +53,8 @@ def draw_pressure_text(screen, pressure):
         pulsation = (math.sin(current_time * constants.PULSATE_SPEED) + 1.0)
         pulsation *= (constants.PULSATE_MAX_OFFSET / 2)
         size = constants.BASE_FONT_SIZE + pulsation
-        font = pygame.font.SysFont(constants.FONT_NAME, int(size), bold=True)
+        font = pygame.font.Font('DungGeunMO.ttf', int(size))
+        font.bold = True
 
     # 텍스트 위치
     text_x = 111

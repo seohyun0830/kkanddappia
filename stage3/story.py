@@ -19,7 +19,7 @@ class Stage3Story:
             (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)
         )
 
-        self.font = pygame.font.SysFont(constants.FONT_NAME, 90)
+        self.font = pygame.font.Font('DungGeunMO.ttf', 90)
 
         # 러닝 애니메이션 이미지
         self.ani1 = pygame.image.load("images/stage3/ani1.png").convert_alpha()
