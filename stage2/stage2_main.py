@@ -63,6 +63,7 @@ class Stage2:
         """게임을 처음 상태로 되돌림 (REPLAY용)"""
         self.game_over = False
         self.go_to_stage1 = False
+
         self.collected_notes_count = 0 # 쪽지 초기화
 
         self.bomb_animation_index = 0
@@ -85,6 +86,8 @@ class Stage2:
             self.inventory = base_items + imported_items
         else:
             self.inventory = base_items
+
+        self.collected_notes_count=self.inventory.count('paper')
         
         self.crafting_table = [None] * 9
         self.spaceship_assembly_storage = []
@@ -117,21 +120,19 @@ class Stage2:
         if self.sounds.tree_sound: self.sounds.tree_sound.stop()
         if self.sounds.walk_sound: self.sounds.walk_sound.stop()
         
-        stage1_resource_names = ['stone', 'soil', 'fossil', 'paper', 'ladder']
+        stage1_resource_names = ['stone', 'soil', 'fossil', 'ladder']
         
         new_inventory = []
         for item in self.inventory:
             if item not in stage1_resource_names:
                 new_inventory.append(item)
-        
-        for item in imported_items:
-            if item == 'paper':
-                self.collected_notes_count += 1
 
         if imported_items:
             new_inventory.extend(imported_items)
-            
+             
         self.inventory = new_inventory
+
+        self.collected_notes_count = self.inventory.count('paper')
         
         self.player.x = PLAYER_START_X
         self.player.y = PLAYER_START_Y

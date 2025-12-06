@@ -160,10 +160,14 @@ class MapManager:
         if not self.stage.is_easy_mode:
             for i in range(len(self.spawned_notes) - 1, -1, -1):
                 note = self.spawned_notes[i]
+
                 if note['map'] == self.current_map:
                     if player_rect.colliderect(note['rect']):
                         self.spawned_notes.pop(i)
-                        self.stage.collected_notes_count += 1
+
+                        self.stage.inventory.append('paper')
+
+                        self.stage.collected_notes_count = self.stage.inventory.count('paper')
                         # print(f"쪽지 획득! 해금 페이지: {self.stage.collected_notes_count}")
 
     def drop_wood(self):

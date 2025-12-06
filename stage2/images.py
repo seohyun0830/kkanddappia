@@ -135,7 +135,8 @@ class ImageManager:
             'spaceship-side': 'spaceship_side_piece.png',
             'spaceship-side-piece': 'spaceship_side_1_9.png',
             'spaceship-roof': 'spaceship_roof_piece.png',
-            'spaceship-roof-piece': 'spaceship_roof_1_4.png'
+            'spaceship-roof-piece': 'spaceship_roof_1_4.png',
+            'paper' : 'paper.png'
         }
 
         for name, filename in items.items():
