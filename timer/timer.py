@@ -2,7 +2,7 @@ import pygame
 
 class Timer:
     def __init__(self):
-        self.targetTime = 12 * 60 * 1000 + 1 # 12분 (밀리초 단위)
+        self.targetTime = 15 * 60 * 1000 + 1 # 15분 (밀리초 단위)
         self.start_ticks = pygame.time.get_ticks()
         self.font_timer = pygame.font.Font("DungGeunMO.ttf", 40)
 
