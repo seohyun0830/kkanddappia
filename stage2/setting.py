@@ -207,11 +207,11 @@ RECIPES = [
                'stick', None, 'stick'],
     'result':'ladder'},
     {'recipe':[None, 'stone', None,
-               'screw', 'window-piece', 'screw',
+               'screw', 'glass', 'screw',
                None, 'stone', 'hammer'],
      'result':'spaceship-side-piece'},
     {'recipe':[None, None, None,
-               None,'spaceship-side-piece','spaceship-side-piece',
+               None, None, None,
                None,'spaceship-side-piece','spaceship-side-piece'],
 
     'result':'spaceship-side'
@@ -221,9 +221,9 @@ RECIPES = [
                None, 'stone', 'hammer'],
     'result':'spaceship-roof-piece'
     },
-    {'recipe':[None, None, None,
-               None, 'spaceship-roof-piece', 'spaceship-roof-piece',
-               None, 'spaceship-roof-piece', 'spaceship-roof-piece'],
+    {'recipe':[None, 'spaceship-roof-piece', 'spaceship-roof-piece',
+               None, None, None,
+               None, None, None],
     'result':'spaceship-roof'
     },
     {'recipe':[None, None, None, None, None, None, None, None, None], 'result':None}
