@@ -195,6 +195,8 @@ def main():
                 if f_isFail(screen, overs):
                     current_state = STATE_STAGE2
                     MapInfo, ItemMapInfo, InvenInfo, InvenCnt = 0, 0, 0, [0,0,0,0,0] 
+                    Try = 0
+                    stage2.reset_game_data()
                     timer.reset()
 
             elif result=="reset":
