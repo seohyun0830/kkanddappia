@@ -50,7 +50,7 @@ class Spaceship:
             elif self.idx == 1:
                 if event.key == pygame.K_a: self.to_y = -self.speed
                 elif event.key == pygame.K_d: self.to_y = self.speed
-                elif event.key == pygame.k_s: self.to_x = -self.speed
+                elif event.key == pygame.K_s: self.to_x = -self.speed
                 elif event.key == pygame.K_w: self.to_x = self.speed
             elif self.idx == 2:
                 if event.key == pygame.K_a: self.to_x = self.speed
