@@ -158,7 +158,7 @@ for rel_x, rel_y in _slot_relative_coords:
     SPACESHIP_SLOT_POSITIONS.append((absolute_x, absolute_y))
     SPACESHIP_SLOT_RECTS.append(pygame.Rect(absolute_x, absolute_y, SLOT_SIZE_PX, SLOT_SIZE_PX))
 
-MAX_STACK_SIZE = 10
+MAX_STACK_SIZE = 20
 MAX_DIC_PAGES = 15
 GATHER_DURATION = 2000
 PULSATE_SPEED = 0.003
@@ -176,11 +176,6 @@ RECIPES = [
                None, None, None],
     'result':'fuel'
     },
-    {'recipe':[None, None, None,
-               'stone','stone','fire',
-               None, None, None],
-    'result':'steel'
-    },
     {'recipe':[None, 'stone', 'stone',
                None, 'stick', None,
                None, 'stick', None],
@@ -189,27 +184,28 @@ RECIPES = [
     {'recipe':[None, None, None,
                None, 'stone', None,
                None, 'stone', None],
-    'result':'screw'},
+    'result':'screw'
+    },
     {'recipe':[None, None, None,
                'stone', 'fuel', 'stone',
                None, 'stone', None],
-    'result':'fuel tank'},
+    'result':'fuel tank'
+    },
     {'recipe':[None, None, None,
                None, 'soil', None,
                None, 'soil', 'fire'],
-    'result':'glass'},
-    {'recipe':[None, None, None,
-               None, 'glass', None,
-               None, None, 'hammer'],
-    'result':'window-piece'},
+    'result':'glass'
+    },
     {'recipe':[None, None, None,
                None, 'stick', None,
                'stick', None, 'stick'],
-    'result':'ladder'},
+    'result':'ladder'
+    },
     {'recipe':[None, 'stone', None,
                'screw', 'glass', 'screw',
                None, 'stone', 'hammer'],
-     'result':'spaceship-side-piece'},
+     'result':'spaceship-side-piece'
+     },
     {'recipe':[None, None, None,
                None, None, None,
                None,'spaceship-side-piece','spaceship-side-piece'],
@@ -226,5 +222,9 @@ RECIPES = [
                None, None, None],
     'result':'spaceship-roof'
     },
-    {'recipe':[None, None, None, None, None, None, None, None, None], 'result':None}
+    {'recipe':[None, None, None,
+               None, None, None,
+               None, None, None],
+    'result':None
+    }
 ]
