@@ -33,9 +33,9 @@ class Cinven:
         for item_id in self.invenList:
             idx = item_id - 1 # 아이템 인덱스 (0~4)
 
-            if temp_cnt[idx] >= 10:
-                self.blockCount.append(10) # 10개 꽉 채움
-                temp_cnt[idx] -= 10
+            if temp_cnt[idx] >= 5:
+                self.blockCount.append(5) # 5개 꽉 채움
+                temp_cnt[idx] -= 5
             else:
                 self.blockCount.append(temp_cnt[idx]) # 남은 거 다 넣음
                 temp_cnt[idx] = 0
@@ -67,10 +67,8 @@ class Cinven:
                         self.invenList.remove(item_id)
                         self.blockCount.remove(count)
                     # (0개인 경우는 안 그리도록 예외 처리 가능)
-                    text = self.font.render(f"x{count}", True, (255, 255, 255))
-                    if count == 10:
-                        window.blit(text, (x + 60, y + 75))      
-                    elif count > 0:
+                    text = self.font.render(f"x{count}", True, (255, 255, 255))    
+                    if count > 0:
                         window.blit(text, (x + 70, y + 75))      
 
     def f_invenInfo(self, window):
@@ -150,6 +148,6 @@ class Cinven:
                 self.invenCnt[itemMap[blockY][blockX] - 1] += 1
             else:
                 self.invenList.append(itemMap[blockY][blockX])
-                self.invenCnt[itemMap[blockY][blockX] - 1] += 10
+                self.invenCnt[itemMap[blockY][blockX] - 1] += 5
             self.invenList.sort()
             itemMap[blockY][blockX] = 0 # 맵에서 아이템 제거
