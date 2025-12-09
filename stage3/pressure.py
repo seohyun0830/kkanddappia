@@ -37,7 +37,7 @@ def update_pressure_spike(pressure, stage3):
 
 
 # --------------------------------------------
-# Q/W 키로 압력 조절
+# <-,-> 키로 압력 조절
 # --------------------------------------------
 def user_pressure_control(pressure, key_pressed, stage3):
     keys = pygame.key.get_pressed()
@@ -45,14 +45,14 @@ def user_pressure_control(pressure, key_pressed, stage3):
     amount = stage3.PRESSURE_CONTROL_AMOUNT
 
     if not key_pressed:
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_q]:
             pressure = min(100.0, pressure + amount)
             key_pressed = True
-        elif keys[pygame.K_LEFT]:
+        elif keys[pygame.K_w]:
             pressure = max(0.0, pressure - amount)
             key_pressed = True
     else:
-        if not (keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]):
+        if not (keys[pygame.K_q] or keys[pygame.K_w]):
             key_pressed = False
 
     return pressure, key_pressed

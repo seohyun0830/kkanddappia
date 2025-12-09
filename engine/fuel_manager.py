@@ -1,6 +1,6 @@
 class FuelManager:
     def __init__(self):
-        self.fuel = 80          
+        self.fuel = 80       
         self.max_fuel = 100
 
     def set_fuel(self, amount):

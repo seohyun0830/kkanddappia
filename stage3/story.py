@@ -25,12 +25,10 @@ class Stage3Story:
         self.ani1 = pygame.image.load("images/stage3/ani1.png").convert_alpha()
         self.ani2 = pygame.image.load("images/stage3/ani2.png").convert_alpha()
         self.ani3 = pygame.image.load("images/stage3/ani3.png").convert_alpha()
-        self.ani4 = pygame.image.load("images/stage3/ani4.png").convert_alpha()
         self.ani1 = pygame.transform.scale(self.ani1, (150, 200))
         self.ani2 = pygame.transform.scale(self.ani2, (150, 200))
         self.ani3 = pygame.transform.scale(self.ani3, (150, 200))
-        self.ani4 = pygame.transform.scale(self.ani4, (150, 200))
-
+    
 
         self.animation_timer = 0
         self.animation_speed = 300
@@ -88,7 +86,7 @@ class Stage3Story:
                 else:
                     current_img = self.ani3
             else:
-                current_img = self.ani4  # 도착 후 고정
+                current_img = self.ani3  # 도착 후 고정
 
             # 그리기
             self.draw(current_img, elapsed)
