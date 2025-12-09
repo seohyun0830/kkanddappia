@@ -408,7 +408,7 @@ class Stage2:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             item_img = self.images.item_images.get(self.drag_item)
             if item_img:
-                self.screen.blit(item_img, (mouse_x - self.drag_offset_x, mouse_y - self.drag_offset_y))
+                self.screen.blit(item_img, (mouse_x - 30, mouse_y - 30))
 
         self.crafting_ui.draw_result_popup()
 
