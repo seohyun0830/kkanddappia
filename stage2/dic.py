@@ -109,6 +109,9 @@ class Dictionary:
         
         self.stage.screen.blit(page_text, (text_x, text_y))
 
+        fuel_text = self.lock_font.render("x7", True, (100,100,100))
+        loop_text = self.lock_font.render("x4", True, (100,100,100))
+
         if self.show_warning:
             current_time = pygame.time.get_ticks()
             if current_time - self.warning_start_time < 2000: # 3000ms = 3초
@@ -118,3 +121,9 @@ class Dictionary:
                 self.stage.screen.blit(warning_text, warning_rect)
             else:
                 self.show_warning = False 
+
+        if (self.current_page == 15):
+            self.stage.screen.blit( fuel_text , (650, 180))
+            self.stage.screen.blit( loop_text , (650, 280))
+            self.stage.screen.blit( loop_text , (650, 390))
+            

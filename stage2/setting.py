@@ -159,7 +159,7 @@ for rel_x, rel_y in _slot_relative_coords:
     SPACESHIP_SLOT_RECTS.append(pygame.Rect(absolute_x, absolute_y, SLOT_SIZE_PX, SLOT_SIZE_PX))
 
 MAX_STACK_SIZE = 10
-MAX_DIC_PAGES = 14
+MAX_DIC_PAGES = 15
 GATHER_DURATION = 3000
 PULSATE_SPEED = 0.003
 PULSATE_MIN_SCALE = 0.9
@@ -181,7 +181,7 @@ RECIPES = [
                None, None, None],
     'result':'steel'
     },
-    {'recipe':['steel', 'steel', 'steel',
+    {'recipe':[None, 'steel', 'steel',
                None, 'stick', None,
                None, 'stick', None],
     'result':'hammer'
@@ -200,30 +200,30 @@ RECIPES = [
     'result':'glass'},
     {'recipe':[None, None, None,
                None, 'glass', None,
-               None, 'glass', 'hammer'],
+               None, None, 'hammer'],
     'result':'window-piece'},
     {'recipe':[None, None, None,
                None, 'stick', None,
                'stick', None, 'stick'],
     'result':'ladder'},
-    {'recipe':['steel', None, 'steel',
+    {'recipe':[None, 'steel', None,
                'screw', 'window-piece', 'screw',
-               'steel', 'hammer', 'steel'],
+               None, 'steel', 'hammer'],
      'result':'spaceship-side-piece'},
-    {'recipe':['spaceship-side-piece', 'spaceship-side-piece', 'spaceship-side-piece',
-               'spaceship-side-piece','spaceship-side-piece','spaceship-side-piece',
-               'spaceship-side-piece','spaceship-side-piece','spaceship-side-piece'],
+    {'recipe':[None, None, None,
+               None,'spaceship-side-piece','spaceship-side-piece',
+               None,'spaceship-side-piece','spaceship-side-piece'],
 
     'result':'spaceship-side'
     },
-    {'recipe':['steel', 'steel', None,
-               'screw', 'screw', 'hammer',
-               'steel', 'steel', None],
+    {'recipe':[None, 'steel', None,
+               'screw', None, 'screw',
+               None, 'steel', 'hammer'],
     'result':'spaceship-roof-piece'
     },
-    {'recipe':['spaceship-roof-piece', 'spaceship-roof-piece', None,
-               'spaceship-roof-piece', 'spaceship-roof-piece', None,
-               None, None, None],
+    {'recipe':[None, None, None,
+               None, 'spaceship-roof-piece', 'spaceship-roof-piece',
+               None, 'spaceship-roof-piece', 'spaceship-roof-piece'],
     'result':'spaceship-roof'
     },
     {'recipe':[None, None, None, None, None, None, None, None, None], 'result':None}

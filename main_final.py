@@ -9,7 +9,7 @@ from stage1.stage1_main import f_stage1
 from button.isClicked import f_isFail
 from stage1.images import waters, magmas
 from stage1.sounds import sfx_water, sfx_magma
-from stage2.stage2_main import Stage2  
+from stage2.stage2_main import Stage2   
 from timer.timer import Timer
 from timer.images import overs, sfx_bombSound
 
