@@ -142,7 +142,7 @@ class Stage4:
                 self.fule_stage4to3=True
                 return "stage4to3"
             ####연료 부족
-            if fuel_manager.fuel < 20 and self.fule_stage4to3==True:    #이미 3갔다왔으면
+            if fuel_manager.fuel <=0 and self.fule_stage4to3==True:    #이미 3갔다왔으면
                 sounds_to_play={'fuel_empty':self.fuel_empty_sound,
                                     'siren':self.siren_sound}
                 crash_ani.fuel_empty_ani(self.screen,self.fuel_empty_img,sounds_to_play)
