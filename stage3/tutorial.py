@@ -7,8 +7,8 @@ class Stage3Tutorial:
 
     def __init__(self, screen):
         self.screen = screen
-        self.font = pygame.font.SysFont(constants.FONT_NAME, 48)  # 기본 폰트(크기 48)
-        self.minifont = pygame.font.SysFont(constants.FONT_NAME, 20)
+        self.font = pygame.font.Font("DungGeunMO.ttf", 48)  # 기본 폰트(크기 48)
+        self.minifont = pygame.font.Font("DungGeunMO.ttf", 20)
 
         # -------------------------
         # 튜토리얼 페이지 구성

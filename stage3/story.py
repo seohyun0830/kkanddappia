@@ -25,9 +25,9 @@ class Stage3Story:
         self.ani1 = pygame.image.load("images/stage3/ani1.png").convert_alpha()
         self.ani2 = pygame.image.load("images/stage3/ani2.png").convert_alpha()
         self.ani3 = pygame.image.load("images/stage3/ani3.png").convert_alpha()
-        self.ani1 = pygame.transform.scale(self.ani1, (150, 200))
-        self.ani2 = pygame.transform.scale(self.ani2, (150, 200))
-        self.ani3 = pygame.transform.scale(self.ani3, (150, 200))
+        self.ani1 = pygame.transform.scale(self.ani1, (100, 100))
+        self.ani2 = pygame.transform.scale(self.ani2, (100, 100))
+        self.ani3 = pygame.transform.scale(self.ani3, (100, 100))
     
 
         self.animation_timer = 0
@@ -35,7 +35,7 @@ class Stage3Story:
 
         # 플레이어 위치
         self.player_x = -150
-        self.player_y = 440
+        self.player_y = 580
         self.run_speed = 6
 
         # 사운드

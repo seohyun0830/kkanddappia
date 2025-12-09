@@ -216,7 +216,7 @@ def main():
         # ---------------------------------------
         elif current_state == STATE_STAGE3:
             # --- Stage 3  ---
-           
+            pygame.mixer.stop()
             stage3 = Stage3(screen, mode=game_difficulty,game_state=game_state)
             next_stage_3 = stage3.run()
             

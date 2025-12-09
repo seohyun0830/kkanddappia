@@ -26,7 +26,7 @@ GROUND_Y = 630
 
 # 우주선 조각 갯수
 TOTAL_PIECES = 9
-PIECE_SIZE = 50
+PIECE_SIZE = 80
 
 LAUNCHPAD_RECT = pygame.Rect(900, 400, 250, 300)
 

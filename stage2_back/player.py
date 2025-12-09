@@ -1,5 +1,6 @@
 import pygame
 from stage2_back.setting import *
+from . import sounds
 
 class Player:
     def __init__(self, images):
@@ -42,6 +43,7 @@ class Player:
             self.is_moving = True
             
         if keys[pygame.K_w] and not self.is_jumping:
+            sounds.jumpSound.play()
             self.vel_y = -JUMP_STRENGTH
             self.is_jumping = True
             self.is_moving = True
@@ -61,6 +63,7 @@ class Player:
         self.animate()
 
     def start_cutscene(self):
+        sounds.walkingSound.play()
         self.is_cutscene_mode = True
         self.x = 0
         self.y = GROUND_Y-50

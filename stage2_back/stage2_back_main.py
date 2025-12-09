@@ -5,6 +5,7 @@ from stage2_back.setting import *
 from stage2_back.images import ImageManager
 from stage2_back.player import Player
 from stage2_back.map import MapManager
+from . import sounds
 
 class Stage2Back:
     def __init__(self, screen):
@@ -31,6 +32,8 @@ class Stage2Back:
             self.font=pygame.font.Font(None, 30)
 
     def run(self):
+        pygame.mixer.music.load("stage2_back/assets/background_sound.mp3")
+        pygame.mixer.music.play(-1)
         while not self.done:
             self.handle_events()
             self.update()
@@ -55,6 +58,7 @@ class Stage2Back:
                     if LAUNCHPAD_RECT.collidepoint(mouse_pos):
                         self.cutscene_active = True
                         self.player.start_cutscene() 
+                        pygame.mixer.music.stop()
                         return
                                     
                 # 상단에서 드래그
@@ -88,7 +92,7 @@ class Stage2Back:
     def add_to_inventory(self):
         count = len(self.inventory_pieces)
         x = 20 + (count * (PIECE_SIZE + 10))
-        y = 25 
+        y = 15
         new_rect = pygame.Rect(x, y, PIECE_SIZE, PIECE_SIZE)
         self.inventory_pieces.append(new_rect)
 
@@ -96,7 +100,7 @@ class Stage2Back:
         new_list = []
         for i in range(len(self.inventory_pieces)):
             x = 20 + (i * (PIECE_SIZE + 10))
-            y = 25
+            y = 15
             rect = pygame.Rect(x, y, PIECE_SIZE, PIECE_SIZE)
             new_list.append(rect)
         self.inventory_pieces = new_list

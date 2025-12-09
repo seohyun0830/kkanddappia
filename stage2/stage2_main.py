@@ -73,8 +73,12 @@ class Stage2:
         
         # 기본 아이템 (불, 물 + 테스트용 부품들)
         base_items = ['fire', 'water'] + \
+                     ['spaceship-side'] * 4 + \
+                     ['spaceship-roof'] * 4 + \
+                     ['fuel tank'] * 15 + \
+                     ['steel'] * 2 + \
                      ['axe'] + \
-                     ['ladder']*1
+                     ['ladder']*10 
 
         if imported_items is not None:
             self.inventory = base_items + imported_items
