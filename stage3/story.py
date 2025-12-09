@@ -8,15 +8,15 @@ class Stage3Story:
         self.clock = pygame.time.Clock()
 
         # 배경 로드
-        self.bg = pygame.image.load("images/stage3/piperoom.png")
+        self.bg = pygame.image.load("images/stage3/piperoom.jpg")
         self.bg = pygame.transform.scale(
             self.bg,
-            (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)
+            (1200, 800)
         )
         self.bg_open = pygame.image.load("images/stage3/piperoom2.png")
         self.bg_open = pygame.transform.scale(
             self.bg_open,
-            (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)
+            (1200, 800)
         )
 
         self.font = pygame.font.Font('DungGeunMO.ttf', 90)
