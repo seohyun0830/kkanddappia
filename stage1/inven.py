@@ -67,9 +67,11 @@ class Cinven:
                         self.invenList.remove(item_id)
                         self.blockCount.remove(count)
                     # (0개인 경우는 안 그리도록 예외 처리 가능)
-                    if count > 0:
-                        text = self.font.render(f"x{count}", True, (255, 255, 255))
+                    text = self.font.render(f"x{count}", True, (255, 255, 255))
+                    if count == 10:
                         window.blit(text, (x + 60, y + 75))      
+                    elif count > 0:
+                        window.blit(text, (x + 70, y + 75))      
 
     def f_invenInfo(self, window):
         mouse_x, mouse_y = pygame.mouse.get_pos()
