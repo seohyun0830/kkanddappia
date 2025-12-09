@@ -52,7 +52,7 @@ ARROW_SIZE=70
 
 # --- [추가] 쪽지(Paper) 설정 ---
 PAPER_SIZE = 40
-NOTE_APPEAR_INTERVAL = 60000 #1분에 하나씩
+NOTE_APPEAR_INTERVAL = 3000 #1분에 하나씩
 
 # 쪽지 8개의 위치 (맵 이름, x좌표, y좌표) - 순서대로 나타납니다.
 NOTE_DATA = [
@@ -60,10 +60,10 @@ NOTE_DATA = [
     {"map": "outside1", "pos": (600, 650)},  # 2번
     {"map": "inside",   "pos": (300, 650)},  # 3번
     {"map": "inside",   "pos": (900, 650)},  # 4번
-    {"map": "outside2", "pos": (100, 650)},  # 5번
+    {"map": "outside2", "pos": (200, 650)},  # 5번
     {"map": "outside2", "pos": (800, 650)},  # 6번
-    {"map": "outside1", "pos": (1000, 650)}, # 7번
-    {"map": "inside",   "pos": (600, 650)}   # 8번
+    #{"map": "outside1", "pos": (1000, 650)}, # 7번
+    #{"map": "inside",   "pos": (600, 650)}   # 8번
 ]
 
 # --- UI 위치 ---
@@ -159,7 +159,7 @@ for rel_x, rel_y in _slot_relative_coords:
     SPACESHIP_SLOT_RECTS.append(pygame.Rect(absolute_x, absolute_y, SLOT_SIZE_PX, SLOT_SIZE_PX))
 
 MAX_STACK_SIZE = 20
-MAX_DIC_PAGES = 15
+MAX_DIC_PAGES = 13
 GATHER_DURATION = 2000
 PULSATE_SPEED = 0.003
 PULSATE_MIN_SCALE = 0.9
@@ -207,9 +207,8 @@ RECIPES = [
      'result':'spaceship-side-piece'
      },
     {'recipe':[None, None, None,
-               None,'spaceship-side-piece','spaceship-side-piece',
-               None,'spaceship-side-piece','spaceship-side-piece'],
-
+               None,'spaceship-side-piece',None,
+               None,'spaceship-side-piece',None],
     'result':'spaceship-side'
     },
     {'recipe':[None, 'stone', None,
@@ -218,8 +217,8 @@ RECIPES = [
     'result':'spaceship-roof-piece'
     },
     {'recipe':[None, None, None,
-               None, 'spaceship-roof-piece', 'spaceship-roof-piece',
-               None, 'spaceship-roof-piece', 'spaceship-roof-piece'],
+               None, 'spaceship-roof-piece', None,
+               None, 'spaceship-roof-piece', None],
     'result':'spaceship-roof'
     },
     {'recipe':[None, None, None,

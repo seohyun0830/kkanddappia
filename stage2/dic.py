@@ -122,7 +122,7 @@ class Dictionary:
             else:
                 self.show_warning = False 
 
-        if (self.current_page == 15):
+        if (self.current_page == 13):
             self.stage.screen.blit( fuel_text , (650, 180))
             self.stage.screen.blit( loop_text , (650, 280))
             self.stage.screen.blit( loop_text , (650, 390))
