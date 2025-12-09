@@ -122,10 +122,12 @@ def f_guide2(window, flag, isDragging):
         pygame.draw.rect(box, hole_color, DIC_AREA)
     elif f_guide2.idx == 1:
         pygame.draw.rect(box, hole_color, CLICK_AREA)
+    '''   
     elif f_guide2.idx == 2 or f_guide2.idx ==3:
         # 제작창 위치 (make2 이미지 기준)
         pygame.draw.rect(box, hole_color, (MAKE2_IMAGE_X, MAKE2_IMAGE_Y, IMG_SIZE_MAKE2[0], IMG_SIZE_MAKE2[1]))
-
+    '''
+    
     box.set_colorkey(hole_color)
     box.set_alpha(128)
     window.blit(box, (0,0))

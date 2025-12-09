@@ -11,10 +11,12 @@ class Dictionary:
         # 폰트 설정 (잠금 메시지용 큰 폰트 추가)
         try:
             self.font = pygame.font.Font('DungGeunMO.ttf', 30)
+            self.tip_font = pygame.font.Font('DungGeunMO.ttf', 12)
             self.lock_font = pygame.font.Font('DungGeunMO.ttf', 50)
             self.warning_font=pygame.font.Font('DungGeunMO.ttf', 50)
         except:
             self.font = pygame.font.Font(None, 30)
+            self.tip_font = pygame.font.Font(None, 10)
             self.lock_font = pygame.font.Font(None, 50)
             self.warning_font=pygame.font.Font(None, 50)
         
@@ -111,6 +113,7 @@ class Dictionary:
 
         fuel_text = self.lock_font.render("x7", True, (100,100,100))
         loop_text = self.lock_font.render("x4", True, (100,100,100))
+        tip_text=self.tip_font.render("tip. 연료는 최대한 많이 모아보자", True, BLACK)
 
         if self.show_warning:
             current_time = pygame.time.get_ticks()
@@ -126,4 +129,5 @@ class Dictionary:
             self.stage.screen.blit( fuel_text , (650, 180))
             self.stage.screen.blit( loop_text , (650, 280))
             self.stage.screen.blit( loop_text , (650, 390))
+            self.stage.screen.blit(tip_text, (595,240))
             
