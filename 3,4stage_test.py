@@ -33,6 +33,7 @@ def main():
     # ------------------------------------
     
     while True:
+        pygame.mixer.stop()
 
         # ===== Stage 3 =====
         stage3 = Stage3(screen, game_state=game_state)
