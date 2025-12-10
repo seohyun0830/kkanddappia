@@ -190,11 +190,13 @@ class Stage3:
             if self.pressure <= 0 or self.hp <= 0:
                 self.fadeout_with_breath()
                 play_oxygen_fail(self.screen)
+                self.stop_all_sounds()
                 return "dead"
 
             elif self.pressure >= 100:
                 from stage3.fail_animation import play_overpressure_fail
                 play_overpressure_fail(self.screen)
+                self.stop_all_sounds()
                 return "dead"
 
             now = pygame.time.get_ticks()
@@ -204,6 +206,7 @@ class Stage3:
                 return "dead"
 
             if self.check_clear():
+                self.stop_all_sounds()
                 self.show_success()
                 return "stage4"
 
@@ -578,3 +581,29 @@ class Stage3:
         elif p <= 70:
             return int(3 + (70 - p) * 0.08)
         return int(3 - (p - 70) * 0.02)
+
+
+    def stop_all_sounds(self):
+        try: sound.stop_bgm()
+        except: pass
+
+        try: sound.high_bgm.stop()
+        except: pass
+
+        try: sound.fire_loop.stop()
+        except: pass
+
+        try: sound.beep_error.stop()
+        except: pass
+
+        try: sound.oxfail_bgm.stop()
+        except: pass
+
+        try: sound.explosion.stop()
+        except: pass
+
+        try: sound.breath.stop()
+        except: pass
+
+        try: sound.fail_bgm.stop()
+        except: pass
