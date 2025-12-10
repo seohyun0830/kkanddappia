@@ -49,7 +49,9 @@ def main():
 
         # ===== Stage 4 =====
         if next_stage == "stage4":
-            stage4 = Stage4(screen)
+            fuel_manager.fuel = 70
+            difficulty = "hard"
+            stage4 = Stage4(screen, mode=difficulty)
             result = stage4.run()
 
             # stage4 내부 반복 처리
@@ -64,7 +66,6 @@ def main():
 
             # stage4 결과
             if result == "dead":
-                fuel_manager.fuel = 80
                 back = Stage2Back(screen)
                 back.run()
                 continue

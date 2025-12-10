@@ -1,4 +1,4 @@
-import pygame
+import pygame,sys
 import random
 import time
 from engine import constants, sound
@@ -33,7 +33,14 @@ def play_oxygen_fail(screen):
 
     # ===== 애니메이션 =====
     for frame in frames:
-        for _ in range(25):  # 천천히
+        for _ in range(18):  # 천천히
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+
             shake_x = random.randint(-5, 5)
             shake_y = random.randint(-5, 5)
 
@@ -49,7 +56,7 @@ def play_oxygen_fail(screen):
             clock.tick(12)
 
     # 마지막 완전 암전
-    for alpha in range(0, 255, 12):
+    for alpha in range(0, 255, 25):
         fade_surf.set_alpha(alpha)
         screen.blit(fade_surf, (0, 0))
         pygame.display.update()
@@ -57,7 +64,7 @@ def play_oxygen_fail(screen):
 
     screen.blit(fade_surf, (0, 0))
     pygame.display.update()
-    time.sleep(5)
+    time.sleep(2)
 
 
 def load_fail2_frames():
@@ -108,7 +115,13 @@ def play_overpressure_fail(screen):
             fire_sound_played = True
 
         # 프레임 애니메이션
-        for _ in range(25):
+        for _ in range(20):
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
             shake_x = random.randint(-5, 5)
             shake_y = random.randint(-5, 5)
 
@@ -119,14 +132,14 @@ def play_overpressure_fail(screen):
             screen.blit(fade_surf, (0, 0))
 
             pygame.display.update()
-            clock.tick(12)
+            clock.tick(15)
 
     # ===== 마지막 암전 =====
-    for alpha in range(0, 255, 10):
+    for alpha in range(0, 255, 20):
         fade_surf.set_alpha(alpha)
         screen.blit(fade_surf, (0, 0))
         pygame.display.update()
-        clock.tick(20)
+        clock.tick(30)
 
     # 불소리 정지
     try:
@@ -135,4 +148,4 @@ def play_overpressure_fail(screen):
         pass
     sound.beep_error.stop()
     # 암전 유지 3초
-    time.sleep(3)
+    time.sleep(2)

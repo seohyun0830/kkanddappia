@@ -1,4 +1,4 @@
-import pygame
+import pygame,sys
 from engine import constants
 from stage3.draw_screen import draw_screen
 
@@ -48,7 +48,8 @@ class Stage3Tutorial:
             result = self.show_page(stage3, text, rect, img_paths)
 
             if result == "quit":
-                return "quit"
+                pygame.quit()
+                sys.exit()
 
             elif result == "next":
                 page += 1

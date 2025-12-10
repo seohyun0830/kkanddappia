@@ -59,6 +59,8 @@ DIFFICULTY = {
         "HP_DAMAGE_INTERVAL": 1800,
 
         "BEGIN_BROKEN_CNT": 4,
+        #"BEGIN_BROKEN_CNT": 0,
+
 
         "DRONE_CHANCE": 0.10,     # EASY보다 확률 낮음
 

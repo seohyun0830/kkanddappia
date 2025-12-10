@@ -1,4 +1,4 @@
-import pygame
+import pygame,sys
 import random
 
 from engine import constants, sound, maze, assets
@@ -18,8 +18,8 @@ from stage3.success_animation import play_success_animation
 class Stage3:
 
     # 일단 easy로설정
-    def apply_difficulty(self, mode="EASY"):
-        cfg = DIFFICULTY.get(mode, DIFFICULTY["EASY"])
+    def apply_difficulty(self, mode="HARD"):
+        cfg = DIFFICULTY.get(mode, DIFFICULTY["HARD"])
 
         # 압력 랜덤
         self.MIN_RANDOM_CHANGE = cfg["MIN_RANDOM_CHANGE"]
@@ -44,7 +44,7 @@ class Stage3:
         # 압력 조절
         self.PRESSURE_CONTROL_AMOUNT = cfg["PRESSURE_CONTROL_AMOUNT"]
 
-    def __init__(self, screen, mode="easy", game_state=None):
+    def __init__(self, screen, mode="hard", game_state=None):
         self.screen = screen
         self.game_state = game_state or {}
 
@@ -423,6 +423,11 @@ class Stage3:
             self.player_row == constants.GRID_SIZE - 1
             and self.player_col == constants.GRID_SIZE - 1
         )
+        """
+        reached = (
+                    self.player_row == 0
+                    and self.player_col == 0
+                )"""
 
         return all_fixed and reached
 
@@ -529,8 +534,14 @@ class Stage3:
         fade = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
         fade.fill((0, 0, 0))
 
-        for i in range(200):
-            alpha = min(255, i * 4)
+        for i in range(60):
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+
+            alpha = min(255, i * 5)
             fade.set_alpha(alpha)
 
             from stage3.draw_screen import draw_screen
@@ -541,7 +552,7 @@ class Stage3:
 
             self.screen.blit(fade, (0, 0))
             pygame.display.update()
-            clock.tick(60)
+            clock.tick(40)
 
     def spawn_initial_broken(self):
         count = self.BEGIN_BROKEN_CNT
@@ -563,7 +574,7 @@ class Stage3:
         p = self.pressure
 
         if p <= 40:
-            return 10
+            return 9
         elif p <= 70:
-            return int(3 + (70 - p) * 0.1)
-        return int(3 - (p - 70) * 0.01)
+            return int(3 + (70 - p) * 0.08)
+        return int(3 - (p - 70) * 0.02)
