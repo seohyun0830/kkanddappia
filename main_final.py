@@ -157,7 +157,7 @@ def main():
             if isinstance(result, tuple):
                 next_stage, count = result
                 if next_stage == "stage3":  #3스테이지 이동
-                    fuel_manager.set_fuel(count*10+70) # 연료 
+                    fuel_manager.set_fuel(70) # 연료 
                     print(f"Stage 2 클리어! 획득한 연료: {count}개")
                     
                     story = Stage3Story(screen)
@@ -249,7 +249,7 @@ def main():
                         break 
 
                 if result_4 == "dead":
-                    fuel_manager.set_fuel(count*10+70)
+                    fuel_manager.set_fuel(70)
                     back = Stage2Back(screen)
                     back.run()
                     continue

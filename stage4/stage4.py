@@ -127,7 +127,7 @@ class Stage4:
             self.game_elapsed_time = game_elapsed_time
 
             # 연료 부족 → stage4to3 이동
-            if fuel_manager.fuel < 20 and self.fule_stage4to3==False:  # 테스트용 기준
+            if fuel_manager.fuel < 35 and self.fule_stage4to3==False:  # 테스트용 기준
 
                 pygame.mixer.music.pause()
                 self.screen.blit(self.fuel_failure_img, (0, 0))
@@ -158,7 +158,7 @@ class Stage4:
                 return "fule_empty"   #이건 아예 재시작으로 바꿔야됨 23합치고
 
             # 연료 감소 (2초마다, defect 아닐 때만)
-            if (not self.is_defect_event) and (game_elapsed_time - self.last_fuel_drop_time > 2):
+            if (not self.is_defect_event) and (game_elapsed_time - self.last_fuel_drop_time > 1):
                 fuel_manager.consume_fuel(1)
                 self.last_fuel_drop_time = game_elapsed_time
 
