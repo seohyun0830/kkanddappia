@@ -21,7 +21,7 @@ class Stage4:
     def __init__(self, screen,mode):
         self.screen = screen
         self.clock = pygame.time.Clock()
-
+        self.mode=mode
         # --- pause / resume 관련 ---
         # total_paused_ms : 퍼즐 + 4to3에 있던 시간까지 모두 포함한 "멈춘 시간" 누적
         self.total_paused_ms = 0
@@ -470,7 +470,8 @@ class Stage4:
                 self.screen, self.ending_bk_images[0], sounds
             )
             Success_animation.kkanddappia_land(self.screen,self.ending_bk_images[1],self.walking_p,self.move_success_p,self.talking_box2,self.talk_font)
-            Success_animation.final_ending(self.screen,self.ending_bk_images[2],self.ending_bk_images[3],self.talking_box2,self.talk_font,"easy")
+            Success_animation.final_ending(self.screen,self.ending_bk_images[2],self.ending_bk_images[3],self.talking_box2,self.talk_font,self.mode)
+
             return True
 
         return False
