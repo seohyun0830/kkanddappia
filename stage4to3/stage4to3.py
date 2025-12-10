@@ -13,7 +13,7 @@ class Stage4To3:
 
         # 타이머
         self.start_time = pygame.time.get_ticks()
-        self.TIME_LIMIT = 30
+        self.TIME_LIMIT = 60 #시간늘림
 
         # 미로
         self.maze = maze.initialize_grid(constants.GRID_SIZE)
