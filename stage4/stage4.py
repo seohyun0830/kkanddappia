@@ -44,7 +44,7 @@ class Stage4:
         # 시간 관련 (run()에서 start_ticks 세팅)
         self.start_ticks = None
         self.last_fuel_drop_time = 0
-        self.TOTAL_GAME_TIME = 100
+        self.TOTAL_GAME_TIME = 99
 
         # 상태 변수들
         self.left_life = 4
@@ -142,7 +142,7 @@ class Stage4:
                 self.fule_stage4to3=True
                 return "stage4to3"
             ####연료 부족
-            if fuel_manager.fuel <=0 and self.fule_stage4to3==True:    #이미 3갔다왔으면
+            if fuel_manager.fuel <0 and self.fule_stage4to3==True:    #이미 3갔다왔으면
                 sounds_to_play={'fuel_empty':self.fuel_empty_sound,
                                     'siren':self.siren_sound}
                 crash_ani.fuel_empty_ani(self.screen,self.fuel_empty_img,sounds_to_play)
