@@ -13,7 +13,7 @@ assets.load_all()
 count=7 ################테스트용
 
 # 스테이지 실행
-stage = Stage4To3(screen,num_fules=count)
+stage = Stage4To3(screen,num_fuels=count)
 stage.run()
 
 pygame.quit()
