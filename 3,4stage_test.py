@@ -7,7 +7,7 @@ from stage4to3.stage4to3 import Stage4To3
 from stage2_back.stage2_back_main import Stage2Back
 from engine.fuel_manager import fuel_manager
 import builtins
-
+'''
 
 def main():
     pygame.init()
@@ -76,32 +76,40 @@ def main():
 
     pygame.quit()
     '''
-    while True:
-        stage4 = Stage4(screen)
-        result = stage4.run()
+while True:
+            pygame.init()
+            screen = pygame.display.set_mode(
+            (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)
+        )
+            builtins.shared_screen = screen
+            pygame.display.set_caption("stage3,4 merge")
 
-                # stage4 내부 반복 처리
-        while result == "stage4to3":
-            stage4to3 = Stage4To3(screen)
-            back = stage4to3.run()
+            assets.load_all()
+            stage4 = Stage4(screen,"easy")
+            result = stage4.run()
 
-            if back == "stage4":
-                result = stage4.resume()
-            else:
+                    # stage4 내부 반복 처리
+            while result == "stage4to3":
+                stage4to3 = Stage4To3(screen)
+                back = stage4to3.run()
+
+                if back == "stage4":
+                    result = stage4.resume()
+                else:
+                    break
+
+                    # stage4 결과
+            if result == "dead":
+                fuel_manager.fuel = 80
+                back = Stage2Back(screen)
+                back.run()
+                continue
+
+            if result == "success":
+                        # 여기서 엔딩 가능
                 break
-
-                # stage4 결과
-        if result == "dead":
-            fuel_manager.fuel = 80
-            back = Stage2Back(screen)
-            back.run()
-            continue
-
-        if result == "success":
-                    # 여기서 엔딩 가능
-            break
     pygame.quit()
-'''
+
 
 if __name__ == "__main__":
     main()
