@@ -45,14 +45,14 @@ def user_pressure_control(pressure, key_pressed, stage3):
     amount = stage3.PRESSURE_CONTROL_AMOUNT
 
     if not key_pressed:
-        if keys[pygame.K_q]:
+        if keys[pygame.K_RIGHT]:
             pressure = min(100.0, pressure + amount)
             key_pressed = True
-        elif keys[pygame.K_w]:
+        elif keys[pygame.K_LEFT]:
             pressure = max(0.0, pressure - amount)
             key_pressed = True
     else:
-        if not (keys[pygame.K_q] or keys[pygame.K_w]):
+        if not (keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]):
             key_pressed = False
 
     return pressure, key_pressed

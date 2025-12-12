@@ -56,9 +56,9 @@ def main():
             result = stage4.run()
 
             # stage4 내부 반복 처리
-            count=10#임의로
+            count=3#임의로
             while result == "stage4to3":
-                stage4to3 = Stage4To3(screen,num_fuel=count)
+                stage4to3 = Stage4To3(screen,num_fuels=count)
                 back = stage4to3.run()
 
                 if back == "stage4":

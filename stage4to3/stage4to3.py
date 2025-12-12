@@ -85,7 +85,7 @@ class Stage4To3:
             remaining = max(0, self.TIME_LIMIT - elapsed)
 
             if remaining <= 0:
-                return "stage4"  # ★ 시간 끝 → Stage4 복귀
+                return "stage4"
 
             self.handle_events()
             self.spawn_fuel()
@@ -135,13 +135,13 @@ class Stage4To3:
 
         r, c = self.player_row, self.player_col
 
-        if self.key_states[pygame.K_UP]:
+        if self.key_states[pygame.K_w]:
             r, c = try_move_player(self.maze, (r, c), -1, 0, [], [])
-        elif self.key_states[pygame.K_DOWN]:
+        elif self.key_states[pygame.K_s]:
             r, c = try_move_player(self.maze, (r, c), 1, 0, [], [])
-        elif self.key_states[pygame.K_LEFT]:
+        elif self.key_states[pygame.K_a]:
             r, c = try_move_player(self.maze, (r, c), 0, -1, [], [])
-        elif self.key_states[pygame.K_RIGHT]:
+        elif self.key_states[pygame.K_d]:
             r, c = try_move_player(self.maze, (r, c), 0, 1, [], [])
 
         self.player_row, self.player_col = r, c
